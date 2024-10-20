@@ -321,7 +321,10 @@ MonoBehaviour:
   rotationSpeed: 350
   speed: 50
   deathSound: {fileID: 8300000, guid: 63eb7295e8ba1874591ddc3d46983deb, type: 3}
+  DeathAudioSource: {fileID: 426983593}
   targetEntity: {fileID: 0}
+  isDead: 0
+  moveDirection: {x: 0, y: 0, z: 0}
   potionsCount: 0
   isHealed: 1
 --- !u!82 &426983593
@@ -334,9 +337,9 @@ AudioSource:
   m_Enabled: 1
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 0.25
+  m_audioClip: {fileID: 8300000, guid: 63eb7295e8ba1874591ddc3d46983deb, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.164
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -467,7 +470,6 @@ MonoBehaviour:
   keyChangeInterval: 3
   keyChangeTimer: 0
   entities: []
-  hasFallen: 0
 --- !u!4 &482013876
 Transform:
   m_ObjectHideFlags: 0
