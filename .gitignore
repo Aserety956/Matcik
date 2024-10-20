@@ -61,6 +61,11 @@ sysinfo.txt
 *.unitypackage
 *.app
 
+# IntellijIdea files
+*.iml
+.idea
+out
+
 # Crashlytics generated file
 crashlytics-build.properties
 

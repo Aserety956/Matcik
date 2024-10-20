@@ -22,7 +22,9 @@ public class Entity : MonoBehaviour
     public float rotationSpeed;
     public float speed;
     public AudioClip deathSound;
+    public AudioSource DeathAudioSource;
     public Entity targetEntity;
+    public bool isDead = false; 
 
     public Vector3 moveDirection;
 
