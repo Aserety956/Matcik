@@ -321,9 +321,17 @@ MonoBehaviour:
   rotationSpeed: 350
   speed: 50
   deathSound: {fileID: 8300000, guid: 63eb7295e8ba1874591ddc3d46983deb, type: 3}
-  DeathAudioSource: {fileID: 426983593}
+  deathAudioSource: {fileID: 426983593}
   targetEntity: {fileID: 0}
   isDead: 0
+  replacement: {fileID: 0}
+  breakForce: 0
+  collisionMultiplier: 0
+  broken: 0
+  triggerForce: 0
+  explosionRadius: 0
+  explosionForce: 0
+  particles: {fileID: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   potionsCount: 0
   isHealed: 1
@@ -612,7 +620,7 @@ MeshCollider:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
-  m_ProvidesContacts: 0
+  m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 5
   m_Convex: 0
@@ -683,6 +691,79 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &1663427732
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5532359337827215812, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: _velocity
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 7528362457485410522, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_Name
+      value: 'Cannon '
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 14.844094
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.0051357746
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.5314598
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.9823248
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.18718475
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -21.577
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: cf56897838253ad45b57178b60b0a101, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -691,3 +772,4 @@ SceneRoots:
   - {fileID: 426983587}
   - {fileID: 482013876}
   - {fileID: 880434582}
+  - {fileID: 1663427732}

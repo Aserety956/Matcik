@@ -222,6 +222,8 @@ GameObject:
   - component: {fileID: 8365906643010469475}
   - component: {fileID: 730517540161944124}
   - component: {fileID: 4281932556136019532}
+  - component: {fileID: 3036795746662748253}
+  - component: {fileID: 2000169896733961662}
   m_Layer: 0
   m_Name: Zombie
   m_TagString: Untagged
@@ -316,8 +318,70 @@ MonoBehaviour:
   rotationSpeed: 0
   speed: 20
   deathSound: {fileID: 0}
+  deathAudioSource: {fileID: 0}
+  targetEntity: {fileID: 0}
+  isDead: 0
+  replacement: {fileID: 8947430647475187164, guid: 4f506076d102f3e4d921bec56fa41298, type: 3}
+  breakForce: 2
+  collisionMultiplier: 100
+  broken: 0
+  triggerForce: 0
+  explosionRadius: 0
+  explosionForce: 0
+  particles: {fileID: 0}
+  moveDirection: {x: 0, y: 0, z: 0}
   potionsCount: 0
   isHealed: 0
+--- !u!136 &3036795746662748253
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7029484091897933338}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &2000169896733961662
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7029484091897933338}
+  serializedVersion: 4
+  m_Mass: 3
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &8485917563142425573
 GameObject:
   m_ObjectHideFlags: 0

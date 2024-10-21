@@ -10,6 +10,7 @@ public enum EntityType
     Player = 1 << 0,
     Zombie = 1 << 1,
     Potion = 1 << 2,
+    Gun = 1 << 3,
 }
 
 public class Entity : MonoBehaviour
@@ -22,9 +23,23 @@ public class Entity : MonoBehaviour
     public float rotationSpeed;
     public float speed;
     public AudioClip deathSound;
-    public AudioSource DeathAudioSource;
+    public AudioSource deathAudioSource;
     public Entity targetEntity;
-    public bool isDead = false; 
+    public bool isDead;
+    
+    [Header("Breakable")]
+    public GameObject replacement;
+    public float breakForce;
+    public float collisionMultiplier;
+    public bool broken;
+    public Collision collision;
+    
+    [Header("Explosive")]
+    public float triggerForce;
+    public float explosionRadius;
+    public float explosionForce;
+    public GameObject particles;
+    
 
     public Vector3 moveDirection;
 

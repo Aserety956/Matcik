@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using Random = UnityEngine.Random;
 
 // ReSharper disable All
@@ -172,8 +173,39 @@ public class MyGame : MonoBehaviour
                     }
                 }
             }
+
+
+            {
+                if (zombie.broken) return;
+
+                if (zombie.collision != null && zombie.collision.relativeVelocity.magnitude >= zombie.breakForce)
+                {
+                    zombie.broken = true;
+                    GameObject replacement;
+                    replacement = Instantiate(zombie.replacement, transform.position, transform.rotation);
+                    Rigidbody[] rbs = replacement.GetComponentsInChildren<Rigidbody>();
+                    foreach (var rb in rbs)
+                    {
+                        rb.AddExplosionForce(
+                            zombie.collision.relativeVelocity.magnitude * zombie.collisionMultiplier,
+                            zombie.collision.contacts[0].point, 2);
+                    }
+
+                    Destroy(gameObject);
+
+                    if (zombie.collision == null)
+                    {
+                        Debug.LogError("Zombie collision is null");
+                    }
+                    else if (zombie.collision.relativeVelocity == null)
+                    {
+                        Debug.LogError("Zombie collision.relativeVelocity is null");
+                    }
+                }
+            }
         }
     }
+
 
     public void FlockMove(Entity e, Entity entityToFollow, List<Entity> entitiesToAvoid)
     {
@@ -393,77 +425,13 @@ public class MyGame : MonoBehaviour
 
     public void EnableFall()
     {
-        if (!player.DeathAudioSource.isPlaying)
+        if (!player.deathAudioSource.isPlaying)
         {
-            player.DeathAudioSource.Play();
+            player.deathAudioSource.Play();
             player.isDead = true;
         }
     }
 
-
-    public static KeyCode[] inputKeys = new[] { KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.E, KeyCode.Q };
-    public static KeyCode[] infectedKeys;
-
-    public static KeyCode[] ShuffleArray(KeyCode[] array)
-    {
-        KeyCode[] newArray = (KeyCode[])array.Clone();
-        int n = newArray.Length;
-
-        for (int i = n - 1; i > 0; i--)
-        {
-            int j = Random.Range(0, i + 1);
-            KeyCode temp = newArray[i];
-            newArray[i] = newArray[j];
-            newArray[j] = temp;
-        }
-
-        return newArray;
-    }
-
-    public void InfectedInput()
-    {
-        float rotationY = player.rotationSpeed * Time.deltaTime;
-        float moveDistance = player.speed * Time.deltaTime;
-
-        keyChangeTimer -= Time.deltaTime;
-
-
-        if (keyChangeTimer <= 0)
-        {
-            keyChangeTimer = keyChangeInterval;
-            infectedKeys = ShuffleArray(inputKeys);
-        }
-
-        if (Input.GetKey(infectedKeys[0]))
-        {
-            player.transform.position += player.transform.forward * moveDistance;
-        }
-
-        if (Input.GetKey(infectedKeys[1]))
-        {
-            player.transform.position -= player.transform.right * moveDistance;
-        }
-
-        if (Input.GetKey(infectedKeys[2]))
-        {
-            player.transform.position -= player.transform.forward * moveDistance;
-        }
-
-        if (Input.GetKey(infectedKeys[3]))
-        {
-            player.transform.position += player.transform.right * moveDistance;
-        }
-
-        if (Input.GetKey(infectedKeys[4]))
-        {
-            player.transform.Rotate(0, rotationY, 0);
-        }
-
-        if (Input.GetKey(infectedKeys[5]))
-        {
-            player.transform.Rotate(0, -rotationY, 0);
-        }
-    }
 
     public void NewInfectedInput()
     {
@@ -503,3 +471,68 @@ public class MyGame : MonoBehaviour
         }
     }
 }
+
+
+//public static KeyCode[] inputKeys = new[] { KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.E, KeyCode.Q };
+//public static KeyCode[] infectedKeys;
+
+//public static KeyCode[] ShuffleArray(KeyCode[] array)
+//{
+//KeyCode[] newArray = (KeyCode[])array.Clone();
+//int n = newArray.Length;
+
+//for (int i = n - 1; i > 0; i--)
+//{
+//int j = Random.Range(0, i + 1);
+//KeyCode temp = newArray[i];
+//newArray[i] = newArray[j];
+//newArray[j] = temp;
+//}
+
+//return newArray;
+//}
+
+//public void InfectedInput()
+//{
+//float rotationY = player.rotationSpeed * Time.deltaTime;
+// float moveDistance = player.speed * Time.deltaTime;
+
+//keyChangeTimer -= Time.deltaTime;
+
+
+//if (keyChangeTimer <= 0)
+//{
+//keyChangeTimer = keyChangeInterval;
+//infectedKeys = ShuffleArray(inputKeys);
+//}
+
+//if (Input.GetKey(infectedKeys[0]))
+//{
+//player.transform.position += player.transform.forward * moveDistance;
+//}
+
+//if (Input.GetKey(infectedKeys[1]))
+//{
+//player.transform.position -= player.transform.right * moveDistance;
+//}
+
+//if (Input.GetKey(infectedKeys[2]))
+//{
+//player.transform.position -= player.transform.forward * moveDistance;
+//}
+
+//if (Input.GetKey(infectedKeys[3]))
+//{
+//player.transform.position += player.transform.right * moveDistance;
+//}
+
+//if (Input.GetKey(infectedKeys[4]))
+//{
+//player.transform.Rotate(0, rotationY, 0);
+//}
+
+//if (Input.GetKey(infectedKeys[5]))
+//{
+//player.transform.Rotate(0, -rotationY, 0);
+//}
+//}
