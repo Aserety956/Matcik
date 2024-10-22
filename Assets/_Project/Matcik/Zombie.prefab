@@ -226,7 +226,7 @@ GameObject:
   - component: {fileID: 2000169896733961662}
   m_Layer: 0
   m_Name: Zombie
-  m_TagString: Untagged
+  m_TagString: Zombie
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -321,8 +321,10 @@ MonoBehaviour:
   deathAudioSource: {fileID: 0}
   targetEntity: {fileID: 0}
   isDead: 0
+  isCollisionEnabled: 1
+  collisionEntityType: 16
   replacement: {fileID: 8947430647475187164, guid: 4f506076d102f3e4d921bec56fa41298, type: 3}
-  breakForce: 2
+  breakForce: 3
   collisionMultiplier: 100
   broken: 0
   triggerForce: 0

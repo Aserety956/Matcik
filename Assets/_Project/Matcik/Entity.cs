@@ -11,6 +11,7 @@ public enum EntityType
     Zombie = 1 << 1,
     Potion = 1 << 2,
     Gun = 1 << 3,
+    Projectile = 1 << 4,
 }
 
 public class Entity : MonoBehaviour
@@ -26,6 +27,9 @@ public class Entity : MonoBehaviour
     public AudioSource deathAudioSource;
     public Entity targetEntity;
     public bool isDead;
+    public bool isCollisionEnabled;
+    public EntityType collisionEntityType;
+    
     
     [Header("Breakable")]
     public GameObject replacement;
@@ -50,6 +54,23 @@ public class Entity : MonoBehaviour
     public bool HasPotion()
     {
         return potionsCount > 0;
+    }
+
+    public void OnCollisionEnter(Collision other)
+    {
+        Entity e = other.gameObject.GetComponent<Entity>();
+        
+        if (e == null) return;
+        
+            
+        if (isCollisionEnabled && (e.type | collisionEntityType) == collisionEntityType)
+        {
+            collision = other;
+            Debug.Log(gameObject.name + " " + other.gameObject.name);
+            
+        }
+
+
     }
 }
 

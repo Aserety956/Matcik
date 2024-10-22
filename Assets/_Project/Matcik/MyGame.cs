@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
+
 using Random = UnityEngine.Random;
 
 // ReSharper disable All
@@ -174,33 +174,29 @@ public class MyGame : MonoBehaviour
                 }
             }
 
-
             {
-                if (zombie.broken) return;
-
-                if (zombie.collision != null && zombie.collision.relativeVelocity.magnitude >= zombie.breakForce)
+                if (zombie.broken) continue;
+                if (zombie.collision == null) continue;
+            
+                if (zombie.collision.relativeVelocity.magnitude >= zombie.breakForce)
                 {
                     zombie.broken = true;
                     GameObject replacement;
-                    replacement = Instantiate(zombie.replacement, transform.position, transform.rotation);
+                    replacement = Instantiate(zombie.replacement, zombie.transform.position, zombie.transform.rotation);
                     Rigidbody[] rbs = replacement.GetComponentsInChildren<Rigidbody>();
                     foreach (var rb in rbs)
                     {
-                        rb.AddExplosionForce(
-                            zombie.collision.relativeVelocity.magnitude * zombie.collisionMultiplier,
-                            zombie.collision.contacts[0].point, 2);
+                        rb.AddExplosionForce(5000,zombie.transform.position, 50);
                     }
-
-                    Destroy(gameObject);
-
-                    if (zombie.collision == null)
-                    {
-                        Debug.LogError("Zombie collision is null");
-                    }
-                    else if (zombie.collision.relativeVelocity == null)
-                    {
-                        Debug.LogError("Zombie collision.relativeVelocity is null");
-                    }
+                    //zombie.collision.contacts[0].point
+            
+                    
+                    zombies.Remove(zombie);
+                    entities.Remove(zombie);
+            
+                    Destroy(zombie.gameObject);
+                    
+                    continue;
                 }
             }
         }
