@@ -176,10 +176,13 @@ MonoBehaviour:
   breakForce: 0
   collisionMultiplier: 0
   broken: 0
+  ballPrefab: {fileID: 0}
   triggerForce: 0
   explosionRadius: 0
   explosionForce: 0
   particles: {fileID: 0}
+  ballSpawn: {fileID: 0}
+  projVelocity: 10
   moveDirection: {x: 0, y: 0, z: 0}
   potionsCount: 0
   isHealed: 0

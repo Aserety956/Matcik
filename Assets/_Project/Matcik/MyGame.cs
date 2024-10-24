@@ -1,7 +1,7 @@
 using UnityEngine;
 using System;
 using System.Collections.Generic;
-
+using System.Linq;
 using Random = UnityEngine.Random;
 
 // ReSharper disable All
@@ -196,6 +196,9 @@ public class MyGame : MonoBehaviour
             
                     Destroy(zombie.gameObject);
                     
+                    Destroy(replacement.gameObject, 3);
+                     
+
                     continue;
                 }
             }
@@ -378,6 +381,15 @@ public class MyGame : MonoBehaviour
         if (Input.GetKey(KeyCode.Q))
         {
             player.transform.Rotate(0, -rotationY, 0);
+        }
+
+        if (Input.GetKey(KeyCode.Space))
+        {
+            Ball ball;
+            player.moveDirection = player.transform.forward;
+            ball = Instantiate(player.ballPrefab, player.ballSpawn.transform.position, player.ballSpawn.rotation);
+            ball.Init(player.projVelocity);
+            Destroy(ball.gameObject, 2);
         }
     }
 

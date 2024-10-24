@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using Quaternion = System.Numerics.Quaternion;
 
 // NOTE(sqd): Sparse Entity System
 
@@ -39,10 +40,16 @@ public class Entity : MonoBehaviour
     public Collision collision;
     
     [Header("Explosive")]
+    public Ball ballPrefab;
     public float triggerForce;
     public float explosionRadius;
     public float explosionForce;
     public GameObject particles;
+    
+    
+    [Header("ProjThrow")]
+    public Transform ballSpawn;
+    public float projVelocity;
     
 
     public Vector3 moveDirection;

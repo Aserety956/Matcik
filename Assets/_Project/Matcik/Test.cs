@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
+using UnityEngine.SocialPlatforms;
 
 public class Test : MonoBehaviour
 {
@@ -14,6 +15,11 @@ public class Test : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.R))
         {
+            Rigidbody[] rbs = gameObject.GetComponentsInChildren<Rigidbody>();
+            foreach (var rb in rbs)
+            {
+                rb.isKinematic = true;
+            }
             Reset();
         }
         
@@ -22,22 +28,25 @@ public class Test : MonoBehaviour
             Rigidbody[] rbs = gameObject.GetComponentsInChildren<Rigidbody>();
             foreach (var rb in rbs)
             {
+                rb.isKinematic = false;
                 rb.AddExplosionForce(Power,transform.localPosition, Radius);
             }
         }
     }
 
-    private Vector3[] StartPositions;
+    private Vector3[] startPositions;
+    private Quaternion[] startRotation;
 
     public void Awake()
     {
-        StartPositions = new Vector3[transform.childCount];
+        startPositions = new Vector3[transform.childCount];
+        startRotation = new Quaternion[transform.childCount];
 
         for (int i = 0; i < transform.childCount; i++)
         {
-            StartPositions[i] = transform.GetChild(i).transform.localPosition;
+            startPositions[i] = transform.GetChild(i).transform.localPosition;
+            startRotation[i] = transform.GetChild(i).transform.localRotation;
         }
-        
     }
 
     public void Reset()
@@ -45,7 +54,9 @@ public class Test : MonoBehaviour
 
         for (int i = 0; i < transform.childCount; i++)
         {
-            transform.GetChild(i).transform.localPosition = StartPositions[i];
+            transform.GetChild(i).transform.localPosition = startPositions[i];
+            transform.GetChild(i).transform.localRotation = startRotation[i];
+            
         }
     }
 }

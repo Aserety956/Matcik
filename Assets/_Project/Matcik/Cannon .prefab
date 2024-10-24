@@ -23,12 +23,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5495196876202120643}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 12.036624}
   m_LocalScale: {x: 1.7579018, y: 1.7579014, z: 5.660425}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1878267189056868272}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7528362457485410522
 GameObject:
@@ -54,15 +55,16 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7528362457485410522}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -9.857464, y: 0.009059072, z: 1.0922451}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2894373980841585920}
   - {fileID: 3934461294231314320}
   - {fileID: 4994819183122654625}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5532359337827215812
 MonoBehaviour:
@@ -71,19 +73,20 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7528362457485410522}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1cc40498bbb18c648b5c1b9d5309a44d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ballPrefab: {fileID: 5924872118086199498, guid: 4cb3f20a55d45ed49b86e55ddfd0cdb8, type: 3}
-  _ballSpawn: {fileID: 1102695859023187065}
-  _velocity: 13
+  ballPrefab: {fileID: 0}
+  ballSpawn: {fileID: 0}
+  velocity: 10
 --- !u!1001 &2133100334761699419
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 4994819183122654625}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: c5457d3d7f6131f4da520f1cc69f4d3b, type: 3}
@@ -151,6 +154,12 @@ PrefabInstance:
       value: Barrel FBX
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: c5457d3d7f6131f4da520f1cc69f4d3b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1102695859023187065}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c5457d3d7f6131f4da520f1cc69f4d3b, type: 3}
 --- !u!4 &1878267189056868272 stripped
 Transform:
@@ -162,6 +171,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 9223179743398719195}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: e4fccede7167d3a41bc347e9f2f10cfb, type: 3}
@@ -237,6 +247,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 6bf0a99e1ee8c8847b75fd59d83f34aa, type: 2}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e4fccede7167d3a41bc347e9f2f10cfb, type: 3}
 --- !u!4 &2894373980841585920 stripped
 Transform:
@@ -248,6 +261,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 9223179743398719195}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: e4fccede7167d3a41bc347e9f2f10cfb, type: 3}
@@ -323,6 +337,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2100000, guid: 6bf0a99e1ee8c8847b75fd59d83f34aa, type: 2}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e4fccede7167d3a41bc347e9f2f10cfb, type: 3}
 --- !u!4 &3934461294231314320 stripped
 Transform:
@@ -334,6 +351,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
+    serializedVersion: 3
     m_TransformParent: {fileID: 9223179743398719195}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: c5457d3d7f6131f4da520f1cc69f4d3b, type: 3}
@@ -401,6 +419,12 @@ PrefabInstance:
       value: Barrel FBX
       objectReference: {fileID: 0}
     m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: c5457d3d7f6131f4da520f1cc69f4d3b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1878267189056868272}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c5457d3d7f6131f4da520f1cc69f4d3b, type: 3}
 --- !u!4 &4994819183122654625 stripped
 Transform:
