@@ -330,10 +330,13 @@ MonoBehaviour:
   breakForce: 0
   collisionMultiplier: 0
   broken: 0
+  ballPrefab: {fileID: 5924872118086199498, guid: 4cb3f20a55d45ed49b86e55ddfd0cdb8, type: 3}
   triggerForce: 0
   explosionRadius: 0
   explosionForce: 0
   particles: {fileID: 0}
+  ballSpawn: {fileID: 426983587}
+  projVelocity: 100
   moveDirection: {x: 0, y: 0, z: 0}
   potionsCount: 0
   isHealed: 1
@@ -472,13 +475,14 @@ MonoBehaviour:
   zombieSpawnInterval: 1
   potionSpawnT: 0
   zombieSpawnT: 0
+  canPressKey: 1
+  keyCooldown: 1
   infectTimerT: 10
   isInfected: 0
   inputEnabled: 1
   inputDisableTimer: 3
-  currentRandomKey: 0
-  keyChangeInterval: 3
-  keyChangeTimer: 0
+  mouseSensitivity: 300
+  xRotation: 50
   entities: []
 --- !u!4 &482013876
 Transform:
@@ -784,79 +788,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 731250630}
   m_SourcePrefab: {fileID: 100100000, guid: 4f506076d102f3e4d921bec56fa41298, type: 3}
---- !u!1001 &1663427732
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5532359337827215812, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: _velocity
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 7528362457485410522, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_Name
-      value: 'Cannon '
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 14.844094
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.0051357746
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -0.5314598
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.9823248
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0.18718475
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9223179743398719195, guid: cf56897838253ad45b57178b60b0a101, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: -21.577
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: cf56897838253ad45b57178b60b0a101, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -865,5 +796,4 @@ SceneRoots:
   - {fileID: 426983587}
   - {fileID: 482013876}
   - {fileID: 880434582}
-  - {fileID: 1663427732}
   - {fileID: 1136508564}

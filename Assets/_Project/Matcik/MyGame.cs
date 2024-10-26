@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Random = UnityEngine.Random;
@@ -7,27 +8,39 @@ using Random = UnityEngine.Random;
 // ReSharper disable All
 public class MyGame : MonoBehaviour
 {
-    public float separationDistance = 10.0f; // Минимальная дистанция между зомби
+    // Main idea - Vampire Survivors like-game
+    [Header("FlockMove")] public float separationDistance = 10.0f; // Минимальная дистанция между зомби
     public float alignmentWeight = 10f; // Влияние выравнивания
     public float cohesionWeight = 10f; // Влияние притяжения к соседям
-    public Entity potionPrefab;
+
+    [Header("Entities")] public Entity potionPrefab;
     public Entity zombiePrefab;
     public Entity player;
-    public float potionSpawnInterval;
+
+    [Header("SpawnIntervals")] public float potionSpawnInterval;
     public float zombieSpawnInterval;
-    public float potionSpawnT;
+
+    [Header("SpawnTimers")] public float potionSpawnT;
     public float zombieSpawnT;
 
+    [Header("ShootingDelays")] public bool canPressKey = true;
+    public float keyCooldown = 1.0f;
 
-    public float infectTimerT = 10f;
+    [Header("InfectStatus")] public float infectTimerT = 10f;
     public bool isInfected = false;
 
+    [Header("InfectedInput")] // Improve idea to infected impact
     public bool inputEnabled = true;
+
     public float inputDisableTimer = 3f;
 
-    public KeyCode currentRandomKey;
-    public float keyChangeInterval = 3f;
-    public float keyChangeTimer = 0f;
+    // [Header("RandomInputs")]
+    // public KeyCode currentRandomKey;
+    // public float keyChangeInterval = 3f;
+    // public float keyChangeTimer = 0f;
+
+    [Header("MouseControls")] public float mouseSensitivity;
+    public float xRotation = 0f;
 
     public List<Entity> entities = new(256);
 
@@ -35,6 +48,7 @@ public class MyGame : MonoBehaviour
     {
         player.transform.position = new Vector3(0, 1, -2);
         entities.Add(player);
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     public void Update()
@@ -177,7 +191,7 @@ public class MyGame : MonoBehaviour
             {
                 if (zombie.broken) continue;
                 if (zombie.collision == null) continue;
-            
+
                 if (zombie.collision.relativeVelocity.magnitude >= zombie.breakForce)
                 {
                     zombie.broken = true;
@@ -186,18 +200,17 @@ public class MyGame : MonoBehaviour
                     Rigidbody[] rbs = replacement.GetComponentsInChildren<Rigidbody>();
                     foreach (var rb in rbs)
                     {
-                        rb.AddExplosionForce(5000,zombie.transform.position, 50);
+                        rb.AddExplosionForce(5000, zombie.transform.position, 50);
                     }
-                    //zombie.collision.contacts[0].point
-            
-                    
+
+
                     zombies.Remove(zombie);
                     entities.Remove(zombie);
-            
+
                     Destroy(zombie.gameObject);
-                    
+
                     Destroy(replacement.gameObject, 3);
-                     
+
 
                     continue;
                 }
@@ -322,18 +335,16 @@ public class MyGame : MonoBehaviour
         Vector3 randomPosition;
         float distanceToPlayer;
 
-        // Генерируем случайную позицию, пока она не будет на безопасном расстоянии от игрока
         do
         {
             float randomX = Random.Range(-100, 100);
             float randomZ = Random.Range(-100, 100);
+
             randomPosition = new Vector3(randomX, 0, randomZ);
 
-            // Вычисляем расстояние до игрока
             distanceToPlayer = Vector3.Distance(randomPosition, player.transform.position);
-        } while (distanceToPlayer < minimumDistance); // Повторяем, пока позиция слишком близка к игроку
+        } while (distanceToPlayer < minimumDistance);
 
-        // Создаем зомби
         Entity result = Instantiate(prefab, randomPosition, Quaternion.identity);
         entities.Add(result);
 
@@ -373,24 +384,39 @@ public class MyGame : MonoBehaviour
             player.transform.position += player.transform.right * moveDistance;
         }
 
-        if (Input.GetKey(KeyCode.E))
-        {
-            player.transform.Rotate(0, rotationY, 0);
-        }
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        if (Input.GetKey(KeyCode.Q))
-        {
-            player.transform.Rotate(0, -rotationY, 0);
-        }
+        xRotation -= mouseY;
 
-        if (Input.GetKey(KeyCode.Space))
+        xRotation = Mathf.Clamp(xRotation, -60f, 60f);
+
+        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
+        player.transform.Rotate(Vector3.up * mouseX);
+
+        if (canPressKey && Input.GetKey(KeyCode.Mouse0))
         {
-            Ball ball;
-            player.moveDirection = player.transform.forward;
-            ball = Instantiate(player.ballPrefab, player.ballSpawn.transform.position, player.ballSpawn.rotation);
-            ball.Init(player.projVelocity);
-            Destroy(ball.gameObject, 2);
+            Shooting();
+            StartCoroutine(KeyPressCooldown());
         }
+    }
+
+    public void Shooting()
+    {
+        Ball ball;
+        player.moveDirection = player.transform.forward;
+        ball = Instantiate(player.ballPrefab, player.ballSpawn.transform.position, player.ballSpawn.rotation);
+        ball.Init(player.projVelocity);
+        Destroy(ball.gameObject, 2);
+    }
+
+
+    IEnumerator KeyPressCooldown()
+    {
+        canPressKey = false;
+        yield return new WaitForSeconds(keyCooldown);
+        canPressKey = true;
     }
 
     public void UpdateInfectionTimer()

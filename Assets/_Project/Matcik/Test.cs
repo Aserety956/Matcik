@@ -56,8 +56,8 @@ public class Test : MonoBehaviour
         {
             transform.GetChild(i).transform.localPosition = startPositions[i];
             transform.GetChild(i).transform.localRotation = startRotation[i];
-            
         }
+        
     }
 }
 
