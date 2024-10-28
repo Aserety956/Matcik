@@ -18,6 +18,7 @@ public class Test : MonoBehaviour
             Rigidbody[] rbs = gameObject.GetComponentsInChildren<Rigidbody>();
             foreach (var rb in rbs)
             {
+                rb.useGravity = false;
                 rb.isKinematic = true;
             }
             Reset();
@@ -28,6 +29,7 @@ public class Test : MonoBehaviour
             Rigidbody[] rbs = gameObject.GetComponentsInChildren<Rigidbody>();
             foreach (var rb in rbs)
             {
+                rb.useGravity = true;
                 rb.isKinematic = false;
                 rb.AddExplosionForce(Power,transform.localPosition, Radius);
             }

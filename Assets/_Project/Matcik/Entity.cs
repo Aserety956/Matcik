@@ -26,7 +26,6 @@ public class Entity : MonoBehaviour
     public float speed;
     public AudioClip deathSound;
     public AudioSource deathAudioSource;
-    public Entity targetEntity;
     public bool isDead;
     public bool isCollisionEnabled;
     public EntityType collisionEntityType;
@@ -44,6 +43,8 @@ public class Entity : MonoBehaviour
     public float triggerForce;
     public float explosionRadius;
     public float explosionForce;
+    public float upwardsModifier; 
+    public float forceDamping;
     public GameObject particles;
     
     

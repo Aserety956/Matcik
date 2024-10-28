@@ -6,11 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Hovl Studio/Procedural fire/Demo scene/LightingData.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Hovl Studio/Procedural fire/Demo scene/LightingData.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Hovl Studio/Procedural fire/Prefabs/Explosion.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Hovl Studio/Procedural fire/Prefabs/Explosion.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Cannon Ball.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Cannon Ball.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Scene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Scene.unity" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Test.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Test.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/boom.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/boom.prefab" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,7 +50,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.sourceCode.C#",
+    "settings.editor.selected.configurable": "editor.preferences.appearance",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -114,7 +117,8 @@
       <workItem from="1729550221234" duration="4842000" />
       <workItem from="1729719467318" duration="10238000" />
       <workItem from="1729907352436" duration="432000" />
-      <workItem from="1729907820702" duration="11049000" />
+      <workItem from="1729907820702" duration="11735000" />
+      <workItem from="1730093193148" duration="8491000" />
     </task>
     <servers />
   </component>

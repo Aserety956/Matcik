@@ -168,18 +168,19 @@ MonoBehaviour:
   speed: 0
   deathSound: {fileID: 0}
   deathAudioSource: {fileID: 0}
-  targetEntity: {fileID: 0}
   isDead: 0
   isCollisionEnabled: 0
   collisionEntityType: 2
   replacement: {fileID: 0}
-  breakForce: 0
+  breakForce: 3
   collisionMultiplier: 0
   broken: 0
   ballPrefab: {fileID: 0}
   triggerForce: 0.5
   explosionRadius: 50
-  explosionForce: 3000
+  explosionForce: 5000
+  upwardsModifier: 2
+  forceDamping: 0.5
   particles: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
   ballSpawn: {fileID: 0}
   projVelocity: 10

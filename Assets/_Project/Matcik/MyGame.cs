@@ -108,6 +108,7 @@ public class MyGame : MonoBehaviour
     {
         List<Entity> zombies = GetEntitiesOfType(EntityType.Zombie);
         List<Entity> potions = GetEntitiesOfType(EntityType.Potion);
+        List<Entity> projectiles = GetEntitiesOfType(EntityType.Projectile);
 
         if (zombies.Count < 10)
         {
@@ -195,21 +196,54 @@ public class MyGame : MonoBehaviour
                 if (zombie.collision.relativeVelocity.magnitude >= zombie.breakForce)
                 {
                     zombie.broken = true;
-                    GameObject replacement;
-                    replacement = Instantiate(zombie.replacement, zombie.transform.position, zombie.transform.rotation);
-                    Rigidbody[] rbs = replacement.GetComponentsInChildren<Rigidbody>();
-                    foreach (var rb in rbs)
+
+                    Instantiate(zombie.particles, zombie.transform.position, zombie.transform.rotation);
+                    GameObject replacement = Instantiate(zombie.replacement, zombie.transform.position, zombie.transform.rotation);
+                    Rigidbody[] replacementRigidbodies = replacement.GetComponentsInChildren<Rigidbody>();
+                    
+                    foreach (var rb in replacementRigidbodies)
                     {
-                        rb.AddExplosionForce(5000, zombie.transform.position, 50);
+                        rb.AddExplosionForce(zombie.explosionForce, zombie.transform.position, zombie.explosionRadius);
                     }
 
+                    Collider[] colliders = Physics.OverlapSphere(zombie.transform.position, zombie.explosionRadius);
+
+                    foreach (Collider hit in colliders)
+                    {
+                        Rigidbody hitRb = hit.GetComponent<Rigidbody>();
+
+                        if (hitRb != null)
+                        {
+                            hitRb.AddExplosionForce(zombie.explosionForce, zombie.transform.position, zombie.explosionRadius);
+
+                            Entity nearbyZombie = hit.GetComponent<Entity>();
+                            if (nearbyZombie != null && nearbyZombie.type == EntityType.Zombie && !nearbyZombie.broken)
+                            {
+                                nearbyZombie.broken = true;
+
+                                GameObject zombieReplacement = Instantiate(nearbyZombie.replacement, nearbyZombie.transform.position, nearbyZombie.transform.rotation);
+                                Rigidbody[] zombieReplacementRigidbodies = zombieReplacement.GetComponentsInChildren<Rigidbody>();
+                                
+                                foreach (var rb in zombieReplacementRigidbodies)
+                                {
+                                    rb.AddExplosionForce(zombie.explosionForce, nearbyZombie.transform.position, zombie.explosionRadius);
+                                }
+
+                                Destroy(zombieReplacement, 3f);
+                                zombies.Remove(nearbyZombie);
+                                entities.Remove(nearbyZombie);
+                                Destroy(nearbyZombie.gameObject);
+                            }
+                        }
+                    }
 
                     zombies.Remove(zombie);
                     entities.Remove(zombie);
 
-                    Destroy(zombie.gameObject);
 
-                    Destroy(replacement.gameObject, 3);
+                    Destroy(zombie.gameObject);
+                    Destroy(replacement.gameObject, 3f);
+                    //add sound effect
 
 
                     continue;
