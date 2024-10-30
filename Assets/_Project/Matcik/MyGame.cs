@@ -9,24 +9,32 @@ using Random = UnityEngine.Random;
 public class MyGame : MonoBehaviour
 {
     // Main idea - Vampire Survivors like-game
-    [Header("FlockMove")] public float separationDistance = 10.0f; // Минимальная дистанция между зомби
+    [Header("FlockMove")] 
+    public float separationDistance = 10.0f; // Минимальная дистанция между зомби
     public float alignmentWeight = 10f; // Влияние выравнивания
     public float cohesionWeight = 10f; // Влияние притяжения к соседям
 
-    [Header("Entities")] public Entity potionPrefab;
+    [Header("Entities")] 
+    public Entity boxPrefab;
+    public Entity buffPrefab;
     public Entity zombiePrefab;
     public Entity player;
+    
 
-    [Header("SpawnIntervals")] public float potionSpawnInterval;
+    [Header("SpawnIntervals")] 
+    public float boxSpawnInterval;
     public float zombieSpawnInterval;
 
-    [Header("SpawnTimers")] public float potionSpawnT;
+    [Header("SpawnTimers")] 
+    public float boxSpawnT;
     public float zombieSpawnT;
 
-    [Header("ShootingDelays")] public bool canPressKey = true;
+    [Header("ShootingDelays")] 
+    public bool canPressKey = true;
     public float keyCooldown = 1.0f;
 
-    [Header("InfectStatus")] public float infectTimerT = 10f;
+    [Header("InfectStatus")] 
+    public float infectTimerT = 10f;
     public bool isInfected = false;
 
     [Header("InfectedInput")] // Improve idea to infected impact
@@ -63,7 +71,7 @@ public class MyGame : MonoBehaviour
             NewInfectedInput();
         }
 
-        UpdatePotions();
+        UpdateBoxes();
         UpdateZombies();
         UpdateInfectionTimer();
         Healing();
@@ -107,7 +115,7 @@ public class MyGame : MonoBehaviour
     public void UpdateZombies()
     {
         List<Entity> zombies = GetEntitiesOfType(EntityType.Zombie);
-        List<Entity> potions = GetEntitiesOfType(EntityType.Potion);
+        List<Entity> boxes = GetEntitiesOfType(EntityType.Box);
         List<Entity> projectiles = GetEntitiesOfType(EntityType.Projectile);
 
         if (zombies.Count < 10)
@@ -128,7 +136,7 @@ public class MyGame : MonoBehaviour
 
             if (zombie.isHealed)
             {
-                if (zombie.HasPotion())
+                if (zombie.HasBox())
                 {
                     Entity nearestZombie = FindNearestEntity(zombie, zombies, (Entity e) => !e.isHealed);
 
@@ -146,16 +154,16 @@ public class MyGame : MonoBehaviour
                 }
                 else
                 {
-                    Entity nearestPotion = FindNearestEntity(zombie, potions);
+                    Entity nearestBox = FindNearestEntity(zombie, boxes);
 
-                    if (nearestPotion != null)
+                    if (nearestBox != null)
                     {
-                        FlockMove(zombie, nearestPotion, zombies);
+                        FlockMove(zombie, nearestBox, zombies);
 
-                        if (Vector3.Distance(zombie.transform.position, nearestPotion.transform.position) < 1.5f)
+                        if (Vector3.Distance(zombie.transform.position, nearestBox.transform.position) < 1.5f)
                         {
-                            KillEntity(nearestPotion);
-                            zombie.potionsCount++;
+                            KillEntity(nearestBox);
+                            zombie.boxesCount++;
                         }
                     }
                 }
@@ -170,7 +178,7 @@ public class MyGame : MonoBehaviour
                 if (entityToFollow != null &&
                     Vector3.Distance(zombie.transform.position, entityToFollow.transform.position) < 3)
                 {
-                    if (entityToFollow.potionsCount == 0)
+                    if (entityToFollow.boxesCount == 0)
                     {
                         if (entityToFollow.type == EntityType.Player)
                         {
@@ -198,10 +206,11 @@ public class MyGame : MonoBehaviour
                     zombie.broken = true;
 
                     Instantiate(zombie.particles, zombie.transform.position, zombie.transform.rotation);
-                    GameObject replacement = Instantiate(zombie.replacement, zombie.transform.position, zombie.transform.rotation);
-                    Rigidbody[] replacementRigidbodies = replacement.GetComponentsInChildren<Rigidbody>();
-                    
-                    foreach (var rb in replacementRigidbodies)
+                    GameObject replacement = Instantiate(zombie.replacement, zombie.transform.position,
+                        zombie.transform.rotation);
+                    Rigidbody[] replacementRbs = replacement.GetComponentsInChildren<Rigidbody>();
+
+                    foreach (var rb in replacementRbs)
                     {
                         rb.AddExplosionForce(zombie.explosionForce, zombie.transform.position, zombie.explosionRadius);
                     }
@@ -214,19 +223,25 @@ public class MyGame : MonoBehaviour
 
                         if (hitRb != null)
                         {
-                            hitRb.AddExplosionForce(zombie.explosionForce, zombie.transform.position, zombie.explosionRadius);
+                            zombie.broken = true;
+
+                            hitRb.AddExplosionForce(zombie.explosionForce, zombie.transform.position,
+                                zombie.explosionRadius);
 
                             Entity nearbyZombie = hit.GetComponent<Entity>();
                             if (nearbyZombie != null && nearbyZombie.type == EntityType.Zombie && !nearbyZombie.broken)
                             {
                                 nearbyZombie.broken = true;
 
-                                GameObject zombieReplacement = Instantiate(nearbyZombie.replacement, nearbyZombie.transform.position, nearbyZombie.transform.rotation);
-                                Rigidbody[] zombieReplacementRigidbodies = zombieReplacement.GetComponentsInChildren<Rigidbody>();
-                                
+                                GameObject zombieReplacement = Instantiate(nearbyZombie.replacement,
+                                    nearbyZombie.transform.position, nearbyZombie.transform.rotation);
+                                Rigidbody[] zombieReplacementRigidbodies =
+                                    zombieReplacement.GetComponentsInChildren<Rigidbody>();
+
                                 foreach (var rb in zombieReplacementRigidbodies)
                                 {
-                                    rb.AddExplosionForce(zombie.explosionForce, nearbyZombie.transform.position, zombie.explosionRadius);
+                                    rb.AddExplosionForce(zombie.explosionForce, nearbyZombie.transform.position,
+                                        zombie.explosionRadius);
                                 }
 
                                 Destroy(zombieReplacement, 3f);
@@ -235,16 +250,13 @@ public class MyGame : MonoBehaviour
                                 Destroy(nearbyZombie.gameObject);
                             }
                         }
+
+                        zombies.Remove(zombie);
+                        entities.Remove(zombie);
+                        Destroy(zombie.gameObject);
+                        Destroy(replacement.gameObject, 3f);
+                        //add sound effect
                     }
-
-                    zombies.Remove(zombie);
-                    entities.Remove(zombie);
-
-
-                    Destroy(zombie.gameObject);
-                    Destroy(replacement.gameObject, 3f);
-                    //add sound effect
-
 
                     continue;
                 }
@@ -328,39 +340,68 @@ public class MyGame : MonoBehaviour
     public void EntityHealEntity(Entity e, Entity entityToHeal)
     {
         Debug.Log($"{e.name} healing {entityToHeal.name}");
-        e.potionsCount--;
+        e.boxesCount--;
         entityToHeal.isHealed = true;
         entityToHeal.speed *= 2;
         entityToHeal.mr.sharedMaterial = entityToHeal.healedMat;
     }
 
-    public void UpdatePotions()
+    public void UpdateBoxes()
     {
-        List<Entity> potions = GetEntitiesOfType(EntityType.Potion);
+        List<Entity> boxes = GetEntitiesOfType(EntityType.Box);
+        List<Entity> buffs = GetEntitiesOfType(EntityType.Buff);
         // NOTE(sqd): Spawn potions
-        if (potions.Count < 10)
+        if (boxes.Count < 10)
         {
-            potionSpawnT -= Time.deltaTime;
+            boxSpawnT -= Time.deltaTime;
 
-            if (potionSpawnT <= 0)
+            if (boxSpawnT <= 0)
             {
-                potionSpawnT += potionSpawnInterval;
-                Entity potion = SpawnEntity(potionPrefab, 20f);
+                boxSpawnT += boxSpawnInterval;
+                Entity box = SpawnEntity(boxPrefab, 20f);
             }
         }
 
-        // NOTE(sqd): Rotate potions over time
-        for (int i = 0; i < potions.Count; i++)
+        // NOTE(sqd): Rotate boxes over time
+        for (int i = 0; i < boxes.Count; i++)
         {
-            potions[i].transform.Rotate(0, potions[i].rotationSpeed * Time.deltaTime, 0);
+            boxes[i].transform.Rotate(0, boxes[i].rotationSpeed * Time.deltaTime, 0);
+            Entity box = boxes[i];
 
             // NOTE(sqd): Check if player near by
-            if (Vector3.Distance(player.transform.position, potions[i].transform.position) < 5)
+            if (Vector3.Distance(player.transform.position, boxes[i].transform.position) < 5)
             {
-                KillEntity(potions[i]);
-                // TODO(sqd): Should we remove potion from potions list?
-                player.potionsCount++;
+                KillEntity(boxes[i]);
+                // TODO(sqd): Should we remove box from boxes list?
+                player.boxesCount++;
             }
+            
+            
+                if (box.broken) continue;
+                if (box.collision == null) continue;
+
+                if (box.collision.relativeVelocity.magnitude >= box.breakForce)
+                {
+                    box.broken = true;
+
+                    GameObject boxReplacement = Instantiate(box.replacement, box.transform.position,
+                        box.transform.rotation);
+                    Rigidbody[] boxReplacmentRbs = boxReplacement.GetComponentsInChildren<Rigidbody>();
+
+                    foreach (var rb in boxReplacmentRbs)
+                    {
+                        rb.AddExplosionForce(box.explosionForce, box.transform.position,
+                            box.explosionRadius);
+                    }
+
+                    Entity buff = SpawnEntityOnDestroyed(box, buffPrefab);
+
+                    Destroy(box.gameObject);
+                    entities.Remove(box);
+                    boxes.Remove(box);
+                    Destroy(boxReplacement.gameObject, 2f);
+                    //add sound effect
+                }
         }
     }
 
@@ -383,6 +424,19 @@ public class MyGame : MonoBehaviour
         entities.Add(result);
 
         return result;
+    }
+
+    public Entity SpawnEntityOnDestroyed(Entity destroyedEntity, Entity prefabToSpawn)
+    {
+        
+        Vector3 spawnPosition = destroyedEntity.transform.position;
+        Quaternion spawnRotation = destroyedEntity.transform.rotation;
+        
+        Entity newEntity = Instantiate(prefabToSpawn, spawnPosition, spawnRotation);
+        
+        entities.Add(newEntity);
+
+        return newEntity;
     }
 
     public void KillEntity(Entity e)
@@ -479,10 +533,10 @@ public class MyGame : MonoBehaviour
 
     public void Healing()
     {
-        if (isInfected && !player.isHealed && player.HasPotion())
+        if (isInfected && !player.isHealed && player.HasBox())
         {
             isInfected = false;
-            player.potionsCount--;
+            player.boxesCount--;
             player.isHealed = true;
             inputDisableTimer = 3f;
             inputEnabled = true;

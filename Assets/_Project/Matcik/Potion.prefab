@@ -102,5 +102,24 @@ MonoBehaviour:
   notHealedMat: {fileID: 0}
   rotationSpeed: 100
   speed: 0
+  deathSound: {fileID: 0}
+  deathAudioSource: {fileID: 0}
+  isDead: 0
+  isCollisionEnabled: 0
+  collisionEntityType: 0
+  replacement: {fileID: 0}
+  breakForce: 0
+  collisionMultiplier: 0
+  broken: 0
+  ballPrefab: {fileID: 0}
+  triggerForce: 0
+  explosionRadius: 0
+  explosionForce: 0
+  upwardsModifier: 0
+  forceDamping: 0
+  particles: {fileID: 0}
+  ballSpawn: {fileID: 0}
+  projVelocity: 0
+  moveDirection: {x: 0, y: 0, z: 0}
   potionsCount: 0
   isHealed: 0

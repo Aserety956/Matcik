@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using Quaternion = System.Numerics.Quaternion;
 
 // NOTE(sqd): Sparse Entity System
 
@@ -10,8 +9,8 @@ public enum EntityType
     None = 0,
     Player = 1 << 0,
     Zombie = 1 << 1,
-    Potion = 1 << 2,
-    Gun = 1 << 3,
+    Box = 1 << 2,
+    Buff = 1 << 3,
     Projectile = 1 << 4,
 }
 
@@ -56,12 +55,12 @@ public class Entity : MonoBehaviour
     public Vector3 moveDirection;
 
     [Header("Runtime")]
-    public int potionsCount;
+    public int boxesCount;
     public bool isHealed;
 
-    public bool HasPotion()
+    public bool HasBox()
     {
-        return potionsCount > 0;
+        return boxesCount > 0;
     }
 
     public void OnCollisionEnter(Collision other)
