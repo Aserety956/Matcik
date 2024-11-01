@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4903090091105704670}
   - component: {fileID: -2175818397552126741}
   m_Layer: 0
-  m_Name: Vege-Pepper-2 A
+  m_Name: Buff
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -50,7 +50,7 @@ MonoBehaviour:
   mr: {fileID: 0}
   healedMat: {fileID: 0}
   notHealedMat: {fileID: 0}
-  rotationSpeed: 0
+  rotationSpeed: 100
   speed: 0
   deathSound: {fileID: 0}
   deathAudioSource: {fileID: 0}

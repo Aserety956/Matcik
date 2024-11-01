@@ -9,32 +9,26 @@ using Random = UnityEngine.Random;
 public class MyGame : MonoBehaviour
 {
     // Main idea - Vampire Survivors like-game
-    [Header("FlockMove")] 
-    public float separationDistance = 10.0f; // Минимальная дистанция между зомби
+    [Header("FlockMove")] public float separationDistance = 10.0f; // Минимальная дистанция между зомби
     public float alignmentWeight = 10f; // Влияние выравнивания
     public float cohesionWeight = 10f; // Влияние притяжения к соседям
 
-    [Header("Entities")] 
-    public Entity boxPrefab;
+    [Header("Entities")] public Entity boxPrefab;
     public Entity buffPrefab;
     public Entity zombiePrefab;
     public Entity player;
-    
 
-    [Header("SpawnIntervals")] 
-    public float boxSpawnInterval;
+
+    [Header("SpawnIntervals")] public float boxSpawnInterval;
     public float zombieSpawnInterval;
 
-    [Header("SpawnTimers")] 
-    public float boxSpawnT;
+    [Header("SpawnTimers")] public float boxSpawnT;
     public float zombieSpawnT;
 
-    [Header("ShootingDelays")] 
-    public bool canPressKey = true;
+    [Header("ShootingDelays")] public bool canPressKey = true;
     public float keyCooldown = 1.0f;
 
-    [Header("InfectStatus")] 
-    public float infectTimerT = 10f;
+    [Header("InfectStatus")] public float infectTimerT = 10f;
     public bool isInfected = false;
 
     [Header("InfectedInput")] // Improve idea to infected impact
@@ -49,6 +43,8 @@ public class MyGame : MonoBehaviour
 
     [Header("MouseControls")] public float mouseSensitivity;
     public float xRotation = 0f;
+
+    [Header("Bufftimer")] public float buffT = 5f;
 
     public List<Entity> entities = new(256);
 
@@ -375,35 +371,66 @@ public class MyGame : MonoBehaviour
                 // TODO(sqd): Should we remove box from boxes list?
                 player.boxesCount++;
             }
-            
-            
-                if (box.broken) continue;
-                if (box.collision == null) continue;
 
-                if (box.collision.relativeVelocity.magnitude >= box.breakForce)
+
+            if (box.broken) continue;
+            if (box.collision == null) continue;
+
+            if (box.collision.relativeVelocity.magnitude >= box.breakForce)
+            {
+                box.broken = true;
+
+                GameObject boxReplacement =
+                    Instantiate(box.replacement, box.transform.position, box.transform.rotation);
+                Rigidbody[] boxReplacmentRbs = boxReplacement.GetComponentsInChildren<Rigidbody>();
+
+                Entity buff = SpawnEntityOnDestroyed(box, buffPrefab);
+
+                foreach (var rb in boxReplacmentRbs)
                 {
-                    box.broken = true;
-
-                    GameObject boxReplacement = Instantiate(box.replacement, box.transform.position,
-                        box.transform.rotation);
-                    Rigidbody[] boxReplacmentRbs = boxReplacement.GetComponentsInChildren<Rigidbody>();
-
-                    foreach (var rb in boxReplacmentRbs)
-                    {
-                        rb.AddExplosionForce(box.explosionForce, box.transform.position,
-                            box.explosionRadius);
-                    }
-
-                    Entity buff = SpawnEntityOnDestroyed(box, buffPrefab);
-
-                    Destroy(box.gameObject);
-                    entities.Remove(box);
-                    boxes.Remove(box);
-                    Destroy(boxReplacement.gameObject, 2f);
-                    //add sound effect
+                    rb.AddExplosionForce(box.explosionForce, box.transform.position, box.explosionRadius);
                 }
+
+                Destroy(box.gameObject);
+                entities.Remove(box);
+                boxes.Remove(box);
+                Destroy(boxReplacement.gameObject, 2f);
+                //add sound effect
+            }
         }
+        
+
+        for (int i = 0; i < buffs.Count; i++)
+        {
+
+            buffs[i].transform.Rotate(0, buffs[i].rotationSpeed * Time.deltaTime, 0);
+            Entity buff = buffs[i];
+
+            if (Vector3.Distance(player.transform.position, buffs[i].transform.position) < 5f && keyCooldown >= 1.0f)
+            {
+                keyCooldown = 0.5f;
+                Destroy(buff.gameObject);
+                buffs.Remove(buff);
+                entities.Remove(buff);
+                i--;
+            }
+        }
+
+        if (keyCooldown <= 0.5f)
+            {
+                buffT -= Time.deltaTime;
+            }
+            if (buffT <= 0f)
+            {
+                buffT = 5.0f;
+                keyCooldown = 1.0f;
+            }
+            
+        
     }
+    
+    
+
 
     public Entity SpawnEntity(Entity prefab, float minimumDistance = 70.0f)
     {
@@ -428,15 +455,14 @@ public class MyGame : MonoBehaviour
 
     public Entity SpawnEntityOnDestroyed(Entity destroyedEntity, Entity prefabToSpawn)
     {
-        
         Vector3 spawnPosition = destroyedEntity.transform.position;
         Quaternion spawnRotation = destroyedEntity.transform.rotation;
-        
-        Entity newEntity = Instantiate(prefabToSpawn, spawnPosition, spawnRotation);
-        
-        entities.Add(newEntity);
 
-        return newEntity;
+        Entity result = Instantiate(prefabToSpawn, spawnPosition, spawnRotation);
+
+        entities.Add(result);
+
+        return result;
     }
 
     public void KillEntity(Entity e)
@@ -593,6 +619,7 @@ public class MyGame : MonoBehaviour
         }
     }
 }
+
 
 
 //public static KeyCode[] inputKeys = new[] { KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.E, KeyCode.Q };
