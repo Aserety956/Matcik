@@ -9,26 +9,32 @@ using Random = UnityEngine.Random;
 public class MyGame : MonoBehaviour
 {
     // Main idea - Vampire Survivors like-game
-    [Header("FlockMove")] public float separationDistance = 10.0f; // Минимальная дистанция между зомби
+    [Header("FlockMove")] 
+    public float separationDistance = 10.0f; // Минимальная дистанция между зомби
     public float alignmentWeight = 10f; // Влияние выравнивания
     public float cohesionWeight = 10f; // Влияние притяжения к соседям
 
-    [Header("Entities")] public Entity boxPrefab;
+    [Header("Entities")] 
+    public Entity boxPrefab;
     public Entity buffPrefab;
     public Entity zombiePrefab;
     public Entity player;
 
 
-    [Header("SpawnIntervals")] public float boxSpawnInterval;
+    [Header("SpawnIntervals")] 
+    public float boxSpawnInterval;
     public float zombieSpawnInterval;
 
-    [Header("SpawnTimers")] public float boxSpawnT;
+    [Header("SpawnTimers")] 
+    public float boxSpawnT;
     public float zombieSpawnT;
 
-    [Header("ShootingDelays")] public bool canPressKey = true;
+    [Header("ShootingDelays")] 
+    public bool canPressKey = true;
     public float keyCooldown = 1.0f;
 
-    [Header("InfectStatus")] public float infectTimerT = 10f;
+    [Header("InfectStatus")] 
+    public float infectTimerT = 10f;
     public bool isInfected = false;
 
     [Header("InfectedInput")] // Improve idea to infected impact
@@ -41,18 +47,25 @@ public class MyGame : MonoBehaviour
     // public float keyChangeInterval = 3f;
     // public float keyChangeTimer = 0f;
 
-    [Header("MouseControls")] public float mouseSensitivity;
+    [Header("MouseControls")] 
+    public float mouseSensitivity;
     public float xRotation = 0f;
 
-    [Header("Bufftimer")] public float buffT = 5f;
+    [Header("Bufftimer")]
+    public float buffT = 5f;
+    
+    public Animator playerAnimator;
+    
 
     public List<Entity> entities = new(256);
 
     public void Start()
     {
+        playerAnimator = player.GetComponent<Animator>();
         player.transform.position = new Vector3(0, 1, -2);
         entities.Add(player);
         Cursor.lockState = CursorLockMode.Locked;
+        playerAnimator.SetBool("Idle", true);
     }
 
     public void Update()
@@ -473,31 +486,112 @@ public class MyGame : MonoBehaviour
 
     public void UpdateInput()
     {
-        player.speed = 50f;
-        player.rotationSpeed = 200f;
         float rotationY = player.rotationSpeed * Time.deltaTime;
         float moveDistance = player.speed * Time.deltaTime;
 
         if (Input.GetKey(KeyCode.W))
         {
             player.transform.position += player.transform.forward * moveDistance;
+            playerAnimator.SetBool("Idle", false);
+            playerAnimator.SetBool("Sprint", true);
         }
-
+        else
+        {
+            playerAnimator.SetBool("Sprint", false);
+            playerAnimator.SetBool("Idle", true);
+        }
         if (Input.GetKey(KeyCode.A))
         {
             player.transform.position -= player.transform.right * moveDistance;
+            playerAnimator.SetBool("Idle", false);
+            playerAnimator.SetBool("Left", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("Left", false);
+            playerAnimator.SetBool("Idle", true);
         }
 
         if (Input.GetKey(KeyCode.S))
         {
             player.transform.position -= player.transform.forward * moveDistance;
+            playerAnimator.SetBool("Idle", false);
+            playerAnimator.SetBool("Back", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("Back", false);
+            playerAnimator.SetBool("Idle", true);
         }
 
         if (Input.GetKey(KeyCode.D))
         {
             player.transform.position += player.transform.right * moveDistance;
+            playerAnimator.SetBool("Idle", false);
+            playerAnimator.SetBool("Right", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("Right", false);
+            playerAnimator.SetBool("Idle", true);
         }
 
+        if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A))
+        {
+            playerAnimator.SetBool("Idle", false);
+            playerAnimator.SetBool("Back", false);
+            playerAnimator.SetBool("Left", false);
+            playerAnimator.SetBool("BackLeft", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("Idle", true);
+            playerAnimator.SetBool("BackLeft", false);
+        }
+
+        if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D))
+        {
+            playerAnimator.SetBool("Idle", false);
+            playerAnimator.SetBool("Back", false);
+            playerAnimator.SetBool("Right", false);
+            playerAnimator.SetBool("BackRight", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("Idle", true);
+            playerAnimator.SetBool("BackRight", false);
+        }
+
+        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
+        {
+            playerAnimator.SetBool("Idle", false);
+            playerAnimator.SetBool("Sprint", false);
+            playerAnimator.SetBool("Left", false);
+            playerAnimator.SetBool("SprintLeft", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("Idle", true);
+            playerAnimator.SetBool("SprintLeft", false);
+        }
+
+        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
+        {
+            playerAnimator.SetBool("Idle", false);
+            playerAnimator.SetBool("Sprint", false);
+            playerAnimator.SetBool("Right", false);
+            playerAnimator.SetBool("SprintRight", true);
+        }
+        else
+        {
+            playerAnimator.SetBool("Idle", true);
+            playerAnimator.SetBool("SprintRight", false);
+        }
+        
+        
+        
+        
+        
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 

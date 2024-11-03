@@ -6,9 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/FastMesh/Prefabs/Vegetable/Vege-Pepper-2 A.prefab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/FastMesh/Prefabs/Vegetable/Vege-Pepper-2 A.prefab.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Scene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Scene.unity" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -116,6 +115,7 @@
       <workItem from="1730093193148" duration="8491000" />
       <workItem from="1730264304693" duration="9698000" />
       <workItem from="1730468585570" duration="6613000" />
+      <workItem from="1730649618746" duration="6856000" />
     </task>
     <servers />
   </component>
