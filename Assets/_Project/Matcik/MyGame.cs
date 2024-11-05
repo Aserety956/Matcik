@@ -55,7 +55,8 @@ public class MyGame : MonoBehaviour
     public float buffT = 5f;
     
     public Animator playerAnimator;
-    
+
+    public Transform cameraTransform; 
 
     public List<Entity> entities = new(256);
 
@@ -66,6 +67,7 @@ public class MyGame : MonoBehaviour
         entities.Add(player);
         Cursor.lockState = CursorLockMode.Locked;
         playerAnimator.SetBool("Idle", true);
+        cameraTransform = Camera.main.transform;
     }
 
     public void Update()
@@ -184,7 +186,7 @@ public class MyGame : MonoBehaviour
                 List<Entity> infectedEntities = GetEntitiesOfType(EntityType.Zombie, (e) => !e.isHealed);
                 FlockMove(zombie, entityToFollow, infectedEntities);
 
-                if (entityToFollow != null &&
+                if (entityToFollow != null && 
                     Vector3.Distance(zombie.transform.position, entityToFollow.transform.position) < 3)
                 {
                     if (entityToFollow.boxesCount == 0)
@@ -393,8 +395,7 @@ public class MyGame : MonoBehaviour
             {
                 box.broken = true;
 
-                GameObject boxReplacement =
-                    Instantiate(box.replacement, box.transform.position, box.transform.rotation);
+                GameObject boxReplacement = Instantiate(box.replacement, box.transform.position, box.transform.rotation);
                 Rigidbody[] boxReplacmentRbs = boxReplacement.GetComponentsInChildren<Rigidbody>();
 
                 Entity buff = SpawnEntityOnDestroyed(box, buffPrefab);
@@ -492,105 +493,126 @@ public class MyGame : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             player.transform.position += player.transform.forward * moveDistance;
-            playerAnimator.SetBool("Idle", false);
-            playerAnimator.SetBool("Sprint", true);
+            // playerAnimator.SetBool("Idle", false);
+            // playerAnimator.SetBool("Sprint", true);
         }
-        else
-        {
-            playerAnimator.SetBool("Sprint", false);
-            playerAnimator.SetBool("Idle", true);
-        }
+        // else
+        // {
+        //     playerAnimator.SetBool("Sprint", false);
+        //     playerAnimator.SetBool("Idle", true);
+        // }
         if (Input.GetKey(KeyCode.A))
         {
             player.transform.position -= player.transform.right * moveDistance;
-            playerAnimator.SetBool("Idle", false);
-            playerAnimator.SetBool("Left", true);
+            // playerAnimator.SetBool("Idle", false);
+            // playerAnimator.SetBool("Left", true);
         }
-        else
-        {
-            playerAnimator.SetBool("Left", false);
-            playerAnimator.SetBool("Idle", true);
-        }
+        // else
+        // {
+        //     playerAnimator.SetBool("Left", false);
+        //     playerAnimator.SetBool("Idle", true);
+        // }
 
         if (Input.GetKey(KeyCode.S))
         {
             player.transform.position -= player.transform.forward * moveDistance;
-            playerAnimator.SetBool("Idle", false);
-            playerAnimator.SetBool("Back", true);
+        //     playerAnimator.SetBool("Idle", false);
+        //     playerAnimator.SetBool("Back", true);
         }
-        else
-        {
-            playerAnimator.SetBool("Back", false);
-            playerAnimator.SetBool("Idle", true);
-        }
+        // else
+        // {
+        //     playerAnimator.SetBool("Back", false);
+        //     playerAnimator.SetBool("Idle", true);
+        // }
 
         if (Input.GetKey(KeyCode.D))
         {
             player.transform.position += player.transform.right * moveDistance;
-            playerAnimator.SetBool("Idle", false);
-            playerAnimator.SetBool("Right", true);
+            // playerAnimator.SetBool("Idle", false);
+            // playerAnimator.SetBool("Right", true);
         }
-        else
-        {
-            playerAnimator.SetBool("Right", false);
-            playerAnimator.SetBool("Idle", true);
-        }
-
-        if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A))
-        {
-            playerAnimator.SetBool("Idle", false);
-            playerAnimator.SetBool("Back", false);
-            playerAnimator.SetBool("Left", false);
-            playerAnimator.SetBool("BackLeft", true);
-        }
-        else
-        {
-            playerAnimator.SetBool("Idle", true);
-            playerAnimator.SetBool("BackLeft", false);
-        }
-
-        if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D))
-        {
-            playerAnimator.SetBool("Idle", false);
-            playerAnimator.SetBool("Back", false);
-            playerAnimator.SetBool("Right", false);
-            playerAnimator.SetBool("BackRight", true);
-        }
-        else
-        {
-            playerAnimator.SetBool("Idle", true);
-            playerAnimator.SetBool("BackRight", false);
-        }
-
-        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
-        {
-            playerAnimator.SetBool("Idle", false);
-            playerAnimator.SetBool("Sprint", false);
-            playerAnimator.SetBool("Left", false);
-            playerAnimator.SetBool("SprintLeft", true);
-        }
-        else
-        {
-            playerAnimator.SetBool("Idle", true);
-            playerAnimator.SetBool("SprintLeft", false);
-        }
-
-        if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
-        {
-            playerAnimator.SetBool("Idle", false);
-            playerAnimator.SetBool("Sprint", false);
-            playerAnimator.SetBool("Right", false);
-            playerAnimator.SetBool("SprintRight", true);
-        }
-        else
-        {
-            playerAnimator.SetBool("Idle", true);
-            playerAnimator.SetBool("SprintRight", false);
-        }
+        // else
+        // {
+        //     playerAnimator.SetBool("Right", false);
+        //     playerAnimator.SetBool("Idle", true);
+        // }
+        //
+        // if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A))
+        // {
+        //     playerAnimator.SetBool("Idle", false);
+        //     playerAnimator.SetBool("Back", false);
+        //     playerAnimator.SetBool("Left", false);
+        //     playerAnimator.SetBool("BackLeft", true);
+        // }
+        // else
+        // {
+        //     playerAnimator.SetBool("Idle", true);
+        //     playerAnimator.SetBool("BackLeft", false);
+        // }
+        //
+        // if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D))
+        // {
+        //     playerAnimator.SetBool("Idle", false);
+        //     playerAnimator.SetBool("Back", false);
+        //     playerAnimator.SetBool("Right", false);
+        //     playerAnimator.SetBool("BackRight", true);
+        // }
+        // else
+        // {
+        //     playerAnimator.SetBool("Idle", true);
+        //     playerAnimator.SetBool("BackRight", false);
+        // }
+        //
+        // if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
+        // {
+        //     playerAnimator.SetBool("Idle", false);
+        //     playerAnimator.SetBool("Sprint", false);
+        //     playerAnimator.SetBool("Left", false);
+        //     playerAnimator.SetBool("SprintLeft", true);
+        // }
+        // else
+        // {
+        //     playerAnimator.SetBool("Idle", true);
+        //     playerAnimator.SetBool("SprintLeft", false);
+        // }
+        //
+        // if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
+        // {
+        //     playerAnimator.SetBool("Idle", false);
+        //     playerAnimator.SetBool("Sprint", false);
+        //     playerAnimator.SetBool("Right", false);
+        //     playerAnimator.SetBool("SprintRight", true);
+        // }
+        // else
+        // {
+        //     playerAnimator.SetBool("Idle", true);
+        //     playerAnimator.SetBool("SprintRight", false);
+        // }
         
-        
-        
-        
+        // Получаем ввод от игрока
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        Vector3 inputDirection = new Vector3(horizontal, 0, vertical);
+
+        if (inputDirection.magnitude > 0.1f) // проверяем, есть ли движение
+        {
+            // Устанавливаем значения posX и posY на основе направления ввода
+            playerAnimator.SetFloat("posX", horizontal);
+            playerAnimator.SetFloat("posY", vertical);
+
+            // Выводим значения posX и posY для проверки
+            Debug.Log($"posX: {horizontal}, posY: {vertical}");
+        }
+        else
+        {
+            // Если нет движения, устанавливаем posX и posY в 0
+            playerAnimator.SetFloat("posX", 0);
+            playerAnimator.SetFloat("posY", 0);
+
+            // Выводим значения posX и posY для проверки
+            Debug.Log("No movement - posX: 0, posY: 0");
+        }
         
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;

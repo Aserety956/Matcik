@@ -364,7 +364,7 @@ MonoBehaviour:
   notHealedMat: {fileID: 0}
   rotationSpeed: 350
   speed: 25
-  deathSound: {fileID: 0}
+  deathSound: {fileID: 8300000, guid: 63eb7295e8ba1874591ddc3d46983deb, type: 3}
   deathAudioSource: {fileID: 0}
   isDead: 0
   isCollisionEnabled: 0
@@ -384,7 +384,7 @@ MonoBehaviour:
   projVelocity: 100
   moveDirection: {x: 0, y: 0, z: 0}
   boxesCount: 0
-  isHealed: 0
+  isHealed: 1
 --- !u!1 &1533166311228591759
 GameObject:
   m_ObjectHideFlags: 0
