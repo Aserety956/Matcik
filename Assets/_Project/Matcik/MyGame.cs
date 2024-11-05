@@ -81,7 +81,6 @@ public class MyGame : MonoBehaviour
         {
             NewInfectedInput();
         }
-
         UpdateBoxes();
         UpdateZombies();
         UpdateInfectionTimer();
