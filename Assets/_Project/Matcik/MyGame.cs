@@ -54,8 +54,8 @@ public class MyGame : MonoBehaviour
     [Header("Bufftimer")]
     public float buffT = 5f;
     
+    [Header ("Animations")]
     public Animator playerAnimator;
-
     public Transform cameraTransform; 
 
     public List<Entity> entities = new(256);
@@ -66,7 +66,7 @@ public class MyGame : MonoBehaviour
         player.transform.position = new Vector3(0, 1, -2);
         entities.Add(player);
         Cursor.lockState = CursorLockMode.Locked;
-        playerAnimator.SetBool("Idle", true);
+        // playerAnimator.SetBool("Idle", true);
         cameraTransform = Camera.main.transform;
     }
 

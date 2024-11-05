@@ -74,7 +74,6 @@ public class Entity : MonoBehaviour
         {
             collision = other;
             Debug.Log(gameObject.name + " " + other.gameObject.name);
-            
         }
 
 
