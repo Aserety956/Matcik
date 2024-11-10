@@ -32,6 +32,7 @@ public class MyGame : MonoBehaviour
     [Header("ShootingDelays")] 
     public bool canPressKey = true;
     public float keyCooldown = 1.0f;
+    
 
     [Header("InfectStatus")] 
     public float infectTimerT = 10f;
@@ -47,23 +48,20 @@ public class MyGame : MonoBehaviour
     // public float keyChangeInterval = 3f;
     // public float keyChangeTimer = 0f;
 
-    [Header("MouseControls")] 
-    public float mouseSensitivity;
+    [Header("MouseControls")] public float mouseSensitivity;
     public float xRotation = 0f;
 
-    [Header("Bufftimer")]
-    public float buffT = 5f;
-    
-    [Header ("Animations")]
-    public Animator playerAnimator;
-    public Transform cameraTransform; 
+    [Header("Bufftimer")] public float buffT = 5f;
+
+    [Header("Animations")] public Animator playerAnimator;
+    public Transform cameraTransform;
 
     public List<Entity> entities = new(256);
 
     public void Start()
     {
         playerAnimator = player.GetComponent<Animator>();
-        player.transform.position = new Vector3(0, 1, -2);
+        player.transform.position = new Vector3(0, 0, -2);
         entities.Add(player);
         Cursor.lockState = CursorLockMode.Locked;
         // playerAnimator.SetBool("Idle", true);
@@ -81,6 +79,7 @@ public class MyGame : MonoBehaviour
         {
             NewInfectedInput();
         }
+
         UpdateBoxes();
         UpdateZombies();
         UpdateInfectionTimer();
@@ -185,7 +184,7 @@ public class MyGame : MonoBehaviour
                 List<Entity> infectedEntities = GetEntitiesOfType(EntityType.Zombie, (e) => !e.isHealed);
                 FlockMove(zombie, entityToFollow, infectedEntities);
 
-                if (entityToFollow != null && 
+                if (entityToFollow != null &&
                     Vector3.Distance(zombie.transform.position, entityToFollow.transform.position) < 3)
                 {
                     if (entityToFollow.boxesCount == 0)
@@ -205,67 +204,71 @@ public class MyGame : MonoBehaviour
                         EntityHealEntity(entityToFollow, zombie);
                     }
                 }
-            }
-
+            }           
             {
                 if (zombie.broken) continue;
                 if (zombie.collision == null) continue;
+                
+                float effectiveDamage = Mathf.Max(0, player.damage - zombie.defense);
 
                 if (zombie.collision.relativeVelocity.magnitude >= zombie.breakForce)
                 {
+                    if (player.canDealDamage)
+                    {
+                        zombie.health -= effectiveDamage;
+                        StartCoroutine(AttackDamageCooldown());
+                    }
+
+                    if (zombie.health <= 0)
+                        {
                     zombie.broken = true;
-
+                    
                     Instantiate(zombie.particles, zombie.transform.position, zombie.transform.rotation);
-                    GameObject replacement = Instantiate(zombie.replacement, zombie.transform.position,
-                        zombie.transform.rotation);
+                    GameObject replacement = Instantiate(zombie.replacement, zombie.transform.position, zombie.transform.rotation);
+                    
                     Rigidbody[] replacementRbs = replacement.GetComponentsInChildren<Rigidbody>();
-
                     foreach (var rb in replacementRbs)
                     {
                         rb.AddExplosionForce(zombie.explosionForce, zombie.transform.position, zombie.explosionRadius);
                     }
-
+                    
                     Collider[] colliders = Physics.OverlapSphere(zombie.transform.position, zombie.explosionRadius);
-
                     foreach (Collider hit in colliders)
                     {
                         Rigidbody hitRb = hit.GetComponent<Rigidbody>();
 
                         if (hitRb != null)
                         {
-                            zombie.broken = true;
-
-                            hitRb.AddExplosionForce(zombie.explosionForce, zombie.transform.position,
-                                zombie.explosionRadius);
+                            hitRb.AddExplosionForce(zombie.explosionForce, zombie.transform.position, zombie.explosionRadius);
 
                             Entity nearbyZombie = hit.GetComponent<Entity>();
                             if (nearbyZombie != null && nearbyZombie.type == EntityType.Zombie && !nearbyZombie.broken)
                             {
                                 nearbyZombie.broken = true;
-
-                                GameObject zombieReplacement = Instantiate(nearbyZombie.replacement,
-                                    nearbyZombie.transform.position, nearbyZombie.transform.rotation);
-                                Rigidbody[] zombieReplacementRigidbodies =
-                                    zombieReplacement.GetComponentsInChildren<Rigidbody>();
-
+                                
+                                GameObject zombieReplacement = Instantiate(nearbyZombie.replacement, nearbyZombie.transform.position, nearbyZombie.transform.rotation);
+                                Rigidbody[] zombieReplacementRigidbodies = zombieReplacement.GetComponentsInChildren<Rigidbody>();
+                                
                                 foreach (var rb in zombieReplacementRigidbodies)
                                 {
-                                    rb.AddExplosionForce(zombie.explosionForce, nearbyZombie.transform.position,
-                                        zombie.explosionRadius);
+                                    rb.AddExplosionForce(zombie.explosionForce, nearbyZombie.transform.position, zombie.explosionRadius);
                                 }
-
+                                
                                 Destroy(zombieReplacement, 3f);
                                 zombies.Remove(nearbyZombie);
                                 entities.Remove(nearbyZombie);
                                 Destroy(nearbyZombie.gameObject);
                             }
+                        
                         }
-
+                        
                         zombies.Remove(zombie);
                         entities.Remove(zombie);
                         Destroy(zombie.gameObject);
                         Destroy(replacement.gameObject, 3f);
-                        //add sound effect
+
+                        // Здесь можно добавить эффект звука
+                    }
                     }
 
                     continue;
@@ -273,72 +276,80 @@ public class MyGame : MonoBehaviour
             }
         }
     }
-
+IEnumerator AttackDamageCooldown()
+    {
+        player.canDealDamage = false;
+        yield return new WaitForSeconds(player.attackSpeed);
+        player.canDealDamage = true;       
+    }
+    
+        
 
     public void FlockMove(Entity e, Entity entityToFollow, List<Entity> entitiesToAvoid)
+{
+    if (entityToFollow != null)
     {
-        if (entityToFollow != null)
+        // Вектор направления, куда двигаться зомби
+        Vector3 moveDirection = Vector3.zero;
+
+        // Применение правил flocking behavior
+        Vector3 separation = Vector3.zero;
+        Vector3 alignment = Vector3.zero;
+        Vector3 cohesion = Vector3.zero;
+
+        foreach (var neighbor in entitiesToAvoid)
         {
-            // Вектор направления, куда двигаться зомби
-            Vector3 moveDirection = Vector3.zero;
-
-            // Применение правил flocking behavior
-            Vector3 separation = Vector3.zero;
-            Vector3 alignment = Vector3.zero;
-            Vector3 cohesion = Vector3.zero;
-
-            // Параметры для регулировки силы эффектов
-
-            foreach (var neighbor in entitiesToAvoid)
+            if (neighbor != e)
             {
-                if (neighbor != e)
+                float distanceToNeighbor = Vector3.Distance(e.transform.position, neighbor.transform.position);
+
+                // Правило разделения: избегаем других зомби
+                if (distanceToNeighbor < separationDistance)
                 {
-                    float distanceToNeighbor = Vector3.Distance(e.transform.position, neighbor.transform.position);
-
-                    // Правило разделения: избегаем других зомби
-                    if (distanceToNeighbor < separationDistance)
-                    {
-                        separation += (e.transform.position - neighbor.transform.position).normalized /
-                                      distanceToNeighbor;
-                    }
-
-                    alignment += neighbor.moveDirection;
-
-                    // Правило притяжения (cohesion): стремимся к средней позиции соседей
-                    cohesion += neighbor.transform.position;
+                    separation += (e.transform.position - neighbor.transform.position).normalized / distanceToNeighbor;
                 }
+
+                alignment += neighbor.moveDirection;
+
+                // Правило притяжения (cohesion): стремимся к средней позиции соседей
+                cohesion += neighbor.transform.position;
             }
-
-            if (entitiesToAvoid.Count > 0)
-            {
-                // Учитываем среднюю позицию для притяжения
-                cohesion /= entitiesToAvoid.Count;
-                cohesion = (cohesion - e.transform.position).normalized;
-
-                // Учитываем направление движения соседей
-                alignment = alignment.normalized;
-            }
-
-            // Итоговое направление с учётом всех правил
-            moveDirection = separation.normalized * separationDistance + alignment * alignmentWeight +
-                            cohesion * cohesionWeight;
-
-            // Следование за игроком (EntityToFollow) как основное поведение
-            moveDirection += (entityToFollow.transform.position - e.transform.position).normalized;
-
-            // Нормализуем вектор для соблюдения скорости
-            moveDirection = new Vector3(moveDirection.x, 0, moveDirection.z).normalized;
-
-            e.moveDirection = moveDirection;
-
-            // Поворачиваем зомби в сторону движения
-            e.transform.LookAt(entityToFollow.transform);
-
-            // Движение зомби
-            float moveDistance = e.speed * Time.deltaTime;
-            e.transform.position += moveDirection * moveDistance;
         }
+
+        if (entitiesToAvoid.Count > 0)
+        {
+            // Учитываем среднюю позицию для притяжения
+            cohesion /= entitiesToAvoid.Count;
+            cohesion = (cohesion - e.transform.position).normalized;
+
+            // Учитываем направление движения соседей
+            alignment = alignment.normalized;
+        }
+
+        // Итоговое направление с учётом всех правил
+        moveDirection = separation.normalized * separationDistance + alignment * alignmentWeight + cohesion * cohesionWeight;
+
+        // Следование за игроком (EntityToFollow) как основное поведение
+        moveDirection += (entityToFollow.transform.position - e.transform.position).normalized;
+
+        // Нормализуем вектор для соблюдения скорости, игнорируя ось Y
+        moveDirection = new Vector3(moveDirection.x, 0, moveDirection.z).normalized;
+
+        e.moveDirection = moveDirection;
+
+        // Поворачиваем зомби в сторону игрока, игнорируя компонент Y
+        Vector3 targetDirection = new Vector3(entityToFollow.transform.position.x - e.transform.position.x, 0, entityToFollow.transform.position.z - e.transform.position.z);
+        if (targetDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(targetDirection);
+            e.transform.rotation = Quaternion.Slerp(e.transform.rotation, targetRotation, e.rotationSpeed * Time.deltaTime);
+        }
+
+        // Движение зомби
+        float moveDistance = e.speed * Time.deltaTime;
+        e.transform.position += moveDirection * moveDistance;
     }
+}
 
     public void EntityInfectEntity(Entity e, Entity entityToInfect)
     {
@@ -411,11 +422,10 @@ public class MyGame : MonoBehaviour
                 //add sound effect
             }
         }
-        
+
 
         for (int i = 0; i < buffs.Count; i++)
         {
-
             buffs[i].transform.Rotate(0, buffs[i].rotationSpeed * Time.deltaTime, 0);
             Entity buff = buffs[i];
 
@@ -430,19 +440,16 @@ public class MyGame : MonoBehaviour
         }
 
         if (keyCooldown <= 0.5f)
-            {
-                buffT -= Time.deltaTime;
-            }
-            if (buffT <= 0f)
-            {
-                buffT = 5.0f;
-                keyCooldown = 1.0f;
-            }
-            
-        
+        {
+            buffT -= Time.deltaTime;
+        }
+
+        if (buffT <= 0f)
+        {
+            buffT = 5.0f;
+            keyCooldown = 1.0f;
+        }
     }
-    
-    
 
 
     public Entity SpawnEntity(Entity prefab, float minimumDistance = 70.0f)
@@ -455,7 +462,7 @@ public class MyGame : MonoBehaviour
             float randomX = Random.Range(-100, 100);
             float randomZ = Random.Range(-100, 100);
 
-            randomPosition = new Vector3(randomX, 0, randomZ);
+            randomPosition = new Vector3(randomX, 3, randomZ);
 
             distanceToPlayer = Vector3.Distance(randomPosition, player.transform.position);
         } while (distanceToPlayer < minimumDistance);
@@ -492,102 +499,23 @@ public class MyGame : MonoBehaviour
         if (Input.GetKey(KeyCode.W))
         {
             player.transform.position += player.transform.forward * moveDistance;
-            // playerAnimator.SetBool("Idle", false);
-            // playerAnimator.SetBool("Sprint", true);
         }
-        // else
-        // {
-        //     playerAnimator.SetBool("Sprint", false);
-        //     playerAnimator.SetBool("Idle", true);
-        // }
+        
         if (Input.GetKey(KeyCode.A))
         {
             player.transform.position -= player.transform.right * moveDistance;
-            // playerAnimator.SetBool("Idle", false);
-            // playerAnimator.SetBool("Left", true);
         }
-        // else
-        // {
-        //     playerAnimator.SetBool("Left", false);
-        //     playerAnimator.SetBool("Idle", true);
-        // }
 
         if (Input.GetKey(KeyCode.S))
         {
             player.transform.position -= player.transform.forward * moveDistance;
-        //     playerAnimator.SetBool("Idle", false);
-        //     playerAnimator.SetBool("Back", true);
         }
-        // else
-        // {
-        //     playerAnimator.SetBool("Back", false);
-        //     playerAnimator.SetBool("Idle", true);
-        // }
 
         if (Input.GetKey(KeyCode.D))
         {
             player.transform.position += player.transform.right * moveDistance;
-            // playerAnimator.SetBool("Idle", false);
-            // playerAnimator.SetBool("Right", true);
         }
-        // else
-        // {
-        //     playerAnimator.SetBool("Right", false);
-        //     playerAnimator.SetBool("Idle", true);
-        // }
-        //
-        // if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.A))
-        // {
-        //     playerAnimator.SetBool("Idle", false);
-        //     playerAnimator.SetBool("Back", false);
-        //     playerAnimator.SetBool("Left", false);
-        //     playerAnimator.SetBool("BackLeft", true);
-        // }
-        // else
-        // {
-        //     playerAnimator.SetBool("Idle", true);
-        //     playerAnimator.SetBool("BackLeft", false);
-        // }
-        //
-        // if (Input.GetKey(KeyCode.S) && Input.GetKey(KeyCode.D))
-        // {
-        //     playerAnimator.SetBool("Idle", false);
-        //     playerAnimator.SetBool("Back", false);
-        //     playerAnimator.SetBool("Right", false);
-        //     playerAnimator.SetBool("BackRight", true);
-        // }
-        // else
-        // {
-        //     playerAnimator.SetBool("Idle", true);
-        //     playerAnimator.SetBool("BackRight", false);
-        // }
-        //
-        // if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.A))
-        // {
-        //     playerAnimator.SetBool("Idle", false);
-        //     playerAnimator.SetBool("Sprint", false);
-        //     playerAnimator.SetBool("Left", false);
-        //     playerAnimator.SetBool("SprintLeft", true);
-        // }
-        // else
-        // {
-        //     playerAnimator.SetBool("Idle", true);
-        //     playerAnimator.SetBool("SprintLeft", false);
-        // }
-        //
-        // if (Input.GetKey(KeyCode.W) && Input.GetKey(KeyCode.D))
-        // {
-        //     playerAnimator.SetBool("Idle", false);
-        //     playerAnimator.SetBool("Sprint", false);
-        //     playerAnimator.SetBool("Right", false);
-        //     playerAnimator.SetBool("SprintRight", true);
-        // }
-        // else
-        // {
-        //     playerAnimator.SetBool("Idle", true);
-        //     playerAnimator.SetBool("SprintRight", false);
-        // }
-        
+
         // Получаем ввод от игрока
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
@@ -612,7 +540,7 @@ public class MyGame : MonoBehaviour
             // Выводим значения posX и posY для проверки
             Debug.Log("No movement - posX: 0, posY: 0");
         }
-        
+
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
@@ -630,16 +558,16 @@ public class MyGame : MonoBehaviour
             StartCoroutine(KeyPressCooldown());
         }
     }
-
+    
     public void Shooting()
     {
         Ball ball;
         player.moveDirection = player.transform.forward;
-        ball = Instantiate(player.ballPrefab, player.ballSpawn.transform.position, player.ballSpawn.rotation);
+        Vector3 spawnPosition = player.ballSpawn.transform.position + new Vector3(0, 2, 0);
+        ball = Instantiate(player.ballPrefab, spawnPosition, player.ballSpawn.rotation);
         ball.Init(player.projVelocity);
         Destroy(ball.gameObject, 2);
     }
-
 
     IEnumerator KeyPressCooldown()
     {
@@ -647,6 +575,16 @@ public class MyGame : MonoBehaviour
         yield return new WaitForSeconds(keyCooldown);
         canPressKey = true;
     }
+
+    // Метод для нанесения урона другой сущности
+   
+
+    // Метод для восстановления здоровья
+    public void PlayerHeal(float amount) // amount?
+    {
+        player.health = Mathf.Min(player.health + amount, 100f); // Ограничение на максимальное здоровье
+    }
+    
 
     public void UpdateInfectionTimer()
     {
@@ -734,7 +672,6 @@ public class MyGame : MonoBehaviour
         }
     }
 }
-
 
 
 //public static KeyCode[] inputKeys = new[] { KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.E, KeyCode.Q };

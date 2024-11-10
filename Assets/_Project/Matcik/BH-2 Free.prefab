@@ -382,6 +382,9 @@ MonoBehaviour:
   particles: {fileID: 0}
   ballSpawn: {fileID: 0}
   projVelocity: 100
+  health: 200
+  defense: 5
+  damage: 35
   moveDirection: {x: 0, y: 0, z: 0}
   boxesCount: 0
   isHealed: 1

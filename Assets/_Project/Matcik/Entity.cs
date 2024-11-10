@@ -16,7 +16,7 @@ public enum EntityType
 
 public class Entity : MonoBehaviour
 {
-    [Header("Editor")]
+    [Header("Editor")] 
     public EntityType type;
     public MeshRenderer mr;
     public Material healedMat;
@@ -28,33 +28,39 @@ public class Entity : MonoBehaviour
     public bool isDead;
     public bool isCollisionEnabled;
     public EntityType collisionEntityType;
-    
-    
-    [Header("Breakable")]
-    public GameObject replacement;
+
+
+    [Header("Breakable")] public GameObject replacement;
     public float breakForce;
     public float collisionMultiplier;
     public bool broken;
     public Collision collision;
-    
-    [Header("Explosive")]
-    public Ball ballPrefab;
+
+    [Header("Explosive")] public Ball ballPrefab;
     public float triggerForce;
     public float explosionRadius;
     public float explosionForce;
-    public float upwardsModifier; 
+    public float upwardsModifier;
     public float forceDamping;
     public GameObject particles;
-    
-    
-    [Header("ProjThrow")]
+
+
+    [Header("ProjThrow")] 
     public Transform ballSpawn;
     public float projVelocity;
     
+    
+    [Header ("BaseStats")]
+    public float health;
+    public float defense;
+    public float damage;
+    public bool canDealDamage;
+    public float attackSpeed;
+
 
     public Vector3 moveDirection;
 
-    [Header("Runtime")]
+    [Header("Runtime")] 
     public int boxesCount;
     public bool isHealed;
 
@@ -66,19 +72,18 @@ public class Entity : MonoBehaviour
     public void OnCollisionEnter(Collision other)
     {
         Entity e = other.gameObject.GetComponent<Entity>();
-        
+
         if (e == null) return;
-        
-            
+
+        // Проверяем, соответствует ли тип столкновения, инициализируем взрыв
         if (isCollisionEnabled && (e.type | collisionEntityType) == collisionEntityType)
         {
             collision = other;
-            Debug.Log(gameObject.name + " " + other.gameObject.name);
+            Debug.Log(gameObject.name + " collided with " + other.gameObject.name);
         }
-
-
     }
 }
+
 
 // public void DoGame()
 // {
