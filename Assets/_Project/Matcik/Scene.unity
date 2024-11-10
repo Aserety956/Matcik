@@ -337,6 +337,11 @@ MonoBehaviour:
   particles: {fileID: 0}
   ballSpawn: {fileID: 426983587}
   projVelocity: 100
+  health: 0
+  defense: 0
+  damage: 0
+  canDealDamage: 0
+  attackSpeed: 0
   moveDirection: {x: 0, y: 0, z: 0}
   boxesCount: 0
   isHealed: 1
@@ -1744,6 +1749,11 @@ MonoBehaviour:
   particles: {fileID: 0}
   ballSpawn: {fileID: 2022718040902312218}
   projVelocity: 100
+  health: 200
+  defense: 5
+  damage: 35
+  canDealDamage: 1
+  attackSpeed: 1
   moveDirection: {x: 0, y: 0, z: 0}
   boxesCount: 0
   isHealed: 1

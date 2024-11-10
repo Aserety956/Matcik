@@ -81,6 +81,11 @@ public class Entity : MonoBehaviour
             collision = other;
             Debug.Log(gameObject.name + " collided with " + other.gameObject.name);
         }
+        if (e.type == EntityType.Projectile && other.relativeVelocity.magnitude >= breakForce)
+            {
+                Destroy(other.gameObject); // Уничтожаем Ball при столкновении
+                Debug.Log($"{gameObject.name} уничтожил объект {other.gameObject.name} при столкновении.");
+            }
     }
 }
 
