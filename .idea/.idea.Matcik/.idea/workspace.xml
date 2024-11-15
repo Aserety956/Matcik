@@ -10,8 +10,8 @@
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Scene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Scene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/TerrainSampleAssets/ThirdPartyNotices.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/TerrainSampleAssets/ThirdPartyNotices.txt.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Terrain.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Terrain.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -124,7 +124,12 @@
       <workItem from="1730999916473" duration="15827000" />
       <workItem from="1731198676137" duration="5496000" />
       <workItem from="1731217056000" duration="591000" />
-      <workItem from="1731217673010" duration="1462000" />
+      <workItem from="1731217673010" duration="2799000" />
+      <workItem from="1731381292438" duration="6519000" />
+      <workItem from="1731430188803" duration="241000" />
+      <workItem from="1731430468644" duration="64000" />
+      <workItem from="1731430589803" duration="5232000" />
+      <workItem from="1731633047309" duration="10055000" />
     </task>
     <servers />
   </component>

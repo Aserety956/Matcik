@@ -47,6 +47,13 @@ public class MyGame : MonoBehaviour
 
     [Header("Bufftimer")] public float buffT = 5f;
 
+    [Header("DamagedTimer")] 
+    public float damageEffectDuration;
+    public float damageEffectTimer;
+    // Ссылка на Image, которая будет заполнением HP бара
+    // public Entity zombie;
+    
+
     [Header("Animations")] public Animator playerAnimator;
     public Transform cameraTransform;
 
@@ -120,6 +127,7 @@ public class MyGame : MonoBehaviour
         List<Entity> zombies = GetEntitiesOfType(EntityType.Zombie);
         List<Entity> boxes = GetEntitiesOfType(EntityType.Box);
         List<Entity> projectiles = GetEntitiesOfType(EntityType.Projectile);
+        
 
         if (zombies.Count < 10)
         {
@@ -130,14 +138,16 @@ public class MyGame : MonoBehaviour
                 zombieSpawnT += zombieSpawnInterval;
                 Entity zombie = SpawnEntity(zombiePrefab, 100f);
                 zombies.Add(zombie);
+                zombie.health = zombie.maxHealth;
             }
         }
 
         for (int i = 0; i < zombies.Count; i++)
         {
             Entity zombie = zombies[i];
+            
 
-            if (zombie.isHealed)
+            /*if (zombie.isHealed)
             {
                 if (zombie.HasBox())
                 {
@@ -171,7 +181,7 @@ public class MyGame : MonoBehaviour
                     }
                 }
             }
-            else
+            else*/
             {
                 List<Entity> entitiesToFilter = GetEntitiesOfType(EntityType.Player | EntityType.Zombie);
                 Entity entityToFollow = FindNearestEntity(zombie, entitiesToFilter, (Entity e) => e.isHealed);
@@ -188,32 +198,32 @@ public class MyGame : MonoBehaviour
                             isInfected = true;
                             player.isHealed = false;
                         }
-                        else
-                        {
-                            EntityInfectEntity(zombie, entityToFollow);
-                        }
-                    }
-                    else
-                    {
-                        EntityHealEntity(entityToFollow, zombie);
+                        //else
+                    //     {
+                    //         EntityInfectEntity(zombie, entityToFollow);
+                    //     }
+                    // }
+                    // else
+                    // {
+                    //     EntityHealEntity(entityToFollow, zombie);
                     }
                 }
             }
-
+            
             {
                 if (zombie.broken) continue;
                 if (zombie.collision == null) continue;
 
-                float effectiveDamage = Mathf.Max(0, player.damage - zombie.defense);
 
                 if (zombie.collision.relativeVelocity.magnitude >= zombie.breakForce) //снаряд уничтожать при коллизии
-                {                   
-                    
-                    if (player.canDealDamage)
-                    {
-                        zombie.health -= effectiveDamage;
-                        StartCoroutine(AttackDamageCooldown());
-                    }
+                {
+                    float effectiveDamage = Mathf.Max(0, player.damage - zombie.defense);
+
+                    // if (player.canDealDamage)
+                    // {
+                    // zombie.health -= effectiveDamage;
+                    // StartCoroutine(AttackDamageCooldown());
+                    // }
 
                     if (zombie.health <= 0)
                     {
@@ -230,56 +240,59 @@ public class MyGame : MonoBehaviour
                                 zombie.explosionRadius);
                         }
 
-                        Collider[] colliders = Physics.OverlapSphere(zombie.transform.position, zombie.explosionRadius);
-                        foreach (Collider hit in colliders)
-                        {
-                            Rigidbody hitRb = hit.GetComponent<Rigidbody>();
+                        // Collider[] colliders = Physics.OverlapSphere(zombie.transform.position, zombie.explosionRadius);
+                        // foreach (Collider hit in colliders)
+                        // {
+                        //     Rigidbody hitRb = hit.GetComponent<Rigidbody>();
+                        //
+                        //     if (hitRb != null)
+                        //     {
+                        //         hitRb.AddExplosionForce(zombie.explosionForce, zombie.transform.position,
+                        //             zombie.explosionRadius);
+                        //
+                        //         Entity nearbyZombie = hit.GetComponent<Entity>();
+                        //         if (nearbyZombie != null && nearbyZombie.type == EntityType.Zombie && !nearbyZombie.broken)
+                        //         {
+                        //             
+                        //             nearbyZombie.health -= effectiveDamage;
+                        //             
+                        //             if (nearbyZombie.health <= 0)
+                        //             {
+                        //                 nearbyZombie.broken = true;
+                        //
+                        //                 GameObject zombieReplacement = Instantiate(nearbyZombie.replacement, nearbyZombie.transform.position, nearbyZombie.transform.rotation);
+                        //                 Rigidbody[] zombieReplacementRigidbodies = zombieReplacement.GetComponentsInChildren<Rigidbody>();
+                        //
+                        //                 foreach (var rb in zombieReplacementRigidbodies)
+                        //                 {
+                        //                     rb.AddExplosionForce(zombie.explosionForce, nearbyZombie.transform.position,
+                        //                         zombie.explosionRadius);
+                        //                 }
+                        //
+                        //                 Destroy(zombieReplacement, 3f);
+                        //                 zombies.Remove(nearbyZombie);
+                        //                 entities.Remove(nearbyZombie);
+                        //                 Destroy(nearbyZombie.gameObject);
+                        //             }
+                        //         }
+                    
 
-                            if (hitRb != null)
-                            {
-                                hitRb.AddExplosionForce(zombie.explosionForce, zombie.transform.position,
-                                    zombie.explosionRadius);
+                    zombies.Remove(zombie);
+                    entities.Remove(zombie);
+                    Destroy(zombie.gameObject);
+                    Destroy(replacement.gameObject, 3f);
+                }
 
-                                Entity nearbyZombie = hit.GetComponent<Entity>();
-                                if (nearbyZombie != null && nearbyZombie.type == EntityType.Zombie &&
-                                    !nearbyZombie.broken)
-                                {
-                                    nearbyZombie.broken = true;
-
-                                    GameObject zombieReplacement = Instantiate(nearbyZombie.replacement,
-                                        nearbyZombie.transform.position, nearbyZombie.transform.rotation);
-                                    Rigidbody[] zombieReplacementRigidbodies =
-                                        zombieReplacement.GetComponentsInChildren<Rigidbody>();
-
-                                    foreach (var rb in zombieReplacementRigidbodies)
-                                    {
-                                        rb.AddExplosionForce(zombie.explosionForce, nearbyZombie.transform.position,
-                                            zombie.explosionRadius);
-                                    }
-
-                                    Destroy(zombieReplacement, 3f);
-                                    zombies.Remove(nearbyZombie);
-                                    entities.Remove(nearbyZombie);
-                                    Destroy(nearbyZombie.gameObject);
-                                }
-                            }
-
-                            zombies.Remove(zombie);
-                            entities.Remove(zombie);
-                            Destroy(zombie.gameObject);
-                            Destroy(replacement.gameObject, 3f);
-
-                            // Здесь можно добавить эффект звука
-                        }
-                    }
-
+                // Здесь можно добавить эффект звука
+                        
+                    
                     continue;
                 }
             }
         }
     }
-
-    IEnumerator AttackDamageCooldown()
+    
+    IEnumerator AttackDamageCooldown() // на подумать
     {
         player.canDealDamage = false;
         yield return new WaitForSeconds(player.attackSpeed);

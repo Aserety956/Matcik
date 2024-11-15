@@ -1,5 +1,8 @@
 using UnityEngine;
 using System;
+using System.Collections;
+using Palmmedia.ReportGenerator.Core.Reporting.Builders;
+using UnityEngine.UI;
 
 // NOTE(sqd): Sparse Entity System
 
@@ -21,6 +24,7 @@ public class Entity : MonoBehaviour
     public MeshRenderer mr;
     public Material healedMat;
     public Material notHealedMat;
+    public Material damagedMat;
     public float rotationSpeed;
     public float speed;
     public AudioClip deathSound;
@@ -28,6 +32,8 @@ public class Entity : MonoBehaviour
     public bool isDead;
     public bool isCollisionEnabled;
     public EntityType collisionEntityType;
+    public Color originalColor;
+    public bool isTakingDamage;
 
 
     [Header("Breakable")] public GameObject replacement;
@@ -56,7 +62,13 @@ public class Entity : MonoBehaviour
     public float damage;
     public bool canDealDamage;
     public float attackSpeed;
-
+    public float maxHealth;
+    
+    public GameObject hpBarPrefab; // Префаб HP бара
+    public GameObject hpBarInstance; // Экземпляр HP бара
+    public Image hpBarForeground;
+    public Image hpBarBackround;// Передний план шкалы здоровья
+// ТУДУ сделать хп бар энеми (и хп плеера?(UI))
 
     public Vector3 moveDirection;
 
@@ -67,6 +79,13 @@ public class Entity : MonoBehaviour
     public bool HasBox()
     {
         return boxesCount > 0;
+    }
+    
+    public void Start()
+    {
+        health = maxHealth;
+        CreateHealthBar();
+        UpdateHealthBar();
     }
 
     public void OnCollisionEnter(Collision other)
@@ -84,8 +103,57 @@ public class Entity : MonoBehaviour
         if (e.type == EntityType.Projectile && other.relativeVelocity.magnitude >= breakForce)
             {
                 Destroy(other.gameObject); // Уничтожаем Ball при столкновении
+                ApplyHitEffect();
+                TakeDamage(35);
                 Debug.Log($"{gameObject.name} уничтожил объект {other.gameObject.name} при столкновении.");
             }
+    }
+    
+    public void ApplyHitEffect()
+    {
+        if (mr == null || damagedMat == null)
+        {
+            return; // Прерываем выполнение, если материал или MeshRenderer не инициализирован
+        }
+
+        Material originalMat = mr.material;
+        mr.material = damagedMat;
+        StartCoroutine(ResetMaterialAfterHit(0.1f, originalMat));
+    }
+    
+    public void CreateHealthBar()
+    {
+        if (hpBarPrefab != null)
+        {
+            // Создаем экземпляр HP бара и помещаем его в Canvas
+            hpBarInstance = Instantiate(hpBarPrefab, transform);
+            hpBarInstance.transform.localPosition = new Vector3(0, 2, 0); // Сдвигаем HP бар выше зомби
+            hpBarForeground = hpBarInstance.transform.Find("HPBarForeground").GetComponent<Image>();
+            hpBarBackround = hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
+        }
+    }
+    
+
+    public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat)
+    {
+        yield return new WaitForSeconds(delay);
+        mr.material = originalMat; // Без дополнительных проверок
+    }
+    
+    public void TakeDamage(float damage)
+    {
+        float effectiveDamage = damage - defense; // Учёт защиты
+        effectiveDamage = Mathf.Max(effectiveDamage, 0); // Урон не может быть отрицательным
+        health -= effectiveDamage;
+        UpdateHealthBar();
+        
+    }
+    public void UpdateHealthBar()
+    {
+        if (hpBarInstance != null)
+        {
+            hpBarForeground.fillAmount = health / maxHealth;
+        }
     }
 }
 

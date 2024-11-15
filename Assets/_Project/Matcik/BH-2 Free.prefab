@@ -362,13 +362,16 @@ MonoBehaviour:
   mr: {fileID: 0}
   healedMat: {fileID: 0}
   notHealedMat: {fileID: 0}
-  rotationSpeed: 250
+  damagedMat: {fileID: 0}
+  rotationSpeed: 200
   speed: 25
   deathSound: {fileID: 8300000, guid: 63eb7295e8ba1874591ddc3d46983deb, type: 3}
   deathAudioSource: {fileID: 0}
   isDead: 0
   isCollisionEnabled: 0
   collisionEntityType: 0
+  originalColor: {r: 0, g: 0, b: 0, a: 0}
+  isTakingDamage: 0
   replacement: {fileID: 0}
   breakForce: 0
   collisionMultiplier: 0
@@ -385,7 +388,7 @@ MonoBehaviour:
   health: 200
   defense: 5
   damage: 35
-  canDealDamage: 0
+  canDealDamage: 1
   attackSpeed: 0.5
   moveDirection: {x: 0, y: 0, z: 0}
   boxesCount: 0
