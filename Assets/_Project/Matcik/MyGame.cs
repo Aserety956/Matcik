@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 // ReSharper disable All
@@ -50,8 +51,7 @@ public class MyGame : MonoBehaviour
     [Header("DamagedTimer")] 
     public float damageEffectDuration;
     public float damageEffectTimer;
-    // Ссылка на Image, которая будет заполнением HP бара
-    // public Entity zombie;
+    
     
 
     [Header("Animations")] public Animator playerAnimator;
@@ -139,6 +139,8 @@ public class MyGame : MonoBehaviour
                 Entity zombie = SpawnEntity(zombiePrefab, 100f);
                 zombies.Add(zombie);
                 zombie.health = zombie.maxHealth;
+                CreateHealthBar(zombie);
+                UpdateHealthBar(zombie);
             }
         }
 
@@ -266,23 +268,9 @@ public class MyGame : MonoBehaviour
 
                 if (zombie.health <= 0)
                     {
-                        zombie.broken = true;
-
-                        Instantiate(zombie.particles, zombie.transform.position, zombie.transform.rotation);
-                        GameObject replacement = Instantiate(zombie.replacement, zombie.transform.position,
-                            zombie.transform.rotation);
-
-                        Rigidbody[] replacementRbs = replacement.GetComponentsInChildren<Rigidbody>();
-                        foreach (var rb in replacementRbs)
-                        {
-                            rb.AddExplosionForce(zombie.explosionForce, zombie.transform.position,
-                                zombie.explosionRadius);
-                        }
-
+                        DestroyZombie(zombie);
                         zombies.Remove(zombie);
                         entities.Remove(zombie);
-                        Destroy(zombie.gameObject);
-                        Destroy(replacement.gameObject, 3f);
                     }
 
                     // Здесь можно добавить эффект звука
@@ -293,13 +281,103 @@ public class MyGame : MonoBehaviour
             }
         }
     }
+
+    public void DestroyZombie(Entity zombie)
+    {
+        zombie.broken = true;
+
+        Instantiate(zombie.particles, zombie.transform.position, zombie.transform.rotation);
+        GameObject replacement = Instantiate(zombie.replacement, zombie.transform.position,
+            zombie.transform.rotation);
+
+        Rigidbody[] replacementRbs = replacement.GetComponentsInChildren<Rigidbody>();
+        foreach (var rb in replacementRbs)
+        {
+            rb.AddExplosionForce(zombie.explosionForce, zombie.transform.position,
+                zombie.explosionRadius);
+        }
+        
+        Destroy(zombie.gameObject);
+        Destroy(replacement.gameObject, 3f);
+    }
     
-    IEnumerator AttackDamageCooldown() // на подумать
+    IEnumerator AttackDamageCooldown() // TODO на подумать
     {
         player.canDealDamage = false;
         yield return new WaitForSeconds(player.attackSpeed);
         player.canDealDamage = true;
     }
+    
+    public void CreateHealthBar(Entity e)
+    {
+        if (e.hpBarPrefab != null)
+        {
+            e.hpBarInstance = Instantiate(e.hpBarPrefab, e.transform);
+            e.hpBarInstance.transform.localPosition = new Vector3(0, 2, 0);
+            e.hpBarForeground = e.hpBarInstance.transform.Find("HPBarForeground").GetComponent<Image>();
+            e.hpBarBackround = e.hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
+        }
+    }
+    
+    public void UpdateHealthBar(Entity e)
+    {
+        if (e.hpBarInstance != null)
+        {
+            e.hpBarForeground.fillAmount = e.health / e.maxHealth;
+        }
+    }
+    
+    public void TakeDamage(float damage, Entity zombie)
+    {
+        float effectiveDamage = player.damage - zombie.defense; 
+        effectiveDamage = Mathf.Max(effectiveDamage, 0); 
+        zombie.health -= effectiveDamage;
+        UpdateHealthBar(zombie);
+    }
+    
+    public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat,Entity e)
+    { 
+        yield return new WaitForSeconds(delay);
+        if (e != null && e.mr != null)
+        {
+            e.mr.material = originalMat;
+        }
+    }
+    
+    public void ApplyHitEffect(Entity e)
+    {
+        if (e.mr == null || e.damagedMat == null)
+        {
+            return; 
+        }
+
+        Material originalMat = e.mr.material;
+        e.mr.material = e.damagedMat;
+        StartCoroutine(ResetMaterialAfterHit(0.1f, originalMat, e));
+    }
+    
+    public void HandleCollision(Entity entity, Collision collision)
+    {
+        Entity otherEntity = collision.gameObject.GetComponent<Entity>();
+
+        if (otherEntity == null) return;
+
+        // Проверяем, соответствует ли тип столкновения
+        if (entity.isCollisionEnabled && (otherEntity.type | entity.collisionEntityType) == entity.collisionEntityType)
+        {
+            entity.collision = collision;
+            Debug.Log(entity.name + " collided with " + collision.gameObject.name);
+        }
+
+        if (otherEntity.type == EntityType.Projectile && collision.relativeVelocity.magnitude >= entity.breakForce)
+        {
+            Destroy(collision.gameObject); 
+            ApplyHitEffect(entity);        
+            TakeDamage(35, entity);        
+            Debug.Log($"{entity.name} уничтожил объект {collision.gameObject.name} при столкновении.");
+        }
+    }
+    
 
 
     public void FlockMove(Entity e, Entity entityToFollow, List<Entity> entitiesToAvoid)

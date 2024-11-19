@@ -1,7 +1,6 @@
 using UnityEngine;
 using System;
 using System.Collections;
-using Palmmedia.ReportGenerator.Core.Reporting.Builders;
 using UnityEngine.UI;
 
 // NOTE(sqd): Sparse Entity System
@@ -67,8 +66,9 @@ public class Entity : MonoBehaviour
     public GameObject hpBarPrefab; // Префаб HP бара
     public GameObject hpBarInstance; // Экземпляр HP бара
     public Image hpBarForeground;
-    public Image hpBarBackround;// Передний план шкалы здоровья
-// ТУДУ сделать хп бар энеми (и хп плеера?(UI))
+    public Image hpBarBackround;
+// ТУДУ хп плеера?(UI) визуал?
+
 
     public Vector3 moveDirection;
 
@@ -81,80 +81,88 @@ public class Entity : MonoBehaviour
         return boxesCount > 0;
     }
     
-    public void Start()
-    {
-        health = maxHealth;
-        CreateHealthBar();
-        UpdateHealthBar();
-    }
-
+    // public void Start()
+    // {
+    //     health = maxHealth;
+    //     CreateHealthBar();
+    //     UpdateHealthBar();
+    // }
     public void OnCollisionEnter(Collision other)
     {
-        Entity e = other.gameObject.GetComponent<Entity>();
-
-        if (e == null) return;
-
-        // Проверяем, соответствует ли тип столкновения, инициализируем взрыв
-        if (isCollisionEnabled && (e.type | collisionEntityType) == collisionEntityType)
+        MyGame game = FindObjectOfType<MyGame>();
+        if (game != null)
         {
-            collision = other;
-            Debug.Log(gameObject.name + " collided with " + other.gameObject.name);
-        }
-        if (e.type == EntityType.Projectile && other.relativeVelocity.magnitude >= breakForce)
-            {
-                Destroy(other.gameObject); // Уничтожаем Ball при столкновении
-                ApplyHitEffect();
-                TakeDamage(35);
-                Debug.Log($"{gameObject.name} уничтожил объект {other.gameObject.name} при столкновении.");
-            }
-    }
-    
-    public void ApplyHitEffect()
-    {
-        if (mr == null || damagedMat == null)
-        {
-            return; // Прерываем выполнение, если материал или MeshRenderer не инициализирован
-        }
-
-        Material originalMat = mr.material;
-        mr.material = damagedMat;
-        StartCoroutine(ResetMaterialAfterHit(0.1f, originalMat));
-    }
-    
-    public void CreateHealthBar()
-    {
-        if (hpBarPrefab != null)
-        {
-            // Создаем экземпляр HP бара и помещаем его в Canvas
-            hpBarInstance = Instantiate(hpBarPrefab, transform);
-            hpBarInstance.transform.localPosition = new Vector3(0, 2, 0); // Сдвигаем HP бар выше зомби
-            hpBarForeground = hpBarInstance.transform.Find("HPBarForeground").GetComponent<Image>();
-            hpBarBackround = hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
+            game.HandleCollision(this, other);
         }
     }
-    
 
-    public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat)
-    {
-        yield return new WaitForSeconds(delay);
-        mr.material = originalMat; // Без дополнительных проверок
-    }
-    
-    public void TakeDamage(float damage)
-    {
-        float effectiveDamage = damage - defense; // Учёт защиты
-        effectiveDamage = Mathf.Max(effectiveDamage, 0); // Урон не может быть отрицательным
-        health -= effectiveDamage;
-        UpdateHealthBar();
-        
-    }
-    public void UpdateHealthBar()
-    {
-        if (hpBarInstance != null)
-        {
-            hpBarForeground.fillAmount = health / maxHealth;
-        }
-    }
+    // public void OnCollisionEnter(Collision other)
+    // {
+    //     Entity e = other.gameObject.GetComponent<Entity>();
+    //
+    //     if (e == null) return;
+    //
+    //     // Проверяем, соответствует ли тип столкновения, инициализируем взрыв
+    //     if (isCollisionEnabled && (e.type | collisionEntityType) == collisionEntityType)
+    //     {
+    //         collision = other;
+    //         Debug.Log(gameObject.name + " collided with " + other.gameObject.name);
+    //     }
+    //     if (e.type == EntityType.Projectile && other.relativeVelocity.magnitude >= breakForce)
+    //         {
+    //             Destroy(other.gameObject); // Уничтожаем Ball при столкновении
+    //             ApplyHitEffect();
+    //             TakeDamage(35);
+    //             Debug.Log($"{gameObject.name} уничтожил объект {other.gameObject.name} при столкновении.");
+    //         }
+    // }
+    //
+    // public void ApplyHitEffect()
+    // {
+    //     if (mr == null || damagedMat == null)
+    //     {
+    //         return; // Прерываем выполнение, если материал или MeshRenderer не инициализирован
+    //     }
+    //
+    //     Material originalMat = mr.material;
+    //     mr.material = damagedMat;
+    //     StartCoroutine(ResetMaterialAfterHit(0.1f, originalMat));
+    // }
+    //
+    // public void CreateHealthBar()
+    // {
+    //     if (hpBarPrefab != null)
+    //     {
+    //         // Создаем экземпляр HP бара и помещаем его в Canvas
+    //         hpBarInstance = Instantiate(hpBarPrefab, transform);
+    //         hpBarInstance.transform.localPosition = new Vector3(0, 2, 0); // Сдвигаем HP бар выше зомби
+    //         hpBarForeground = hpBarInstance.transform.Find("HPBarForeground").GetComponent<Image>();
+    //         hpBarBackround = hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
+    //     }
+    // }
+    //
+    //
+    // public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat)
+    // {
+    //     yield return new WaitForSeconds(delay);
+    //     mr.material = originalMat; // Без дополнительных проверок
+    // }
+    //
+    // public void TakeDamage(float damage)
+    // {
+    //     float effectiveDamage = damage - defense; // Учёт защиты
+    //     effectiveDamage = Mathf.Max(effectiveDamage, 0); // Урон не может быть отрицательным
+    //     health -= effectiveDamage;
+    //     UpdateHealthBar();
+    //     
+    // }
+    // public void UpdateHealthBar()
+    // {
+    //     if (hpBarInstance != null)
+    //     {
+    //         hpBarForeground.fillAmount = health / maxHealth;
+    //     }
+    // }
 }
 
 
