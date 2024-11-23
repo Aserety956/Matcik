@@ -384,12 +384,17 @@ MonoBehaviour:
   forceDamping: 0
   particles: {fileID: 0}
   ballSpawn: {fileID: 0}
-  projVelocity: 100
+  projVelocity: 5
   health: 200
   defense: 5
   damage: 35
   canDealDamage: 1
   attackSpeed: 0.5
+  maxHealth: 0
+  hpBarPrefab: {fileID: 0}
+  hpBarInstance: {fileID: 0}
+  hpBarForeground: {fileID: 0}
+  hpBarBackround: {fileID: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   boxesCount: 0
   isHealed: 1

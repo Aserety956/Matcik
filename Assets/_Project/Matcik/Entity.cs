@@ -14,6 +14,7 @@ public enum EntityType
     Box = 1 << 2,
     Buff = 1 << 3,
     Projectile = 1 << 4,
+    Grenade = 1 << 5,
 }
 
 public class Entity : MonoBehaviour
@@ -48,6 +49,7 @@ public class Entity : MonoBehaviour
     public float upwardsModifier;
     public float forceDamping;
     public GameObject particles;
+    public bool IsGrenade;
 
 
     [Header("ProjThrow")] 
