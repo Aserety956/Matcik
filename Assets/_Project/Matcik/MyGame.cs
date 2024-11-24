@@ -30,7 +30,7 @@ public class MyGame : MonoBehaviour
     public bool canPressKey = true;
     public bool canPressKeyGrenade = true;
     public float keyCooldownShooting = 1.0f;
-    public float keyCooldownGranade = 3.0f;
+    public float keyCooldownGrenade = 3.0f;
 
 
     [Header("InfectStatus")] public float infectTimerT = 10f;
@@ -252,19 +252,18 @@ public class MyGame : MonoBehaviour
                     //         }
                     //     }
                     // }
-
-                    if (zombie.health <= 0)
-                    {
-                        DestroyZombie(zombie);
-                        zombies.Remove(zombie);
-                        entities.Remove(zombie);
-                    }
+                    
 
                     // Здесь можно добавить эффект звука
 
-
-                    continue;
+                    
                 }
+            }
+            if (zombie.health <= 0)
+            {
+                DestroyZombie(zombie);
+                zombies.Remove(zombie);
+                entities.Remove(zombie);
             }
         }
     }
@@ -301,6 +300,7 @@ public class MyGame : MonoBehaviour
         {
             e.hpBarInstance = Instantiate(e.hpBarPrefab, e.transform);
             e.hpBarInstance.transform.localPosition = new Vector3(0, 2, 0);
+            e.hpBarInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             e.hpBarForeground = e.hpBarInstance.transform.Find("HPBarForeground").GetComponent<Image>();
             e.hpBarBackround = e.hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
         }
@@ -338,7 +338,7 @@ public class MyGame : MonoBehaviour
             return; 
         }
 
-        Material originalMat = e.mr.material;
+        Material originalMat = e.mr.sharedMaterial;
         e.mr.material = e.damagedMat;
         StartCoroutine(ResetMaterialAfterHit(0.1f, originalMat, e));
     }
@@ -364,12 +364,13 @@ public class MyGame : MonoBehaviour
             TakeDamage(35, entity);        
             Debug.Log($"{entity.name} уничтожил объект {collision.gameObject.name} при столкновении.");
         }
+        
+        for (int j = 0; j < Grenades.Count; j++)
+        {
+            Entity grenade = Grenades[j];
+            
         if (otherEntity.type == EntityType.Grenade && collision.relativeVelocity.magnitude >= entity.breakForce)
         {
-            for (int j = 0; j < Grenades.Count; j++)
-            {
-                Entity grenade = Grenades[j];
-
 
                 Instantiate(grenade.particles, grenade.transform.position, Quaternion.identity);
 
@@ -379,21 +380,28 @@ public class MyGame : MonoBehaviour
                 foreach (var hit in colliders)
                 {
                     Rigidbody rb = hit.GetComponent<Rigidbody>();
-                    if (rb != null)
-                    {
-                        rb.AddExplosionForce(grenade.explosionForce, grenade.transform.position,
-                            grenade.explosionRadius, grenade.upwardsModifier, ForceMode.Impulse);
-                    }
-
+                    
                     // Нанесение урона объектам типа Entity
                     Entity entityG = hit.GetComponent<Entity>();
-                    if (entity != null)
+                    if (entityG != null && entityG.type == EntityType.Zombie) // Проверяем тип Zombie
                     {
-                        Destroy(collision.gameObject); 
-                        TakeDamage(grenade.damage, entityG);
+                        float distance = Vector3.Distance(grenade.transform.position, entityG.transform.position);
+                        float damageMultiplier = Mathf.Clamp01(1 - (distance / grenade.explosionRadius));
+                        TakeDamage(grenade.damage * damageMultiplier, entityG);
                         ApplyHitEffect(entityG);
+                        
+                        if (entityG.health <= 0)
+                        {
+                            Debug.Log($"{entityG.name} died from grenade explosion.");
+                            DestroyZombie(entityG);
+                            entities.Remove(entityG);
+                        }
                     }
                 }
+
+                // Удаляем гранату из списка и уничтожаем объект
+                entities.Remove(grenade);
+                Destroy(collision.gameObject); // Уничтожаем гранату
             }
             
             Debug.Log($"{entity.name} уничтожил объект {collision.gameObject.name} при столкновении.");
@@ -554,7 +562,7 @@ public class MyGame : MonoBehaviour
             if (Vector3.Distance(player.transform.position, buffs[i].transform.position) < 5f && keyCooldownShooting >= 1.0f)
             {
                 keyCooldownShooting = 0.5f;
-                keyCooldownGranade = 1.5f;
+                keyCooldownGrenade = 1.5f;
                 Destroy(buff.gameObject);
                 buffs.Remove(buff);
                 entities.Remove(buff);
@@ -562,7 +570,7 @@ public class MyGame : MonoBehaviour
             }
         }
 
-        if (keyCooldownShooting <= 0.5f || keyCooldownGranade <= 1.5f)
+        if (keyCooldownShooting <= 0.5f || keyCooldownGrenade <= 1.5f)
         {
             buffT -= Time.deltaTime;
         }
@@ -571,7 +579,7 @@ public class MyGame : MonoBehaviour
         {
             buffT = 5.0f;
             keyCooldownShooting = 1.0f;
-            keyCooldownGranade = 3f;
+            keyCooldownGrenade = 3f;
         }
     }
 
@@ -682,10 +690,10 @@ public class MyGame : MonoBehaviour
             StartCoroutine(KeyPressCooldownShooting());
         }
 
-        if (canPressKey && Input.GetKey(KeyCode.Mouse1))
+        if (canPressKeyGrenade && Input.GetKey(KeyCode.Mouse1))
         {
             ThrowGrenade();
-            StartCoroutine(KeyPressCooldownGranade()); // fix
+            StartCoroutine(KeyPressCooldownGrenade()); // fix
         }
     }
 
@@ -705,13 +713,18 @@ public class MyGame : MonoBehaviour
         if (grenadePrefab != null)
         {
             Vector3 spawnPosition = player.ballSpawn.transform.position + new Vector3(0, 2, 0);
-            GameObject grenade = Instantiate(grenadePrefab, spawnPosition, Quaternion.identity);
-            Rigidbody rb = grenade.GetComponent<Rigidbody>();
+            GameObject Grenade = Instantiate(grenadePrefab, spawnPosition, Quaternion.identity);
+            Rigidbody rb = Grenade.GetComponent<Rigidbody>();
+            Entity grenade = Grenade.GetComponent<Entity>();
 
             if (rb != null)
             {
                 //Vector3 throwDirection = player.transform.forward * 10f + Vector3.up * 5f;
-                rb.velocity = player.transform.forward * player.projVelocity + Vector3.up * 15f;
+                rb.velocity = player.transform.forward * grenade.projVelocity + Vector3.up * 15f;
+            }
+            if (grenade != null)
+            {
+                entities.Add(grenade);
             }
         }
     }
@@ -722,10 +735,10 @@ public class MyGame : MonoBehaviour
         yield return new WaitForSeconds(keyCooldownShooting);
         canPressKey = true;
     }
-    IEnumerator KeyPressCooldownGranade()
+    IEnumerator KeyPressCooldownGrenade()
     {
         canPressKeyGrenade = false;
-        yield return new WaitForSeconds(keyCooldownGranade);
+        yield return new WaitForSeconds(keyCooldownGrenade);
         canPressKeyGrenade = true;
     }
 

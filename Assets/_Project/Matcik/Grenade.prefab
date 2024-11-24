@@ -94,7 +94,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 915003303001102376}
   serializedVersion: 4
-  m_Mass: 500
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -166,14 +166,14 @@ MonoBehaviour:
   broken: 0
   ballPrefab: {fileID: 0}
   triggerForce: 0
-  explosionRadius: 0
+  explosionRadius: 30
   explosionForce: 0
   upwardsModifier: 0
   forceDamping: 0
   particles: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
   IsGrenade: 0
   ballSpawn: {fileID: 0}
-  projVelocity: 50
+  projVelocity: 30
   health: 0
   defense: 70
   damage: 0
