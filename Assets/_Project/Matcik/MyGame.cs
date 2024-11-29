@@ -88,6 +88,7 @@ public class MyGame : MonoBehaviour
         UpdateZombies();
         UpdateInfectionTimer();
         Healing();
+        
     }
 
     public List<Entity> GetEntitiesOfType(EntityType type, Func<Entity, bool> filter = null)
@@ -142,7 +143,7 @@ public class MyGame : MonoBehaviour
                 Entity zombie = SpawnEntity(zombiePrefab, 100f);
                 zombies.Add(zombie);
                 zombie.health = zombie.maxHealth;
-                CreateHealthBar(zombie);
+                CreateHealthBar(zombie, new Vector3(0.5f, 0.5f, 0.5f));
                 UpdateHealthBar(zombie);
             }
         }
@@ -191,7 +192,8 @@ public class MyGame : MonoBehaviour
                 List<Entity> entitiesToFilter = GetEntitiesOfType(EntityType.Player | EntityType.Zombie);
                 Entity entityToFollow = FindNearestEntity(zombie, entitiesToFilter, (Entity e) => e.isHealed);
                 List<Entity> infectedEntities = GetEntitiesOfType(EntityType.Zombie, (e) => !e.isHealed);
-                FlockMove(zombie, entityToFollow, infectedEntities);
+                FlockMove(zombie, entityToFollow, infectedEntities); 
+                HoverObject(zombie.transform, 3f);
 
                 if (entityToFollow != null &&
                     Vector3.Distance(zombie.transform.position, entityToFollow.transform.position) < 3)
@@ -294,13 +296,13 @@ public class MyGame : MonoBehaviour
         player.canDealDamage = true;
     }
     
-    public void CreateHealthBar(Entity e)
+    public void CreateHealthBar(Entity e, Vector3 customScale)
     {
         if (e.hpBarPrefab != null)
         {
             e.hpBarInstance = Instantiate(e.hpBarPrefab, e.transform);
             e.hpBarInstance.transform.localPosition = new Vector3(0, 2, 0);
-            e.hpBarInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            e.hpBarInstance.transform.localScale = customScale;
             e.hpBarForeground = e.hpBarInstance.transform.Find("HPBarForeground").GetComponent<Image>();
             e.hpBarBackround = e.hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
         }
@@ -519,12 +521,12 @@ public class MyGame : MonoBehaviour
             Entity box = boxes[i];
 
             // NOTE(sqd): Check if player near by
-            if (Vector3.Distance(player.transform.position, boxes[i].transform.position) < 5)
-            {
-                KillEntity(boxes[i]);
-                // TODO(sqd): Should we remove box from boxes list?
-                player.boxesCount++;
-            }
+            // if (Vector3.Distance(player.transform.position, boxes[i].transform.position) < 5)
+            // {
+            //     KillEntity(boxes[i]);
+            //     // TODO(sqd): Should we remove box from boxes list?
+            //     player.boxesCount++;
+            // }
 
 
             if (box.broken) continue;
@@ -552,17 +554,23 @@ public class MyGame : MonoBehaviour
                 //add sound effect
             }
         }
-
-
+        
         for (int i = 0; i < buffs.Count; i++)
         {
-            buffs[i].transform.Rotate(0, buffs[i].rotationSpeed * Time.deltaTime, 0);
             Entity buff = buffs[i];
+            
+            buff.transform.Rotate(0, buff.rotationSpeed * Time.deltaTime, 0);
 
-            if (Vector3.Distance(player.transform.position, buffs[i].transform.position) < 5f && keyCooldownShooting >= 1.0f)
+            float distance = Vector3.Distance(player.transform.position, buff.transform.position);
+            Debug.Log($"Distance to buff {buff.name}: {distance}");
+            
+            if (distance < 8.0f)
             {
+                Debug.Log($"Picking up buff at distance {distance}");
+                
                 keyCooldownShooting = 0.5f;
                 keyCooldownGrenade = 1.5f;
+                
                 Destroy(buff.gameObject);
                 buffs.Remove(buff);
                 entities.Remove(buff);
@@ -570,7 +578,7 @@ public class MyGame : MonoBehaviour
             }
         }
 
-        if (keyCooldownShooting <= 0.5f || keyCooldownGrenade <= 1.5f)
+        if (keyCooldownShooting <= 0.5f | keyCooldownGrenade <= 1.5f)
         {
             buffT -= Time.deltaTime;
         }
@@ -581,6 +589,19 @@ public class MyGame : MonoBehaviour
             keyCooldownShooting = 1.0f;
             keyCooldownGrenade = 3f;
         }
+    }
+    
+    public void HoverObject(Transform obj, float hoverSpeed)
+    {
+        if (obj == null) return;
+
+        // Рассчитываем смещение в пределах 4 до 7
+        float baseY = 5f; // Средняя точка
+        float hoverHeight = 1.5f; 
+        float offset = Mathf.Sin(Time.time * hoverSpeed) * hoverHeight;
+
+        // Обновляем позицию объекта
+        obj.position = new Vector3(obj.position.x, baseY + offset, obj.position.z);
     }
 
 
@@ -594,7 +615,7 @@ public class MyGame : MonoBehaviour
             float randomX = Random.Range(-100, 100);
             float randomZ = Random.Range(-100, 100);
 
-            randomPosition = new Vector3(randomX, 3, randomZ);
+            randomPosition = new Vector3(randomX, 5, randomZ);
 
             distanceToPlayer = Vector3.Distance(randomPosition, player.transform.position);
         } while (distanceToPlayer < minimumDistance);
@@ -661,7 +682,7 @@ public class MyGame : MonoBehaviour
             playerAnimator.SetFloat("posY", vertical);
 
             // Выводим значения posX и posY для проверки
-            Debug.Log($"posX: {horizontal}, posY: {vertical}");
+            //Debug.Log($"posX: {horizontal}, posY: {vertical}");
         }
         else
         {
@@ -670,7 +691,7 @@ public class MyGame : MonoBehaviour
             playerAnimator.SetFloat("posY", 0);
 
             // Выводим значения posX и posY для проверки
-            Debug.Log("No movement - posX: 0, posY: 0");
+            //Debug.Log("No movement - posX: 0, posY: 0");
         }
 
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
@@ -702,7 +723,7 @@ public class MyGame : MonoBehaviour
         {
             Ball ball;
             player.moveDirection = player.transform.forward;
-            Vector3 spawnPosition = player.ballSpawn.transform.position + new Vector3(0, 2, 0);
+            Vector3 spawnPosition = player.ballSpawn.transform.position + new Vector3(0, 4, 0);
             ball = Instantiate(player.ballPrefab, spawnPosition, player.ballSpawn.rotation);
             ball.Init(player.projVelocity);
         }

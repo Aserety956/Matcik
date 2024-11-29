@@ -223,6 +223,7 @@ MonoBehaviour:
   mr: {fileID: 0}
   healedMat: {fileID: 0}
   notHealedMat: {fileID: 0}
+  damagedMat: {fileID: 0}
   rotationSpeed: 0
   speed: 0
   deathSound: {fileID: 0}
@@ -230,9 +231,11 @@ MonoBehaviour:
   isDead: 0
   isCollisionEnabled: 0
   collisionEntityType: 0
+  originalColor: {r: 0, g: 0, b: 0, a: 0}
+  isTakingDamage: 0
   replacement: {fileID: 0}
-  breakForce: 0
-  collisionMultiplier: 0
+  breakForce: 3
+  collisionMultiplier: 100
   broken: 0
   ballPrefab: {fileID: 0}
   triggerForce: 0
@@ -241,10 +244,21 @@ MonoBehaviour:
   upwardsModifier: 0
   forceDamping: 0
   particles: {fileID: 0}
+  IsGrenade: 0
   ballSpawn: {fileID: 0}
   projVelocity: 0
+  health: 0
+  defense: 0
+  damage: 0
+  canDealDamage: 0
+  attackSpeed: 0
+  maxHealth: 0
+  hpBarPrefab: {fileID: 0}
+  hpBarInstance: {fileID: 0}
+  hpBarForeground: {fileID: 0}
+  hpBarBackround: {fileID: 0}
   moveDirection: {x: 0, y: 0, z: 0}
-  potionsCount: 0
+  boxesCount: 0
   isHealed: 0
 --- !u!1 &286383138284556568
 GameObject:

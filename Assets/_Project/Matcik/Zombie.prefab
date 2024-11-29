@@ -335,7 +335,7 @@ MonoBehaviour:
   explosionForce: 5000
   upwardsModifier: 0
   forceDamping: 0
-  particles: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
+  particles: {fileID: 1007127540951276732, guid: 3ace37360f306cb4aac03640550fa9ef, type: 3}
   IsGrenade: 0
   ballSpawn: {fileID: 0}
   projVelocity: 10
