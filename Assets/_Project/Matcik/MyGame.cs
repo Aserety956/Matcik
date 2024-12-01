@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -26,8 +27,7 @@ public class MyGame : MonoBehaviour
     [Header("SpawnTimers")] public float boxSpawnT;
     public float zombieSpawnT;
 
-    [Header("ShootingDelays")] 
-    public bool canPressKey = true;
+    [Header("ShootingDelays")] public bool canPressKey = true;
     public bool canPressKeyGrenade = true;
     public float keyCooldownShooting = 1.0f;
     public float keyCooldownGrenade = 3.0f;
@@ -41,26 +41,49 @@ public class MyGame : MonoBehaviour
 
     public float inputDisableTimer = 3f;
 
-    // [Header("RandomInputs")]
-    // public KeyCode currentRandomKey;
-    // public float keyChangeInterval = 3f;
-    // public float keyChangeTimer = 0f;
-
     [Header("MouseControls")] public float mouseSensitivity;
     public float xRotation = 0f;
 
     [Header("Bufftimer")] public float buffT = 5f;
 
-    [Header("DamagedTimer")] 
-    public float damageEffectDuration;
+    [Header("DamagedTimer")] public float damageEffectDuration;
     public float damageEffectTimer;
-    
-    
+
+    [Header("Inventory")] 
+    public List<InventoryItemInstance> inventory = new (6); // Инвентарь игрока
+    public GameObject inventorySlotPrefab; // Префаб ячейки UI
+    public Transform inventoryGrid; // Сетка для отображения предметов
+
+
 
     [Header("Animations")] public Animator playerAnimator;
     public Transform cameraTransform;
 
     public List<Entity> entities = new(256);
+    
+    
+
+    [CreateAssetMenu(fileName = "NewItem", menuName = "Inventory/Item")]
+    public class InventoryItem : ScriptableObject
+    {
+        public string itemName; // Название предмета
+        public Sprite icon; // Иконка предмета
+        public ItemType type; // Тип предмета
+    }
+    
+    [System.Serializable]
+    public class InventoryItemInstance
+    {
+        public InventoryItem data; // Ссылка на ScriptableObject
+        public int lvl; // Уровень предмета
+    }
+
+    public enum ItemType
+    {
+        Weapon,
+        Support
+    }
+
 
     public void Start()
     {
@@ -68,8 +91,24 @@ public class MyGame : MonoBehaviour
         player.transform.position = new Vector3(0, 0, -2);
         entities.Add(player);
         Cursor.lockState = CursorLockMode.Locked;
-        // playerAnimator.SetBool("Idle", true);
         cameraTransform = Camera.main.transform;
+
+        InventoryItem testItem = Resources.Load<InventoryItem>("Items/PomeGrenade");
+
+        if (testItem != null)
+        {
+            InventoryItemInstance testItemInstance = new InventoryItemInstance
+            {
+                data = testItem,
+                lvl = 1 // Уровень по умолчанию
+            };
+
+            inventory.Add(testItemInstance); // Добавляем в инвентарь
+            Debug.Log($"Added '{testItemInstance.data.itemName}' with level {testItemInstance.lvl}");
+        }
+        
+
+        UpdateInventoryUI(); // Обновляем интерфейс
     }
 
     public void Update()
@@ -79,16 +118,10 @@ public class MyGame : MonoBehaviour
             UpdateInput();
         }
 
-        if (!inputEnabled && !player.isDead)
-        {
-            NewInfectedInput();
-        }
-
         UpdateBoxes();
         UpdateZombies();
         UpdateInfectionTimer();
         Healing();
-        
     }
 
     public List<Entity> GetEntitiesOfType(EntityType type, Func<Entity, bool> filter = null)
@@ -151,7 +184,7 @@ public class MyGame : MonoBehaviour
         for (int i = 0; i < zombies.Count; i++)
         {
             Entity zombie = zombies[i];
-            
+
 
             /*if (zombie.isHealed)
             {
@@ -192,7 +225,7 @@ public class MyGame : MonoBehaviour
                 List<Entity> entitiesToFilter = GetEntitiesOfType(EntityType.Player | EntityType.Zombie);
                 Entity entityToFollow = FindNearestEntity(zombie, entitiesToFilter, (Entity e) => e.isHealed);
                 List<Entity> infectedEntities = GetEntitiesOfType(EntityType.Zombie, (e) => !e.isHealed);
-                FlockMove(zombie, entityToFollow, infectedEntities); 
+                FlockMove(zombie, entityToFollow, infectedEntities);
                 HoverObject(zombie.transform, 3f);
 
                 if (entityToFollow != null &&
@@ -206,17 +239,17 @@ public class MyGame : MonoBehaviour
                             player.isHealed = false;
                         }
                         //else
-                    //     {
-                    //         EntityInfectEntity(zombie, entityToFollow);
-                    //     }
-                    // }
-                    // else
-                    // {
-                    //     EntityHealEntity(entityToFollow, zombie);
+                        //     {
+                        //         EntityInfectEntity(zombie, entityToFollow);
+                        //     }
+                        // }
+                        // else
+                        // {
+                        //     EntityHealEntity(entityToFollow, zombie);
                     }
                 }
             }
-            
+
             {
                 if (zombie.broken) continue;
                 if (zombie.collision == null) continue;
@@ -254,11 +287,11 @@ public class MyGame : MonoBehaviour
                     //         }
                     //     }
                     // }
-                    
+
 
                     // Здесь можно добавить эффект звука
 
-                    
+
                 }
             }
             if (zombie.health <= 0)
@@ -284,18 +317,18 @@ public class MyGame : MonoBehaviour
             rb.AddExplosionForce(zombie.explosionForce, zombie.transform.position,
                 zombie.explosionRadius);
         }
-        
+
         Destroy(zombie.gameObject);
         Destroy(replacement.gameObject, 3f);
     }
-    
+
     IEnumerator AttackDamageCooldown() // TODO на подумать
     {
         player.canDealDamage = false;
         yield return new WaitForSeconds(player.attackSpeed);
         player.canDealDamage = true;
     }
-    
+
     public void CreateHealthBar(Entity e, Vector3 customScale)
     {
         if (e.hpBarPrefab != null)
@@ -307,7 +340,7 @@ public class MyGame : MonoBehaviour
             e.hpBarBackround = e.hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
         }
     }
-    
+
     public void UpdateHealthBar(Entity e)
     {
         if (e.hpBarInstance != null)
@@ -315,36 +348,36 @@ public class MyGame : MonoBehaviour
             e.hpBarForeground.fillAmount = e.health / e.maxHealth;
         }
     }
-    
+
     public void TakeDamage(float damage, Entity zombie)
     {
-        float effectiveDamage = player.damage - zombie.defense; 
-        effectiveDamage = Mathf.Max(effectiveDamage, 0); 
+        float effectiveDamage = player.damage - zombie.defense;
+        effectiveDamage = Mathf.Max(effectiveDamage, 0);
         zombie.health -= effectiveDamage;
         UpdateHealthBar(zombie);
     }
-    
-    public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat,Entity e)
-    { 
+
+    public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat, Entity e)
+    {
         yield return new WaitForSeconds(delay);
         if (e != null && e.mr != null)
         {
             e.mr.material = originalMat;
         }
     }
-    
+
     public void ApplyHitEffect(Entity e)
     {
         if (e.mr == null || e.damagedMat == null)
         {
-            return; 
+            return;
         }
 
         Material originalMat = e.mr.sharedMaterial;
         e.mr.material = e.damagedMat;
         StartCoroutine(ResetMaterialAfterHit(0.1f, originalMat, e));
     }
-    
+
     public void HandleCollision(Entity entity, Collision collision)
     {
         Entity otherEntity = collision.gameObject.GetComponent<Entity>();
@@ -361,18 +394,18 @@ public class MyGame : MonoBehaviour
 
         if (otherEntity.type == EntityType.Projectile && collision.relativeVelocity.magnitude >= entity.breakForce)
         {
-            Destroy(collision.gameObject); 
-            ApplyHitEffect(entity);        
-            TakeDamage(35, entity);        
+            Destroy(collision.gameObject);
+            ApplyHitEffect(entity);
+            TakeDamage(35, entity);
             Debug.Log($"{entity.name} уничтожил объект {collision.gameObject.name} при столкновении.");
         }
-        
+
         for (int j = 0; j < Grenades.Count; j++)
         {
             Entity grenade = Grenades[j];
-            
-        if (otherEntity.type == EntityType.Grenade && collision.relativeVelocity.magnitude >= entity.breakForce)
-        {
+
+            if (otherEntity.type == EntityType.Grenade && collision.relativeVelocity.magnitude >= entity.breakForce)
+            {
 
                 Instantiate(grenade.particles, grenade.transform.position, Quaternion.identity);
 
@@ -382,7 +415,7 @@ public class MyGame : MonoBehaviour
                 foreach (var hit in colliders)
                 {
                     Rigidbody rb = hit.GetComponent<Rigidbody>();
-                    
+
                     // Нанесение урона объектам типа Entity
                     Entity entityG = hit.GetComponent<Entity>();
                     if (entityG != null && entityG.type == EntityType.Zombie) // Проверяем тип Zombie
@@ -391,7 +424,7 @@ public class MyGame : MonoBehaviour
                         float damageMultiplier = Mathf.Clamp01(1 - (distance / grenade.explosionRadius));
                         TakeDamage(grenade.damage * damageMultiplier, entityG);
                         ApplyHitEffect(entityG);
-                        
+
                         if (entityG.health <= 0)
                         {
                             Debug.Log($"{entityG.name} died from grenade explosion.");
@@ -405,11 +438,11 @@ public class MyGame : MonoBehaviour
                 entities.Remove(grenade);
                 Destroy(collision.gameObject); // Уничтожаем гранату
             }
-            
+
             Debug.Log($"{entity.name} уничтожил объект {collision.gameObject.name} при столкновении.");
         }
     }
-    
+
 
 
     public void FlockMove(Entity e, Entity entityToFollow, List<Entity> entitiesToAvoid)
@@ -554,23 +587,23 @@ public class MyGame : MonoBehaviour
                 //add sound effect
             }
         }
-        
+
         for (int i = 0; i < buffs.Count; i++)
         {
             Entity buff = buffs[i];
-            
+
             buff.transform.Rotate(0, buff.rotationSpeed * Time.deltaTime, 0);
 
             float distance = Vector3.Distance(player.transform.position, buff.transform.position);
             Debug.Log($"Distance to buff {buff.name}: {distance}");
-            
+
             if (distance < 8.0f)
             {
                 Debug.Log($"Picking up buff at distance {distance}");
-                
+
                 keyCooldownShooting = 0.5f;
                 keyCooldownGrenade = 1.5f;
-                
+
                 Destroy(buff.gameObject);
                 buffs.Remove(buff);
                 entities.Remove(buff);
@@ -590,14 +623,14 @@ public class MyGame : MonoBehaviour
             keyCooldownGrenade = 3f;
         }
     }
-    
+
     public void HoverObject(Transform obj, float hoverSpeed)
     {
         if (obj == null) return;
 
         // Рассчитываем смещение в пределах 4 до 7
         float baseY = 5f; // Средняя точка
-        float hoverHeight = 1.5f; 
+        float hoverHeight = 1.5f;
         float offset = Mathf.Sin(Time.time * hoverSpeed) * hoverHeight;
 
         // Обновляем позицию объекта
@@ -743,6 +776,7 @@ public class MyGame : MonoBehaviour
                 //Vector3 throwDirection = player.transform.forward * 10f + Vector3.up * 5f;
                 rb.velocity = player.transform.forward * grenade.projVelocity + Vector3.up * 15f;
             }
+
             if (grenade != null)
             {
                 entities.Add(grenade);
@@ -756,6 +790,7 @@ public class MyGame : MonoBehaviour
         yield return new WaitForSeconds(keyCooldownShooting);
         canPressKey = true;
     }
+
     IEnumerator KeyPressCooldownGrenade()
     {
         canPressKeyGrenade = false;
@@ -810,7 +845,6 @@ public class MyGame : MonoBehaviour
         }
     }
 
-
     public void EnableFall()
     {
         if (!player.deathAudioSource.isPlaying)
@@ -820,107 +854,80 @@ public class MyGame : MonoBehaviour
         }
     }
 
-
-    public void NewInfectedInput()
+    public void AddItem(InventoryItem itemData)
     {
-        player.speed = 15f;
-        player.rotationSpeed = 20f;
-        float rotationY = player.rotationSpeed * Time.deltaTime;
-        float moveDistance = player.speed * Time.deltaTime;
-
-        if (Input.GetKey(KeyCode.W))
+        // Проверяем, есть ли уже предмет в инвентаре
+        InventoryItemInstance existingItem = inventory.Find(i => i.data == itemData);
+        if (existingItem != null)
         {
-            player.transform.position += player.transform.forward * moveDistance;
+            existingItem.lvl++;
+        }
+        else
+        {
+            // Создаём новую запись
+            inventory.Add(new InventoryItemInstance { data = itemData, lvl = 1 });
         }
 
-        if (Input.GetKey(KeyCode.A))
+        UpdateInventoryUI();
+    }
+
+    public void UpdateInventoryUI()
+    {
+        // Очищаем старый интерфейс
+        foreach (Transform child in inventoryGrid)
         {
-            player.transform.position -= player.transform.right * moveDistance;
+            Destroy(child.gameObject);
         }
 
-        if (Input.GetKey(KeyCode.S))
+        // Создаём новые слоты
+        foreach (var instance in inventory)
         {
-            player.transform.position -= player.transform.forward * moveDistance;
-        }
+            // Создаём слот из префаба
+            GameObject slot = Instantiate(inventorySlotPrefab, inventoryGrid);
 
-        if (Input.GetKey(KeyCode.D))
-        {
-            player.transform.position += player.transform.right * moveDistance;
-        }
+            // Устанавливаем иконку предмета (на корневом объекте Button)
+            Image icon = slot.GetComponent<Image>();
+            if (icon != null)
+            {
+                icon.sprite = instance.data.icon; // Берём иконку из ScriptableObject
+            }
+            else
+            {
+                Debug.LogError("Image component missing on inventorySlotPrefab!");
+            }
 
-        if (Input.GetKey(KeyCode.E))
-        {
-            player.transform.Rotate(0, rotationY, 0);
+            // Настраиваем уровень предмета (Lvl) — ищем дочерний объект
+            TextMeshProUGUI lvlText = slot.GetComponentInChildren<TextMeshProUGUI>();
+            if (lvlText != null)
+            {
+                lvlText.text = $"Lvl {instance.lvl}"; // Уровень предмета из InventoryItemInstance
+            }
+            else
+            {
+                Debug.LogError("Text component missing for Lvl in inventorySlotPrefab!");
+            }
         }
+    }
 
-        if (Input.GetKey(KeyCode.Q))
+    public void UpdateItemIcon(InventoryItem itemData, Sprite newIcon)
+    {
+        // Проверяем, есть ли предмет в инвентаре
+        InventoryItemInstance existingItem = inventory.Find(i => i.data == itemData);
+        if (existingItem != null)
         {
-            player.transform.Rotate(0, -rotationY, 0);
+            // Обновляем иконку в данных предмета
+            existingItem.data.icon = newIcon;
+
+            Debug.Log($"Updated icon for item: {existingItem.data.itemName}");
+            UpdateInventoryUI(); // Обновляем интерфейс
+        }
+        else
+        {
+            Debug.LogWarning($"Item {itemData.itemName} not found in inventory!");
         }
     }
 }
+    
 
+    
 
-//public static KeyCode[] inputKeys = new[] { KeyCode.W, KeyCode.A, KeyCode.S, KeyCode.D, KeyCode.E, KeyCode.Q };
-//public static KeyCode[] infectedKeys;
-
-//public static KeyCode[] ShuffleArray(KeyCode[] array)
-//{
-//KeyCode[] newArray = (KeyCode[])array.Clone();
-//int n = newArray.Length;
-
-//for (int i = n - 1; i > 0; i--)
-//{
-//int j = Random.Range(0, i + 1);
-//KeyCode temp = newArray[i];
-//newArray[i] = newArray[j];
-//newArray[j] = temp;
-//}
-
-//return newArray;
-//}
-
-//public void InfectedInput()
-//{
-//float rotationY = player.rotationSpeed * Time.deltaTime;
-// float moveDistance = player.speed * Time.deltaTime;
-
-//keyChangeTimer -= Time.deltaTime;
-
-
-//if (keyChangeTimer <= 0)
-//{
-//keyChangeTimer = keyChangeInterval;
-//infectedKeys = ShuffleArray(inputKeys);
-//}
-
-//if (Input.GetKey(infectedKeys[0]))
-//{
-//player.transform.position += player.transform.forward * moveDistance;
-//}
-
-//if (Input.GetKey(infectedKeys[1]))
-//{
-//player.transform.position -= player.transform.right * moveDistance;
-//}
-
-//if (Input.GetKey(infectedKeys[2]))
-//{
-//player.transform.position -= player.transform.forward * moveDistance;
-//}
-
-//if (Input.GetKey(infectedKeys[3]))
-//{
-//player.transform.position += player.transform.right * moveDistance;
-//}
-
-//if (Input.GetKey(infectedKeys[4]))
-//{
-//player.transform.Rotate(0, rotationY, 0);
-//}
-
-//if (Input.GetKey(infectedKeys[5]))
-//{
-//player.transform.Rotate(0, -rotationY, 0);
-//}
-//}
