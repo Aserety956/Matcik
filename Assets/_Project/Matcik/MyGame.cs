@@ -10,59 +10,70 @@ using Random = UnityEngine.Random;
 public class MyGame : MonoBehaviour
 {
     // Main idea - Vampire Survivors like-game
-    [Header("FlockMove")] public float separationDistance = 10.0f; // Минимальная дистанция между зомби
+    [Header("FlockMove")] 
+    public float separationDistance = 10.0f; // Минимальная дистанция между зомби
     public float alignmentWeight = 10f; // Влияние выравнивания
     public float cohesionWeight = 10f; // Влияние притяжения к соседям
 
-    [Header("Entities")] public Entity boxPrefab;
+    [Header("Entities")] 
+    public Entity boxPrefab;
     public Entity buffPrefab;
     public Entity zombiePrefab;
     public Entity player;
     public GameObject grenadePrefab;
 
 
-    [Header("SpawnIntervals")] public float boxSpawnInterval;
+    [Header("SpawnIntervals")] 
+    public float boxSpawnInterval;
     public float zombieSpawnInterval;
 
-    [Header("SpawnTimers")] public float boxSpawnT;
+    [Header("SpawnTimers")] 
+    public float boxSpawnT;
     public float zombieSpawnT;
 
-    [Header("ShootingDelays")] public bool canPressKey = true;
+    [Header("ShootingDelays")] 
+    public bool canPressKey = true;
     public bool canPressKeyGrenade = true;
     public float keyCooldownShooting = 1.0f;
     public float keyCooldownGrenade = 3.0f;
 
+    
+    public float inputDisableTimer = 3f; // idea?
 
-    [Header("InfectStatus")] public float infectTimerT = 10f;
-    public bool isInfected = false;
-
-    [Header("InfectedInput")] // Improve idea to infected impact
-    public bool inputEnabled = true;
-
-    public float inputDisableTimer = 3f;
-
-    [Header("MouseControls")] public float mouseSensitivity;
+    [Header("MouseControls")] 
+    public float mouseSensitivity;
     public float xRotation = 0f;
 
     [Header("Bufftimer")] public float buffT = 5f;
 
-    [Header("DamagedTimer")] public float damageEffectDuration;
+    [Header("DamagedTimer")] 
+    public float damageEffectDuration;
     public float damageEffectTimer;
+    
+    [Header("Exp LvL Upgrades")]
+    // Опыт и уровень
+    public int currentLevel = 1;      // Текущий уровень игрока
+    public int currentXP = 0;         // Текущее количество XP
+    public int xpToNextLevel = 100;  // XP для следующего уровня
+    public Slider xpBar;             // Прогресс-бар для XP
+    // Меню улучшений
+    public GameObject upgradeMenu;              // Панель выбора улучшений
+    public List<Button> upgradeButtons;         // Кнопки для выбора улучшений
+    // Список доступных улучшений
+    public List<Upgrade> availableUpgrades;
+    
 
-    [Header("Inventory")] 
-    public List<InventoryItemInstance> inventory = new (6); // Инвентарь игрока
-    public GameObject inventorySlotPrefab; // Префаб ячейки UI
-    public Transform inventoryGrid; // Сетка для отображения предметов
-
-
-
-    [Header("Animations")] public Animator playerAnimator;
+    [Header("Animations")] 
+    public Animator playerAnimator;
     public Transform cameraTransform;
 
     public List<Entity> entities = new(256);
     
+    [Header("Inventory")] 
+    public List<InventoryItemInstance> inventory = new (6); // Инвентарь игрока
+    public GameObject inventorySlotPrefab; // Префаб ячейки UI
+    public Transform inventoryGrid; // Сетка для отображения предметов
     
-
     [CreateAssetMenu(fileName = "NewItem", menuName = "Inventory/Item")]
     public class InventoryItem : ScriptableObject
     {
@@ -76,6 +87,15 @@ public class MyGame : MonoBehaviour
     {
         public InventoryItem data; // Ссылка на ScriptableObject
         public int lvl; // Уровень предмета
+    }
+    
+    [System.Serializable]
+    public class Upgrade
+    {
+        public string name;          // Название улучшения
+        public string description;   // Описание улучшения
+        public Sprite icon;          // Иконка улучшения
+        public System.Action applyEffect; // Действие при выборе улучшения
     }
 
     public enum ItemType
@@ -92,6 +112,8 @@ public class MyGame : MonoBehaviour
         entities.Add(player);
         Cursor.lockState = CursorLockMode.Locked;
         cameraTransform = Camera.main.transform;
+        
+        UpdateXPUI();
 
         InventoryItem testItem = Resources.Load<InventoryItem>("Items/PomeGrenade");
 
@@ -113,15 +135,14 @@ public class MyGame : MonoBehaviour
 
     public void Update()
     {
-        if (inputEnabled == true && !player.isDead)
+        if (!player.isDead)
         {
             UpdateInput();
         }
 
         UpdateBoxes();
         UpdateZombies();
-        UpdateInfectionTimer();
-        Healing();
+        //Healing(); TODO: heal method?
     }
 
     public List<Entity> GetEntitiesOfType(EntityType type, Func<Entity, bool> filter = null)
@@ -164,7 +185,6 @@ public class MyGame : MonoBehaviour
         List<Entity> zombies = GetEntitiesOfType(EntityType.Zombie);
         List<Entity> boxes = GetEntitiesOfType(EntityType.Box);
         List<Entity> projectiles = GetEntitiesOfType(EntityType.Projectile);
-        //List<Entity> Grenades = GetEntitiesOfType(EntityType.Grenade);
 
         if (zombies.Count < 10)
         {
@@ -186,41 +206,7 @@ public class MyGame : MonoBehaviour
             Entity zombie = zombies[i];
 
 
-            /*if (zombie.isHealed)
-            {
-                if (zombie.HasBox())
-                {
-                    Entity nearestZombie = FindNearestEntity(zombie, zombies, (Entity e) => !e.isHealed);
-
-                    if (nearestZombie != null)
-                    {
-                        // PERFORMANCE(sqd): Find a way not to call this;
-                        List<Entity> healedEntities = GetEntitiesOfType(EntityType.Zombie, (e) => e.isHealed);
-                        FlockMove(zombie, nearestZombie, healedEntities);
-
-                        if (Vector3.Distance(zombie.transform.position, nearestZombie.transform.position) < 1.5f)
-                        {
-                            EntityHealEntity(zombie, nearestZombie);
-                        }
-                    }
-                }
-                else
-                {
-                    Entity nearestBox = FindNearestEntity(zombie, boxes);
-
-                    if (nearestBox != null)
-                    {
-                        FlockMove(zombie, nearestBox, zombies);
-
-                        if (Vector3.Distance(zombie.transform.position, nearestBox.transform.position) < 1.5f)
-                        {
-                            KillEntity(nearestBox);
-                            zombie.boxesCount++;
-                        }
-                    }
-                }
-            }
-            else*/
+            
             {
                 List<Entity> entitiesToFilter = GetEntitiesOfType(EntityType.Player | EntityType.Zombie);
                 Entity entityToFollow = FindNearestEntity(zombie, entitiesToFilter, (Entity e) => e.isHealed);
@@ -228,25 +214,13 @@ public class MyGame : MonoBehaviour
                 FlockMove(zombie, entityToFollow, infectedEntities);
                 HoverObject(zombie.transform, 3f);
 
-                if (entityToFollow != null &&
+                if (entityToFollow != null && 
                     Vector3.Distance(zombie.transform.position, entityToFollow.transform.position) < 3)
                 {
-                    if (entityToFollow.boxesCount == 0)
-                    {
                         if (entityToFollow.type == EntityType.Player)
                         {
-                            isInfected = true;
                             player.isHealed = false;
                         }
-                        //else
-                        //     {
-                        //         EntityInfectEntity(zombie, entityToFollow);
-                        //     }
-                        // }
-                        // else
-                        // {
-                        //     EntityHealEntity(entityToFollow, zombie);
-                    }
                 }
             }
 
@@ -258,37 +232,7 @@ public class MyGame : MonoBehaviour
                 if (zombie.collision.relativeVelocity.magnitude >= zombie.breakForce) //снаряд уничтожать при коллизии
                 {
                     float effectiveDamage = Mathf.Max(0, player.damage - zombie.defense);
-
-                    // for (int j = 0; j < Grenades.Count; j++)
-                    // {
-                    //     Entity grenade = Grenades[j];
-                    //
-                    //
-                    //     Instantiate(grenade.particles, grenade.transform.position, Quaternion.identity);
-                    //
-                    //     // Обработка физического воздействия
-                    //     Collider[] colliders =
-                    //         Physics.OverlapSphere(grenade.transform.position, grenade.explosionRadius);
-                    //     foreach (var hit in colliders)
-                    //     {
-                    //         Rigidbody rb = hit.GetComponent<Rigidbody>();
-                    //         if (rb != null)
-                    //         {
-                    //             rb.AddExplosionForce(grenade.explosionForce, grenade.transform.position,
-                    //                 grenade.explosionRadius, grenade.upwardsModifier, ForceMode.Impulse);
-                    //         }
-                    //
-                    //         // Нанесение урона объектам типа Entity
-                    //         Entity entity = hit.GetComponent<Entity>();
-                    //         if (entity != null)
-                    //         {
-                    //             TakeDamage(grenade.damage, entity);
-                    //             ApplyHitEffect(entity);
-                    //         }
-                    //     }
-                    // }
-
-
+                    
                     // Здесь можно добавить эффект звука
 
 
@@ -515,22 +459,6 @@ public class MyGame : MonoBehaviour
         }
     }
 
-    public void EntityInfectEntity(Entity e, Entity entityToInfect)
-    {
-        entityToInfect.isHealed = false;
-        entityToInfect.speed /= 2;
-        entityToInfect.mr.sharedMaterial = entityToInfect.notHealedMat;
-    }
-
-    public void EntityHealEntity(Entity e, Entity entityToHeal)
-    {
-        Debug.Log($"{e.name} healing {entityToHeal.name}");
-        e.boxesCount--;
-        entityToHeal.isHealed = true;
-        entityToHeal.speed *= 2;
-        entityToHeal.mr.sharedMaterial = entityToHeal.healedMat;
-    }
-
     public void UpdateBoxes()
     {
         List<Entity> boxes = GetEntitiesOfType(EntityType.Box);
@@ -552,15 +480,6 @@ public class MyGame : MonoBehaviour
         {
             boxes[i].transform.Rotate(0, boxes[i].rotationSpeed * Time.deltaTime, 0);
             Entity box = boxes[i];
-
-            // NOTE(sqd): Check if player near by
-            // if (Vector3.Distance(player.transform.position, boxes[i].transform.position) < 5)
-            // {
-            //     KillEntity(boxes[i]);
-            //     // TODO(sqd): Should we remove box from boxes list?
-            //     player.boxesCount++;
-            // }
-
 
             if (box.broken) continue;
             if (box.collision == null) continue;
@@ -802,47 +721,9 @@ public class MyGame : MonoBehaviour
 
 
     // Метод для восстановления здоровья
-    public void PlayerHeal(float amount) // amount?
+    public void PlayerHeal(float amount) // TODO: heal on pickup
     {
         player.health = Mathf.Min(player.health + amount, 100f); // Ограничение на максимальное здоровье
-    }
-
-
-    public void UpdateInfectionTimer()
-    {
-        if (isInfected)
-        {
-            if (infectTimerT > 0)
-            {
-                infectTimerT -= Time.deltaTime;
-                inputDisableTimer -= Time.deltaTime;
-
-                if (inputDisableTimer <= 0)
-                {
-                    inputEnabled = !inputEnabled;
-                    inputDisableTimer = 3f;
-                }
-            }
-            else if (!player.isDead)
-            {
-                EnableFall();
-
-                // TODO(sqd): Ragdoll
-            }
-        }
-    }
-
-    public void Healing()
-    {
-        if (isInfected && !player.isHealed && player.HasBox())
-        {
-            isInfected = false;
-            player.boxesCount--;
-            player.isHealed = true;
-            inputDisableTimer = 3f;
-            inputEnabled = true;
-            infectTimerT = 10f;
-        }
     }
 
     public void EnableFall()
@@ -895,7 +776,7 @@ public class MyGame : MonoBehaviour
             {
                 Debug.LogError("Image component missing on inventorySlotPrefab!");
             }
-
+ 
             // Настраиваем уровень предмета (Lvl) — ищем дочерний объект
             TextMeshProUGUI lvlText = slot.GetComponentInChildren<TextMeshProUGUI>();
             if (lvlText != null)
@@ -926,7 +807,92 @@ public class MyGame : MonoBehaviour
             Debug.LogWarning($"Item {itemData.itemName} not found in inventory!");
         }
     }
+    public void AddXP(int xp)
+    {
+        currentXP += xp;
+
+        // Проверяем переход на новый уровень
+        while (currentXP >= xpToNextLevel)
+        {
+            LevelUp();
+        }
+
+        UpdateXPUI(); // Обновляем интерфейс
+    }
+
+    // Обновление уровня
+    private void LevelUp()
+    {
+        currentXP -= xpToNextLevel; // Переносим лишний XP
+        currentLevel++;             // Увеличиваем уровень
+        xpToNextLevel = Mathf.FloorToInt(xpToNextLevel * 1.25f); // Увеличиваем требования
+
+        Debug.Log($"Level Up! Current Level: {currentLevel}");
+
+        // Показываем меню улучшений
+        ShowUpgradeMenu(GetRandomUpgrades(3)); // Выбираем 3 случайных улучшения
+    }
+
+    // Обновление UI прогресса
+    private void UpdateXPUI()
+    {
+        if (xpBar != null)
+        {
+            xpBar.value = (float)currentXP / xpToNextLevel; // Устанавливаем прогресс
+        }
+    }
+
+    // Показ меню улучшений
+    public void ShowUpgradeMenu(List<Upgrade> upgrades)
+    {
+        upgradeMenu.SetActive(true); // Показываем меню
+
+        for (int i = 0; i < upgradeButtons.Count; i++)
+        {
+            if (i < upgrades.Count)
+            {
+                Upgrade upgrade = upgrades[i];
+                upgradeButtons[i].gameObject.SetActive(true);
+                upgradeButtons[i].GetComponentInChildren<Text>().text = upgrade.name;
+                upgradeButtons[i].GetComponent<Image>().sprite = upgrade.icon;
+
+                // Удаляем предыдущие события и добавляем новые
+                upgradeButtons[i].onClick.RemoveAllListeners();
+                upgradeButtons[i].onClick.AddListener(() => ApplyUpgrade(upgrade));
+            }
+            else
+            {
+                upgradeButtons[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+    // Применение улучшения
+    public void ApplyUpgrade(Upgrade upgrade)
+    {
+        upgrade.applyEffect?.Invoke(); // Применяем эффект улучшения
+        Debug.Log($"Applied upgrade: {upgrade.name}");
+
+        upgradeMenu.SetActive(false); // Скрываем меню
+    }
+
+    // Получение случайных улучшений
+    public List<Upgrade> GetRandomUpgrades(int count)
+    {
+        List<Upgrade> randomUpgrades = new List<Upgrade>();
+        List<Upgrade> pool = new List<Upgrade>(availableUpgrades);
+
+        for (int i = 0; i < count && pool.Count > 0; i++)
+        {
+            int randomIndex = Random.Range(0, pool.Count);
+            randomUpgrades.Add(pool[randomIndex]);
+            pool.RemoveAt(randomIndex); // Убираем выбранное улучшение из пула
+        }
+
+        return randomUpgrades;
+    }
 }
+
     
 
     
