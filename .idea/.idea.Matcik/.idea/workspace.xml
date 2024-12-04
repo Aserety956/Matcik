@@ -9,6 +9,28 @@
   <component name="ChangeListManager">
     <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/URPstore/URP.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/URPstore/URP.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Assets/Gems/Crystals.blend.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Assets/Gems/Crystals.blend.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Assets/Gems/Crystals.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Assets/Gems/Crystals.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Cannon .prefab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Cannon .prefab.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Cannon.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Cannon.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Emerald.prefab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Emerald.prefab.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/New Material.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/New Material.mat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Ruby.prefab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Ruby.prefab.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Sapphire.prefab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Sapphire.prefab.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Scene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Scene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/boom.fbx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/boom.fbx.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/g_jabko.FBX" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/g_jabko.FBX.meta" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,22 +58,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Attach to Unity Editor.Attach to Unity Editor & Play.executor": "Debug",
-    "Attach to Unity Editor.Attach to Unity Editor.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "reference.settingsdialog.IDE.editor.colors.C#",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Attach to Unity Editor.Attach to Unity Editor &amp; Play.executor&quot;: &quot;Debug&quot;,
+    &quot;Attach to Unity Editor.Attach to Unity Editor.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settingsdialog.IDE.editor.colors.C#&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="Attach to Unity Editor.Attach to Unity Editor">
     <configuration name="Start Unity" type="RunUnityExe" factoryName="Unity Executable">
       <option name="EXE_PATH" value="D:\Games\2022.3.36f1\Editor\Unity.exe" />
@@ -140,6 +162,9 @@
       <workItem from="1732838961840" duration="3366000" />
       <workItem from="1733084656537" duration="11212000" />
       <workItem from="1733192091963" duration="6671000" />
+      <workItem from="1733258078520" duration="585000" />
+      <workItem from="1733287917015" duration="6543000" />
+      <workItem from="1733294957833" duration="2013000" />
     </task>
     <servers />
   </component>

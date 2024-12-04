@@ -21,6 +21,10 @@ public class MyGame : MonoBehaviour
     public Entity zombiePrefab;
     public Entity player;
     public GameObject grenadePrefab;
+    public Entity gemlvl1Prefab;
+    public Entity gemlvl2Prefab;
+    public Entity gemlvl3Prefab;
+        
 
 
     [Header("SpawnIntervals")] 
@@ -142,6 +146,7 @@ public class MyGame : MonoBehaviour
 
         UpdateBoxes();
         UpdateZombies();
+        Exp();
         //Healing(); TODO: heal method?
     }
 
@@ -185,6 +190,8 @@ public class MyGame : MonoBehaviour
         List<Entity> zombies = GetEntitiesOfType(EntityType.Zombie);
         List<Entity> boxes = GetEntitiesOfType(EntityType.Box);
         List<Entity> projectiles = GetEntitiesOfType(EntityType.Projectile);
+        List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
+        
 
         if (zombies.Count < 10)
         {
@@ -204,8 +211,6 @@ public class MyGame : MonoBehaviour
         for (int i = 0; i < zombies.Count; i++)
         {
             Entity zombie = zombies[i];
-
-
             
             {
                 List<Entity> entitiesToFilter = GetEntitiesOfType(EntityType.Player | EntityType.Zombie);
@@ -240,12 +245,45 @@ public class MyGame : MonoBehaviour
             }
             if (zombie.health <= 0)
             {
+                Entity gem = SpawnEntityOnDestroyed(zombie, gemlvl1Prefab);
+                gems.Add(gem);
+                i++;
                 DestroyZombie(zombie);
                 zombies.Remove(zombie);
                 entities.Remove(zombie);
             }
         }
     }
+    public void Exp() //TODO: seems weird
+        {
+            List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
+            
+            if (gems.Count == 0)
+                {
+                    Debug.Log("No experience gems found!");
+                    return;
+                }
+            
+            for (int i = 0; i < gems.Count; i++)
+            {
+                Entity gem = gems[i];
+                
+            if (Vector3.Distance(player.transform.position, gem.transform.position) <= 5)
+            {
+       
+                currentXP += gem.exp;
+                UpdateXPUI();
+                Destroy(gem.gameObject);
+                gems.Remove(gem);
+                entities.Remove(gem);
+                i--;
+            }
+                          
+            }
+                
+        }
+        
+    
 
     public void DestroyZombie(Entity zombie)
     {
@@ -580,8 +618,8 @@ public class MyGame : MonoBehaviour
 
     public Entity SpawnEntityOnDestroyed(Entity destroyedEntity, Entity prefabToSpawn)
     {
-        Vector3 spawnPosition = destroyedEntity.transform.position;
-        Quaternion spawnRotation = destroyedEntity.transform.rotation;
+        Vector3 spawnPosition = destroyedEntity.transform.position - new Vector3(0, 2, 0);
+        Quaternion spawnRotation = prefabToSpawn.transform.rotation;
 
         Entity result = Instantiate(prefabToSpawn, spawnPosition, spawnRotation);
 

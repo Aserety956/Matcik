@@ -345,6 +345,7 @@ MonoBehaviour:
   canDealDamage: 0
   attackSpeed: 0
   maxHealth: 100
+  exp: 0
   hpBarPrefab: {fileID: 5303699854912754023, guid: 678f93637a488b44887509a9c6fcc0e9, type: 3}
   hpBarInstance: {fileID: 0}
   hpBarForeground: {fileID: 9173978057401823071, guid: 1f49b8f1b662a9646a957d260aa8c344, type: 3}

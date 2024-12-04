@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 8480200287151580994}
   - component: {fileID: 5107665198977848601}
   - component: {fileID: 6749420738366197940}
+  - component: {fileID: -7483390410567822133}
   m_Layer: 0
-  m_Name: Sapphire
+  m_Name: Exp gem lvl 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,13 +27,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1999426709539409044}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.037406314, y: 0.5370648, z: 0.8203677, w: -0.19276711}
-  m_LocalPosition: {x: 4.3577766, y: 0.10578004, z: -0.000958771}
+  m_LocalRotation: {x: 0.81113803, y: 0.12257759, z: 0.15372424, w: 0.5508164}
+  m_LocalPosition: {x: 4.646408, y: -0.07217729, z: -0.2929567}
   m_LocalScale: {x: 0.042225033, y: 0.04331093, z: 0.1567166}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 121.142, y: -48.01599, z: -45.395996}
 --- !u!33 &5107665198977848601
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -83,3 +84,57 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-7483390410567822133
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1999426709539409044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b0461747d10edf468aa97ad11fb3ab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 64
+  mr: {fileID: 0}
+  healedMat: {fileID: 0}
+  notHealedMat: {fileID: 0}
+  damagedMat: {fileID: 0}
+  rotationSpeed: 0
+  speed: 0
+  deathSound: {fileID: 0}
+  deathAudioSource: {fileID: 0}
+  isDead: 0
+  isCollisionEnabled: 0
+  collisionEntityType: 0
+  originalColor: {r: 0, g: 0, b: 0, a: 0}
+  isTakingDamage: 0
+  replacement: {fileID: 0}
+  breakForce: 0
+  collisionMultiplier: 0
+  broken: 0
+  ballPrefab: {fileID: 0}
+  triggerForce: 0
+  explosionRadius: 0
+  explosionForce: 0
+  upwardsModifier: 0
+  forceDamping: 0
+  particles: {fileID: 0}
+  IsGrenade: 0
+  ballSpawn: {fileID: 0}
+  projVelocity: 0
+  health: 0
+  defense: 0
+  damage: 0
+  canDealDamage: 0
+  attackSpeed: 0
+  maxHealth: 0
+  exp: 25
+  hpBarPrefab: {fileID: 0}
+  hpBarInstance: {fileID: 0}
+  hpBarForeground: {fileID: 0}
+  hpBarBackround: {fileID: 0}
+  moveDirection: {x: 0, y: 0, z: 0}
+  boxesCount: 0
+  isHealed: 0

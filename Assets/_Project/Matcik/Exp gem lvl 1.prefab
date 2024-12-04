@@ -11,8 +11,9 @@ GameObject:
   - component: {fileID: 7229134313721904044}
   - component: {fileID: 6926135669687541819}
   - component: {fileID: 8229251805565655117}
+  - component: {fileID: -4791376813349504071}
   m_Layer: 0
-  m_Name: Emerald
+  m_Name: Exp gem lvl 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,13 +27,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8469334018666193422}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.6785535, y: 0.08227419, z: -0.2077577, w: 0.69973767}
-  m_LocalPosition: {x: 0.8792182, y: 0.873733, z: -0.18457742}
-  m_LocalScale: {x: 0.440395, y: 0.38139328, z: 1.0286288}
+  m_LocalRotation: {x: 0.70710677, y: 0, z: 0, w: 0.70710677}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.4, y: 0.4, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 90, z: 90}
 --- !u!33 &6926135669687541819
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -83,3 +84,57 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-4791376813349504071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8469334018666193422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b0461747d10edf468aa97ad11fb3ab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 64
+  mr: {fileID: 0}
+  healedMat: {fileID: 0}
+  notHealedMat: {fileID: 0}
+  damagedMat: {fileID: 0}
+  rotationSpeed: 0
+  speed: 0
+  deathSound: {fileID: 0}
+  deathAudioSource: {fileID: 0}
+  isDead: 0
+  isCollisionEnabled: 0
+  collisionEntityType: 0
+  originalColor: {r: 0, g: 0, b: 0, a: 0}
+  isTakingDamage: 0
+  replacement: {fileID: 0}
+  breakForce: 0
+  collisionMultiplier: 0
+  broken: 0
+  ballPrefab: {fileID: 0}
+  triggerForce: 0
+  explosionRadius: 0
+  explosionForce: 0
+  upwardsModifier: 0
+  forceDamping: 0
+  particles: {fileID: 0}
+  IsGrenade: 0
+  ballSpawn: {fileID: 0}
+  projVelocity: 0
+  health: 0
+  defense: 0
+  damage: 0
+  canDealDamage: 0
+  attackSpeed: 0
+  maxHealth: 0
+  exp: 10
+  hpBarPrefab: {fileID: 0}
+  hpBarInstance: {fileID: 0}
+  hpBarForeground: {fileID: 0}
+  hpBarBackround: {fileID: 0}
+  moveDirection: {x: 0, y: 0, z: 0}
+  boxesCount: 0
+  isHealed: 0
