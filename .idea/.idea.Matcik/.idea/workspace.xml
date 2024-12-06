@@ -9,28 +9,9 @@
   <component name="ChangeListManager">
     <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/URPstore/URP.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/URPstore/URP.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Assets/Gems/Crystals.blend.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Assets/Gems/Crystals.blend.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Assets/Gems/Crystals.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Assets/Gems/Crystals.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Cannon .prefab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Cannon .prefab.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Cannon.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Cannon.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Emerald.prefab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Emerald.prefab.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Exp gem lvl 1.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Exp gem lvl 1.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/New Material.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/New Material.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Ruby.prefab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Ruby.prefab.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Sapphire.prefab" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Sapphire.prefab.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Scene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Scene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/boom.fbx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/boom.fbx.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/g_jabko.FBX" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/g_jabko.FBX.meta" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -165,6 +146,7 @@
       <workItem from="1733258078520" duration="585000" />
       <workItem from="1733287917015" duration="6543000" />
       <workItem from="1733294957833" duration="2013000" />
+      <workItem from="1733446382455" duration="5779000" />
     </task>
     <servers />
   </component>

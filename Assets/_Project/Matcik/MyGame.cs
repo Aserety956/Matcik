@@ -65,6 +65,7 @@ public class MyGame : MonoBehaviour
     public List<Button> upgradeButtons;         // Кнопки для выбора улучшений
     // Список доступных улучшений
     public List<Upgrade> availableUpgrades;
+
     
 
     [Header("Animations")] 
@@ -119,7 +120,7 @@ public class MyGame : MonoBehaviour
         
         UpdateXPUI();
 
-        InventoryItem testItem = Resources.Load<InventoryItem>("Items/PomeGrenade");
+        InventoryItem testItem = Resources.Load<InventoryItem>("Items/GrenadePome");
 
         if (testItem != null)
         {
@@ -133,7 +134,30 @@ public class MyGame : MonoBehaviour
             Debug.Log($"Added '{testItemInstance.data.itemName}' with level {testItemInstance.lvl}");
         }
         
-
+        availableUpgrades = new List<Upgrade>
+        {
+            new Upgrade
+            {
+                name = "Damage Boost",
+                description = "Increase weapon damage by 10%",
+                icon = testItem.icon,
+                //applyEffect = () => IncreaseDamage(0.1f)
+            },
+            new Upgrade
+            {
+                name = "Speed Boost",
+                description = "Increase movement speed by 15%",
+                icon = testItem.icon,
+                //applyEffect = () => IncreaseSpeed(0.15f)
+            },
+            new Upgrade
+            {
+                name = "Health Regen",
+                description = "Regenerate 5% health every second",
+                icon = testItem.icon,
+                //applyEffect = () => RegenerateHealth(0.05f)
+            }
+        };
         UpdateInventoryUI(); // Обновляем интерфейс
     }
 
@@ -245,16 +269,14 @@ public class MyGame : MonoBehaviour
             }
             if (zombie.health <= 0)
             {
-                Entity gem = SpawnEntityOnDestroyed(zombie, gemlvl1Prefab);
-                gems.Add(gem);
-                i++;
                 DestroyZombie(zombie);
                 zombies.Remove(zombie);
                 entities.Remove(zombie);
+                i--;
             }
         }
     }
-    public void Exp() //TODO: seems weird
+    public void Exp() //TODO: Magnetism and item for it
         {
             List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
             
@@ -273,6 +295,10 @@ public class MyGame : MonoBehaviour
        
                 currentXP += gem.exp;
                 UpdateXPUI();
+                while (currentXP >= xpToNextLevel)
+                {
+                    LevelUp();
+                }
                 Destroy(gem.gameObject);
                 gems.Remove(gem);
                 entities.Remove(gem);
@@ -287,6 +313,8 @@ public class MyGame : MonoBehaviour
 
     public void DestroyZombie(Entity zombie)
     {
+        List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
+        
         zombie.broken = true;
 
         Instantiate(zombie.particles, zombie.transform.position, zombie.transform.rotation);
@@ -302,6 +330,8 @@ public class MyGame : MonoBehaviour
 
         Destroy(zombie.gameObject);
         Destroy(replacement.gameObject, 3f);
+        Entity gem = SpawnEntityOnDestroyed(zombie, gemlvl1Prefab);
+        gems.Add(gem);
     }
 
     IEnumerator AttackDamageCooldown() // TODO на подумать
@@ -537,11 +567,14 @@ public class MyGame : MonoBehaviour
                     rb.AddExplosionForce(box.explosionForce, box.transform.position, box.explosionRadius);
                 }
 
-                Destroy(box.gameObject);
-                entities.Remove(box);
-                boxes.Remove(box);
-                Destroy(boxReplacement.gameObject, 2f);
-                //add sound effect
+                if (box.health <= -1)
+                {
+                    Destroy(box.gameObject);
+                    entities.Remove(box);
+                    boxes.Remove(box);
+                    Destroy(boxReplacement.gameObject, 2f);
+                    //add sound effect
+                }
             }
         }
 
@@ -845,21 +878,21 @@ public class MyGame : MonoBehaviour
             Debug.LogWarning($"Item {itemData.itemName} not found in inventory!");
         }
     }
-    public void AddXP(int xp)
-    {
-        currentXP += xp;
-
-        // Проверяем переход на новый уровень
-        while (currentXP >= xpToNextLevel)
-        {
-            LevelUp();
-        }
-
-        UpdateXPUI(); // Обновляем интерфейс
-    }
+    // public void AddXP(int xp)
+    // {
+    //     currentXP += xp;
+    //
+    //     // Проверяем переход на новый уровень
+    //     while (currentXP >= xpToNextLevel)
+    //     {
+    //         LevelUp();
+    //     }
+    //
+    //     UpdateXPUI(); // Обновляем интерфейс
+    // }
 
     // Обновление уровня
-    private void LevelUp()
+    public void LevelUp()
     {
         currentXP -= xpToNextLevel; // Переносим лишний XP
         currentLevel++;             // Увеличиваем уровень
@@ -872,7 +905,7 @@ public class MyGame : MonoBehaviour
     }
 
     // Обновление UI прогресса
-    private void UpdateXPUI()
+    public void UpdateXPUI()
     {
         if (xpBar != null)
         {
@@ -883,25 +916,35 @@ public class MyGame : MonoBehaviour
     // Показ меню улучшений
     public void ShowUpgradeMenu(List<Upgrade> upgrades)
     {
-        upgradeMenu.SetActive(true); // Показываем меню
+        // Активируем меню улучшений
+        upgradeMenu.SetActive(true);
 
         for (int i = 0; i < upgradeButtons.Count; i++)
         {
             if (i < upgrades.Count)
             {
                 Upgrade upgrade = upgrades[i];
-                upgradeButtons[i].gameObject.SetActive(true);
-                upgradeButtons[i].GetComponentInChildren<Text>().text = upgrade.name;
-                upgradeButtons[i].GetComponent<Image>().sprite = upgrade.icon;
+                Button button = upgradeButtons[i];
 
-                // Удаляем предыдущие события и добавляем новые
-                upgradeButtons[i].onClick.RemoveAllListeners();
-                upgradeButtons[i].onClick.AddListener(() => ApplyUpgrade(upgrade));
+                // Устанавливаем текст кнопки
+                TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
+
+                // Устанавливаем иконку (если есть)
+                Image icon = button.GetComponent<Image>();
+                if (icon != null && upgrade.icon != null)
+                {
+                    icon.sprite = upgrade.icon;
+                }
+
+                // Удаляем старые события и добавляем новое
+                button.onClick.RemoveAllListeners();
+                button.onClick.AddListener(() => ApplyUpgrade(upgrade));
             }
-            else
-            {
-                upgradeButtons[i].gameObject.SetActive(false);
-            }
+            // else
+            // {
+            //     // Деактивируем кнопку, если улучшение не назначено
+            //     upgradeButtons[i].gameObject.SetActive(false);
+            // }
         }
     }
 
