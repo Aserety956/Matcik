@@ -4,5 +4,11 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/_Project/Matcik/MainMenu.unity
+    guid: 2702e0a0a769f1941a43ff5b4a392a0d
+  - enabled: 1
+    path: Assets/_Project/Matcik/sisfruit.unity
+    guid: ab5bc1a011b6a4a449ac34f9d6bce580
   m_configObjects: {}

@@ -9,9 +9,11 @@
   <component name="ChangeListManager">
     <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Exp gem lvl 1.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Exp gem lvl 1.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Scene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Scene.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scenes/SampleScene.unity.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/manifest.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Packages/packages-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/Packages/packages-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,9 +29,10 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f1e29a71158e46cdb750140a667aea01175e00/41/24357410/Transform.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f1e29a71158e46cdb750140a667aea01175e00/ff/ce0920c2/Component.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/_Project/Matcik/MainMenuHandler.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProblemsViewState">
-    <option name="selectedTabId" value="SWEA" />
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 7
@@ -147,6 +150,8 @@
       <workItem from="1733287917015" duration="6543000" />
       <workItem from="1733294957833" duration="2013000" />
       <workItem from="1733446382455" duration="5779000" />
+      <workItem from="1735085231197" duration="3071000" />
+      <workItem from="1735090318076" duration="1187000" />
     </task>
     <servers />
   </component>
