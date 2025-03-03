@@ -56,51 +56,73 @@ public class MyGame : MonoBehaviour
     
     [Header("Exp LvL Upgrades")]
     // Опыт и уровень
-    public int currentLevel = 1;      // Текущий уровень игрока
-    public int currentXP = 0;         // Текущее количество XP
-    public int xpToNextLevel = 100;  // XP для следующего уровня
-    public Slider xpBar;             // Прогресс-бар для XP
+    public int currentLevel = 1;      
+    public int currentXP = 0;         
+    public int xpToNextLevel = 100;  
+    public Slider xpBar;             
     // Меню улучшений
-    public GameObject upgradeMenu;              // Панель выбора улучшений
-    public List<Button> upgradeButtons;         // Кнопки для выбора улучшений
-    // Список доступных улучшений
+    public GameObject upgradeMenu;              
+    public List<Button> upgradeButtons;         
     public List<Upgrade> availableUpgrades;
 
     
 
     [Header("Animations")] 
     public Animator playerAnimator;
-    public Transform cameraTransform;
+    public Transform playerCameraTransform;
 
     public List<Entity> entities = new(256);
     
     [Header("Inventory")] 
-    public List<InventoryItemInstance> inventory = new (6); // Инвентарь игрока
-    public GameObject inventorySlotPrefab; // Префаб ячейки UI
-    public Transform inventoryGrid; // Сетка для отображения предметов
+    public List<InventoryItemInstance> inventory = new (6); 
+    public GameObject inventorySlotPrefab; 
+    public Transform inventoryGrid; 
+    
+    [Header("Game State")]
+    public bool isGamePaused = false;
     
     [CreateAssetMenu(fileName = "NewItem", menuName = "Inventory/Item")]
     public class InventoryItem : ScriptableObject
     {
-        public string itemName; // Название предмета
-        public Sprite icon; // Иконка предмета
-        public ItemType type; // Тип предмета
+        public string itemName; 
+        public Sprite icon; 
+        public ItemType type; 
     }
     
     [System.Serializable]
     public class InventoryItemInstance
     {
-        public InventoryItem data; // Ссылка на ScriptableObject
-        public int lvl; // Уровень предмета
+        public InventoryItem data; // Ссылка на ScriptableObject?
+        public Upgrade appliedUpgrade;
+        public int lvl; 
     }
     
     [System.Serializable]
     public class Upgrade
     {
-        public string name;          // Название улучшения
-        public string description;   // Описание улучшения
-        public Sprite icon;          // Иконка улучшения
-        public System.Action applyEffect; // Действие при выборе улучшения
+        public string name;          
+        public string description;   
+        public Sprite icon;          
+        public UpgradeType upgradeType; 
+        public float value; 
+        
+        /*public Upgrade Clone()
+        {
+            return new Upgrade()
+            {
+                name = this.name,
+                description = this.description,
+                icon = this.icon,
+                upgradeType = this.upgradeType,
+                value = this.value
+            };
+        }*/
+    }
+    public enum UpgradeType
+    {
+        Damage,
+        Speed,
+        HealthRegen,
     }
 
     public enum ItemType
@@ -116,53 +138,16 @@ public class MyGame : MonoBehaviour
         player.transform.position = new Vector3(0, 0, -2);
         entities.Add(player);
         Cursor.lockState = CursorLockMode.Locked;
-        cameraTransform = Camera.main.transform;
+        playerCameraTransform = Camera.main.transform;
         
         UpdateXPUI();
-
-        InventoryItem testItem = Resources.Load<InventoryItem>("Items/GrenadePome");
-
-        if (testItem != null)
-        {
-            InventoryItemInstance testItemInstance = new InventoryItemInstance
-            {
-                data = testItem,
-                lvl = 1 // Уровень по умолчанию
-            };
-
-            inventory.Add(testItemInstance); // Добавляем в инвентарь
-            Debug.Log($"Added '{testItemInstance.data.itemName}' with level {testItemInstance.lvl}");
-        }
-        
-        availableUpgrades = new List<Upgrade>
-        {
-            new Upgrade
-            {
-                name = "Damage Boost",
-                description = "Increase weapon damage by 10%",
-                icon = testItem.icon,
-                //applyEffect = () => IncreaseDamage(0.1f)
-            },
-            new Upgrade
-            {
-                name = "Speed Boost",
-                description = "Increase movement speed by 15%",
-                icon = testItem.icon,
-                //applyEffect = () => IncreaseSpeed(0.15f)
-            },
-            new Upgrade
-            {
-                name = "Health Regen",
-                description = "Regenerate 5% health every second",
-                icon = testItem.icon,
-                //applyEffect = () => RegenerateHealth(0.05f)
-            }
-        };
         UpdateInventoryUI(); // Обновляем интерфейс
     }
 
     public void Update()
     {
+        if (isGamePaused) return;
+        
         if (!player.isDead)
         {
             UpdateInput();
@@ -255,10 +240,10 @@ public class MyGame : MonoBehaviour
 
             {
                 if (zombie.broken) continue;
-                if (zombie.collision == null) continue;
+                if (zombie.Collision == null) continue;
 
 
-                if (zombie.collision.relativeVelocity.magnitude >= zombie.breakForce) //снаряд уничтожать при коллизии
+                if (zombie.Collision.relativeVelocity.magnitude >= zombie.breakForce)
                 {
                     float effectiveDamage = Mathf.Max(0, player.damage - zombie.defense);
                     
@@ -292,6 +277,7 @@ public class MyGame : MonoBehaviour
                 
             if (Vector3.Distance(player.transform.position, gem.transform.position) <= 5)
             {
+       //TODO: кнопки для отладки статов
        
                 currentXP += gem.exp;
                 UpdateXPUI();
@@ -400,7 +386,7 @@ public class MyGame : MonoBehaviour
         // Проверяем, соответствует ли тип столкновения
         if (entity.isCollisionEnabled && (otherEntity.type | entity.collisionEntityType) == entity.collisionEntityType)
         {
-            entity.collision = collision;
+            entity.Collision = collision;
             Debug.Log(entity.name + " collided with " + collision.gameObject.name);
         }
 
@@ -461,10 +447,10 @@ public class MyGame : MonoBehaviour
     {
         if (entityToFollow != null)
         {
-            // Вектор направления, куда двигаться зомби
+            // Вектор направления зомби
             Vector3 moveDirection = Vector3.zero;
 
-            // Применение правил flocking behavior
+            // flocking behavior
             Vector3 separation = Vector3.zero;
             Vector3 alignment = Vector3.zero;
             Vector3 cohesion = Vector3.zero;
@@ -550,9 +536,9 @@ public class MyGame : MonoBehaviour
             Entity box = boxes[i];
 
             if (box.broken) continue;
-            if (box.collision == null) continue;
+            if (box.Collision == null) continue;
 
-            if (box.collision.relativeVelocity.magnitude >= box.breakForce)
+            if (box.Collision.relativeVelocity.magnitude >= box.breakForce)
             {
                 box.broken = true;
 
@@ -691,8 +677,7 @@ public class MyGame : MonoBehaviour
         {
             player.transform.position += player.transform.right * moveDistance;
         }
-
-        // Получаем ввод от игрока
+        
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
 
@@ -703,18 +688,12 @@ public class MyGame : MonoBehaviour
             // Устанавливаем значения posX и posY на основе направления ввода
             playerAnimator.SetFloat("posX", horizontal);
             playerAnimator.SetFloat("posY", vertical);
-
-            // Выводим значения posX и posY для проверки
-            //Debug.Log($"posX: {horizontal}, posY: {vertical}");
         }
         else
         {
             // Если нет движения, устанавливаем posX и posY в 0
             playerAnimator.SetFloat("posX", 0);
             playerAnimator.SetFloat("posY", 0);
-
-            // Выводим значения posX и posY для проверки
-            //Debug.Log("No movement - posX: 0, posY: 0");
         }
 
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
@@ -787,14 +766,10 @@ public class MyGame : MonoBehaviour
         yield return new WaitForSeconds(keyCooldownGrenade);
         canPressKeyGrenade = true;
     }
-
-    // Метод для нанесения урона другой сущности
-
-
-    // Метод для восстановления здоровья
+    
     public void PlayerHeal(float amount) // TODO: heal on pickup
     {
-        player.health = Mathf.Min(player.health + amount, 100f); // Ограничение на максимальное здоровье
+        player.health = Mathf.Min(player.health + amount, 100f); 
     }
 
     public void EnableFall()
@@ -806,102 +781,90 @@ public class MyGame : MonoBehaviour
         }
     }
 
-    public void AddItem(InventoryItem itemData)
+    public void AddUpgradeToInventory(Upgrade upgrade)
     {
-        // Проверяем, есть ли уже предмет в инвентаре
-        InventoryItemInstance existingItem = inventory.Find(i => i.data == itemData);
-        if (existingItem != null)
+        // Проверяем, есть ли уже такое улучшение
+        InventoryItemInstance existing = 
+            inventory.Find(item => item.appliedUpgrade != null && 
+                                   item.appliedUpgrade.upgradeType == upgrade.upgradeType);
+
+        if (existing != null)
         {
-            existingItem.lvl++;
+            existing.lvl++; 
         }
         else
         {
-            // Создаём новую запись
-            inventory.Add(new InventoryItemInstance { data = itemData, lvl = 1 });
+            
+            InventoryItemInstance newUpgrade = new InventoryItemInstance
+            {
+                appliedUpgrade = upgrade,
+                lvl = 1,
+                data = null // Можно создать специальный InventoryItem для улучшений
+            };
+            inventory.Add(newUpgrade);
         }
-
+    
         UpdateInventoryUI();
     }
 
     public void UpdateInventoryUI()
     {
-        // Очищаем старый интерфейс
         foreach (Transform child in inventoryGrid)
         {
             Destroy(child.gameObject);
         }
 
-        // Создаём новые слоты
-        foreach (var instance in inventory)
+        foreach (var item in inventory)
         {
-            // Создаём слот из префаба
             GameObject slot = Instantiate(inventorySlotPrefab, inventoryGrid);
-
-            // Устанавливаем иконку предмета (на корневом объекте Button)
             Image icon = slot.GetComponent<Image>();
-            if (icon != null)
-            {
-                icon.sprite = instance.data.icon; // Берём иконку из ScriptableObject
-            }
-            else
-            {
-                Debug.LogError("Image component missing on inventorySlotPrefab!");
-            }
- 
-            // Настраиваем уровень предмета (Lvl) — ищем дочерний объект
             TextMeshProUGUI lvlText = slot.GetComponentInChildren<TextMeshProUGUI>();
-            if (lvlText != null)
+
+            // Для улучшений
+            if (item.appliedUpgrade != null)
             {
-                lvlText.text = $"Lvl {instance.lvl}"; // Уровень предмета из InventoryItemInstance
+                icon.sprite = item.appliedUpgrade.icon;
+                lvlText.text = $"Lvl {item.lvl}";
+            
+                // TODO: Добавляем Tooltip
+                /*TooltipTrigger tooltip = slot.AddComponent<TooltipTrigger>();
+                tooltip.header = item.appliedUpgrade.name;
+                tooltip.content = item.appliedUpgrade.description;*/
             }
-            else
+            //TODO?: Для обычных предметов
+            else if (item.data != null)
             {
-                Debug.LogError("Text component missing for Lvl in inventorySlotPrefab!");
+                icon.sprite = item.data.icon;
+                lvlText.text = $"Lvl {item.lvl}";
             }
         }
     }
 
     public void UpdateItemIcon(InventoryItem itemData, Sprite newIcon)
     {
-        // Проверяем, есть ли предмет в инвентаре
         InventoryItemInstance existingItem = inventory.Find(i => i.data == itemData);
         if (existingItem != null)
         {
-            // Обновляем иконку в данных предмета
             existingItem.data.icon = newIcon;
 
             Debug.Log($"Updated icon for item: {existingItem.data.itemName}");
-            UpdateInventoryUI(); // Обновляем интерфейс
+            UpdateInventoryUI();
         }
         else
         {
             Debug.LogWarning($"Item {itemData.itemName} not found in inventory!");
         }
     }
-    // public void AddXP(int xp)
-    // {
-    //     currentXP += xp;
-    //
-    //     // Проверяем переход на новый уровень
-    //     while (currentXP >= xpToNextLevel)
-    //     {
-    //         LevelUp();
-    //     }
-    //
-    //     UpdateXPUI(); // Обновляем интерфейс
-    // }
-
-    // Обновление уровня
+    
     public void LevelUp()
     {
-        currentXP -= xpToNextLevel; // Переносим лишний XP
-        currentLevel++;             // Увеличиваем уровень
-        xpToNextLevel = Mathf.FloorToInt(xpToNextLevel * 1.25f); // Увеличиваем требования
+        currentXP -= xpToNextLevel;
+        currentLevel++;             
+        xpToNextLevel = Mathf.FloorToInt(xpToNextLevel * 1.25f); 
 
         Debug.Log($"Level Up! Current Level: {currentLevel}");
-
-        // Показываем меню улучшений
-        ShowUpgradeMenu(GetRandomUpgrades(3)); // Выбираем 3 случайных улучшения
+        
+        ShowUpgradeMenu(GetRandomUpgrades(3)); 
     }
 
     // Обновление UI прогресса
@@ -909,14 +872,20 @@ public class MyGame : MonoBehaviour
     {
         if (xpBar != null)
         {
-            xpBar.value = (float)currentXP / xpToNextLevel; // Устанавливаем прогресс
+            xpBar.value = (float)currentXP / xpToNextLevel;
         }
     }
 
-    // Показ меню улучшений
+    
     public void ShowUpgradeMenu(List<Upgrade> upgrades)
     {
-        // Активируем меню улучшений
+        
+        Time.timeScale = 0f;
+        isGamePaused = true;
+        
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        
         upgradeMenu.SetActive(true);
 
         for (int i = 0; i < upgradeButtons.Count; i++)
@@ -925,11 +894,15 @@ public class MyGame : MonoBehaviour
             {
                 Upgrade upgrade = upgrades[i];
                 Button button = upgradeButtons[i];
-
-                // Устанавливаем текст кнопки
-                TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>();
-
-                // Устанавливаем иконку (если есть)
+                
+                // Находим текстовые компоненты
+                TMP_Text[] texts = button.GetComponentsInChildren<TMP_Text>();
+                TMP_Text nameText = texts[0];
+                TMP_Text descText = texts[1];
+                
+                nameText.text = upgrade.name;
+                descText.text = upgrade.description;
+                
                 Image icon = button.GetComponent<Image>();
                 if (icon != null && upgrade.icon != null)
                 {
@@ -939,25 +912,48 @@ public class MyGame : MonoBehaviour
                 // Удаляем старые события и добавляем новое
                 button.onClick.RemoveAllListeners();
                 button.onClick.AddListener(() => ApplyUpgrade(upgrade));
+               
+                button.gameObject.SetActive(true);
             }
-            // else
-            // {
-            //     // Деактивируем кнопку, если улучшение не назначено
-            //     upgradeButtons[i].gameObject.SetActive(false);
-            // }
+            else
+            {
+                // Скрываем неиспользуемые кнопки
+                upgradeButtons[i].gameObject.SetActive(false);
+            }
         }
     }
-
-    // Применение улучшения
+    
     public void ApplyUpgrade(Upgrade upgrade)
     {
-        upgrade.applyEffect?.Invoke(); // Применяем эффект улучшения
-        Debug.Log($"Applied upgrade: {upgrade.name}");
+        switch(upgrade.upgradeType)
+        {
+            case UpgradeType.Damage:
+                IncreaseDamage(upgrade.value);
+                break;
+            
+            case UpgradeType.Speed:
+                IncreaseSpeed(upgrade.value);
+                break;
+            
+            case UpgradeType.HealthRegen:
+                RegenerateHealth(upgrade.value);
+                break;
+            
+            default:
+                Debug.LogWarning("Unknown upgrade type: " + upgrade.upgradeType);
+                break;
+        }
+        AddUpgradeToInventory(upgrade); // Добавляем в инвентарь
+        
+        Time.timeScale = 1f;
+        isGamePaused = false;
+        
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
 
-        upgradeMenu.SetActive(false); // Скрываем меню
+        upgradeMenu.SetActive(false); 
     }
-
-    // Получение случайных улучшений
+    
     public List<Upgrade> GetRandomUpgrades(int count)
     {
         List<Upgrade> randomUpgrades = new List<Upgrade>();
@@ -971,6 +967,44 @@ public class MyGame : MonoBehaviour
         }
 
         return randomUpgrades;
+    }
+    // Увеличение урона
+    public void IncreaseDamage(float multiplier)
+    {
+        if (player != null)
+        {
+            player.damage *= (1f + multiplier);
+            Debug.Log($"Damage increased! New damage: {player.damage}");
+        }
+    }
+
+// Увеличение скорости движения
+    public void IncreaseSpeed(float multiplier)
+    {
+        if (player != null)
+        {
+            player.speed *= (1f + multiplier);
+            Debug.Log($"Speed increased! New speed: {player.speed}");
+        }
+    }
+
+// Регенерация здоровья
+    public void RegenerateHealth(float percentPerSecond)
+    {
+        if (player != null)
+        {
+            StartCoroutine(HealthRegenerationCoroutine(percentPerSecond));
+        }
+    }
+    private IEnumerator HealthRegenerationCoroutine(float percentPerSecond)
+    {
+        while (!player.isDead && player != null)
+        {
+            yield return new WaitForSeconds(1f);
+            float healAmount = player.maxHealth * percentPerSecond;
+            player.health = Mathf.Clamp(player.health + healAmount, 0, player.maxHealth);
+            Debug.Log($"Healed {healAmount} HP. Current health: {player.health}");
+        }
     }
 }
 

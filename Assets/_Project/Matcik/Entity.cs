@@ -1,6 +1,5 @@
 using UnityEngine;
 using System;
-using System.Collections;
 using UnityEngine.UI;
 
 // NOTE(sqd): Sparse Entity System
@@ -40,7 +39,7 @@ public class Entity : MonoBehaviour
     public float breakForce;
     public float collisionMultiplier;
     public bool broken;
-    public Collision collision;
+    public Collision Collision;
 
     [Header("Explosive")] public Ball ballPrefab;
     public float triggerForce;

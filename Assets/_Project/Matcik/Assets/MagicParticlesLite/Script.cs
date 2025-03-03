@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 public class Script : MonoBehaviour {
 
-	public Transform camera;
+	public Transform newcamera;
 	public Transform middle;
 	public float speed;
 	public GameObject sun;
@@ -27,27 +27,27 @@ public class Script : MonoBehaviour {
 	void FixedUpdate(){
 		//CAM MOVEMENT
 		if (Input.GetKey (KeyCode.A)) {
-			camera.LookAt (middle);
-			camera.Translate (-Vector3.right * Time.deltaTime * speed);
+			newcamera.LookAt (middle);
+			newcamera.Translate (-Vector3.right * Time.deltaTime * speed);
 		}
 
 		if (Input.GetKey (KeyCode.D)) {
-			camera.LookAt (middle);
-			camera.Translate (Vector3.right * Time.deltaTime * speed);
+			newcamera.LookAt (middle);
+			newcamera.Translate (Vector3.right * Time.deltaTime * speed);
 		}
 
 		if (zoom < 0.35f) {
 			if (Input.GetKey (KeyCode.W)) {
-				camera.position += camera.forward * Time.deltaTime * speed;
-				camera.LookAt (middle);
+				newcamera.position += newcamera.forward * Time.deltaTime * speed;
+				newcamera.LookAt (middle);
 				zoom += Time.deltaTime;
 			}
 		}
 
 		if (zoom > -0.35f){
 			if (Input.GetKey (KeyCode.S)) {
-				camera.position += -camera.forward * Time.deltaTime * speed;
-				camera.LookAt (middle);
+				newcamera.position += -newcamera.forward * Time.deltaTime * speed;
+				newcamera.LookAt (middle);
 				zoom -= Time.deltaTime;
 			}
 		}
