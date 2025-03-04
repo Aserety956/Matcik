@@ -62,6 +62,9 @@ public class Entity : MonoBehaviour
     public float attackSpeed;
     public float maxHealth;
     public int exp;
+    public float magnetRadius;
+    public float magnetForce; 
+    
 
     public GameObject hpBarPrefab; // Префаб HP бара
     public GameObject hpBarInstance; // Экземпляр HP бара

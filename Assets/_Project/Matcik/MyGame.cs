@@ -38,8 +38,9 @@ public class MyGame : MonoBehaviour
     [Header("ShootingDelays")] 
     public bool canPressKey = true;
     public bool canPressKeyGrenade = true;
-    public float keyCooldownShooting = 1.0f;
-    public float keyCooldownGrenade = 3.0f;
+    public float baseCooldownShooting = 1.0f;
+    public float baseCooldownGrenade = 3.0f;
+    public Coroutine shootingBuffCoroutine;
 
     
     public float inputDisableTimer = 3f; // idea?
@@ -48,7 +49,8 @@ public class MyGame : MonoBehaviour
     public float mouseSensitivity;
     public float xRotation = 0f;
 
-    [Header("Bufftimer")] public float buffT = 5f;
+    [Header("Bufftimer")] 
+    public float buffDuration = 5f;
 
     [Header("DamagedTimer")] 
     public float damageEffectDuration;
@@ -123,6 +125,7 @@ public class MyGame : MonoBehaviour
         Damage,
         Speed,
         HealthRegen,
+        Magnet,
     }
 
     public enum ItemType
@@ -261,41 +264,47 @@ public class MyGame : MonoBehaviour
             }
         }
     }
-    public void Exp() //TODO: Magnetism and item for it
+    //TODO: кнопки для отладки статов
+    public void Exp()
+    {
+        List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
+
+        //TODO: learn Обработка камней с обратной итерацией
+        for (int i = gems.Count - 1; i >= 0; i--)
         {
-            List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
+            Entity gem = gems[i];
             
-            if (gems.Count == 0)
-                {
-                    Debug.Log("No experience gems found!");
-                    return;
-                }
-            
-            for (int i = 0; i < gems.Count; i++)
+            if (gem == null || gem.gameObject == null)
             {
-                Entity gem = gems[i];
-                
-            if (Vector3.Distance(player.transform.position, gem.transform.position) <= 5)
-            {
-       //TODO: кнопки для отладки статов
-       
-                currentXP += gem.exp;
-                UpdateXPUI();
-                while (currentXP >= xpToNextLevel)
-                {
-                    LevelUp();
-                }
-                Destroy(gem.gameObject);
-                gems.Remove(gem);
+                gems.RemoveAt(i);
                 entities.Remove(gem);
-                i--;
+                continue;
             }
-                          
+
+            float distance = Vector3.Distance(player.transform.position, gem.transform.position);
+
+            if (distance <= player.magnetRadius)
+            {
+                Vector3 direction = (player.transform.position - gem.transform.position).normalized;
+                gem.transform.position += direction * player.magnetForce * Time.deltaTime;
+
+                if (distance < 3f)
+                {
+                    currentXP += gem.exp;
+                    Destroy(gem.gameObject);
+                    gems.RemoveAt(i); // Удаляем из локального списка
+                    entities.Remove(gem); // Удаляем из общего списка
+                    UpdateXPUI();
+                    while (currentXP >= xpToNextLevel)
+                    {
+                        LevelUp();
+                    }
+                }
             }
-                
         }
-        
-    
+    }
+
+
 
     public void DestroyZombie(Entity zombie)
     {
@@ -320,12 +329,12 @@ public class MyGame : MonoBehaviour
         gems.Add(gem);
     }
 
-    IEnumerator AttackDamageCooldown() // TODO на подумать
+    /*IEnumerator AttackDamageCooldown() // TODO на подумать
     {
         player.canDealDamage = false;
         yield return new WaitForSeconds(player.attackSpeed);
         player.canDealDamage = true;
-    }
+    }*/
 
     public void CreateHealthBar(Entity e, Vector3 customScale)
     {
@@ -407,7 +416,7 @@ public class MyGame : MonoBehaviour
 
                 Instantiate(grenade.particles, grenade.transform.position, Quaternion.identity);
 
-                // Обработка физического воздействия
+                // TODO: своя физика?
                 Collider[] colliders =
                     Physics.OverlapSphere(grenade.transform.position, grenade.explosionRadius);
                 foreach (var hit in colliders)
@@ -432,9 +441,9 @@ public class MyGame : MonoBehaviour
                     }
                 }
 
-                // Удаляем гранату из списка и уничтожаем объект
+                
                 entities.Remove(grenade);
-                Destroy(collision.gameObject); // Уничтожаем гранату
+                Destroy(collision.gameObject);
             }
 
             Debug.Log($"{entity.name} уничтожил объект {collision.gameObject.name} при столкновении.");
@@ -528,8 +537,7 @@ public class MyGame : MonoBehaviour
                 Entity box = SpawnEntity(boxPrefab, 20f);
             }
         }
-
-        // NOTE(sqd): Rotate boxes over time
+        
         for (int i = 0; i < boxes.Count; i++)
         {
             boxes[i].transform.Rotate(0, boxes[i].rotationSpeed * Time.deltaTime, 0);
@@ -564,48 +572,40 @@ public class MyGame : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < buffs.Count; i++)
+        for (int i = buffs.Count - 1; i >= 0; i--)
         {
             Entity buff = buffs[i];
-
-            buff.transform.Rotate(0, buff.rotationSpeed * Time.deltaTime, 0);
+        
+            if (buff == null || buff.gameObject == null)
+            {
+                buffs.RemoveAt(i);
+                entities.Remove(buff);
+                continue;
+            }
 
             float distance = Vector3.Distance(player.transform.position, buff.transform.position);
-            Debug.Log($"Distance to buff {buff.name}: {distance}");
-
-            if (distance < 8.0f)
+        
+            if (distance <= player.magnetRadius)
             {
-                Debug.Log($"Picking up buff at distance {distance}");
+                Vector3 direction = (player.transform.position - buff.transform.position).normalized;
+                buff.transform.position += direction * player.magnetForce * Time.deltaTime;
 
-                keyCooldownShooting = 0.5f;
-                keyCooldownGrenade = 1.5f;
-
-                Destroy(buff.gameObject);
-                buffs.Remove(buff);
-                entities.Remove(buff);
-                i--;
+                if (distance < 1f)
+                {
+                    ApplyBuffEffect(buff);
+                    Destroy(buff.gameObject);
+                    buffs.RemoveAt(i);
+                    entities.Remove(buff);
+                }
             }
-        }
-
-        if (keyCooldownShooting <= 0.5f | keyCooldownGrenade <= 1.5f)
-        {
-            buffT -= Time.deltaTime;
-        }
-
-        if (buffT <= 0f)
-        {
-            buffT = 5.0f;
-            keyCooldownShooting = 1.0f;
-            keyCooldownGrenade = 3f;
         }
     }
 
     public void HoverObject(Transform obj, float hoverSpeed)
     {
         if (obj == null) return;
-
-        // Рассчитываем смещение в пределах 4 до 7
-        float baseY = 5f; // Средняя точка
+        
+        float baseY = 5f;
         float hoverHeight = 1.5f;
         float offset = Mathf.Sin(Time.time * hoverSpeed) * hoverHeight;
 
@@ -752,18 +752,41 @@ public class MyGame : MonoBehaviour
             }
         }
     }
+    public void ApplyBuffEffect(Entity buff)
+    {
+        if(shootingBuffCoroutine != null) 
+            StopCoroutine(shootingBuffCoroutine);
+        
+        baseCooldownShooting *= 0.5f;
+    
+        // Запускаем таймер бафа
+        shootingBuffCoroutine = StartCoroutine(ResetShootingSpeed(buffDuration));
+    
+        // Визуальный эффект
+        /*if(buff.buffParticles != null)
+            Instantiate(buff.buffParticles, player.transform.position, Quaternion.identity);*/
+    }
+
+    private IEnumerator ResetShootingSpeed(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+    
+        // Восстанавливаем исходные значения
+        baseCooldownShooting /= 0.5f;
+        Debug.Log("Buff ended. Shooting speed restored");
+    }
 
     IEnumerator KeyPressCooldownShooting()
     {
         canPressKey = false;
-        yield return new WaitForSeconds(keyCooldownShooting);
+        yield return new WaitForSeconds(baseCooldownShooting);
         canPressKey = true;
     }
 
     IEnumerator KeyPressCooldownGrenade()
     {
         canPressKeyGrenade = false;
-        yield return new WaitForSeconds(keyCooldownGrenade);
+        yield return new WaitForSeconds(baseCooldownGrenade);
         canPressKeyGrenade = true;
     }
     
@@ -939,6 +962,10 @@ public class MyGame : MonoBehaviour
                 RegenerateHealth(upgrade.value);
                 break;
             
+            case UpgradeType.Magnet:
+                IncreaseMagnet(upgrade.value);
+                break;
+            
             default:
                 Debug.LogWarning("Unknown upgrade type: " + upgrade.upgradeType);
                 break;
@@ -968,7 +995,7 @@ public class MyGame : MonoBehaviour
 
         return randomUpgrades;
     }
-    // Увеличение урона
+    
     public void IncreaseDamage(float multiplier)
     {
         if (player != null)
@@ -977,8 +1004,7 @@ public class MyGame : MonoBehaviour
             Debug.Log($"Damage increased! New damage: {player.damage}");
         }
     }
-
-// Увеличение скорости движения
+    
     public void IncreaseSpeed(float multiplier)
     {
         if (player != null)
@@ -987,8 +1013,7 @@ public class MyGame : MonoBehaviour
             Debug.Log($"Speed increased! New speed: {player.speed}");
         }
     }
-
-// Регенерация здоровья
+    
     public void RegenerateHealth(float percentPerSecond)
     {
         if (player != null)
@@ -1006,6 +1031,15 @@ public class MyGame : MonoBehaviour
             Debug.Log($"Healed {healAmount} HP. Current health: {player.health}");
         }
     }
+    public void IncreaseMagnet(float multiplier)
+    {
+        if(player != null)
+        {
+            player.magnetRadius *= (1f + multiplier);
+            Debug.Log($"Magnet radius: {player.magnetRadius}");
+        }
+    }
+    //TODO: terrain? something that feels good
 }
 
     
