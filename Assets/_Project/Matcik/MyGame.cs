@@ -67,7 +67,16 @@ public class MyGame : MonoBehaviour
     public List<Button> upgradeButtons;         
     public List<Upgrade> availableUpgrades;
 
+    [Header("PlayerDamaged")]
+    public float invincibilityTime = 0.5f;
     
+    public AudioClip damageSound;
+    public AudioSource audioSource;
+    
+    
+    public float flashDuration = 0.1f;
+    public float lastDamageTime;
+    public bool isInvincible;
 
     [Header("Animations")] 
     public Animator playerAnimator;
@@ -142,6 +151,7 @@ public class MyGame : MonoBehaviour
         entities.Add(player);
         Cursor.lockState = CursorLockMode.Locked;
         playerCameraTransform = Camera.main.transform;
+        audioSource = GetComponent<AudioSource>();
         
         UpdateXPUI();
         UpdateInventoryUI(); // Обновляем интерфейс
@@ -356,12 +366,56 @@ public class MyGame : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float damage, Entity zombie)
+    public void TakeDamageZombie(float damage, Entity zombie)
     {
-        float effectiveDamage = player.damage - zombie.defense;
-        effectiveDamage = Mathf.Max(effectiveDamage, 0);
-        zombie.health -= effectiveDamage;
+        float PlayerEffectiveDamage = player.damage - zombie.defense;
+        PlayerEffectiveDamage = Mathf.Max(PlayerEffectiveDamage, 0);
+        zombie.health -= PlayerEffectiveDamage;
         UpdateHealthBar(zombie);
+    }
+    //TODO:типы врагов и логику для обработки их статов а не только зомби
+    
+    public void TakeDamagePlayer(float damage, Entity zombie)
+    {
+        if (isInvincible || player.health <= 0) return;
+        
+        if (Time.time - lastDamageTime < invincibilityTime) return;
+
+        float ZombieEffectiveDamage = zombie.damage - player.defense;
+        ZombieEffectiveDamage = Mathf.Max(ZombieEffectiveDamage, 0);
+        player.health -= ZombieEffectiveDamage;
+        lastDamageTime = Time.time;
+        
+        StartCoroutine(PlayerDamageEffects());
+        
+        if (player.health <= 0)
+        {
+            Die();
+        }
+    }
+    
+    public void Die()
+    {
+        //TODO: Логика смерти игрока
+        Debug.Log("Player Died!");
+        //TODO: Дополнительные действия: анимация, перезагрузка уровня и т.д.
+    }
+    
+    
+    public IEnumerator PlayerDamageEffects()
+    {
+        isInvincible = true;
+
+        
+        if (damageSound != null) audioSource.PlayOneShot(damageSound);
+        
+        ApplyHitEffect(player);
+        
+        yield return new WaitForSeconds(flashDuration);
+        
+        
+        yield return new WaitForSeconds(invincibilityTime - flashDuration);
+        isInvincible = false;
     }
 
     public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat, Entity e)
@@ -382,7 +436,7 @@ public class MyGame : MonoBehaviour
 
         Material originalMat = e.mr.sharedMaterial;
         e.mr.material = e.damagedMat;
-        StartCoroutine(ResetMaterialAfterHit(0.1f, originalMat, e));
+        StartCoroutine(ResetMaterialAfterHit(0.1f, originalMat, e)); //TODO: entity invincible duration
     }
 
     public void HandleCollision(Entity entity, Collision collision)
@@ -403,8 +457,15 @@ public class MyGame : MonoBehaviour
         {
             Destroy(collision.gameObject);
             ApplyHitEffect(entity);
-            TakeDamage(35, entity);
+            TakeDamageZombie(player.damage, entity);
             Debug.Log($"{entity.name} уничтожил объект {collision.gameObject.name} при столкновении.");
+        }
+        
+        if (entity.type == EntityType.Zombie && otherEntity.type == EntityType.Player)
+        {
+            //TODO: Health bar
+            TakeDamagePlayer(entity.damage, entity);
+            return;
         }
 
         for (int j = 0; j < Grenades.Count; j++)
@@ -429,7 +490,7 @@ public class MyGame : MonoBehaviour
                     {
                         float distance = Vector3.Distance(grenade.transform.position, entityG.transform.position);
                         float damageMultiplier = Mathf.Clamp01(1 - (distance / grenade.explosionRadius));
-                        TakeDamage(grenade.damage * damageMultiplier, entityG);
+                        TakeDamageZombie(grenade.damage * damageMultiplier, entityG);
                         ApplyHitEffect(entityG);
 
                         if (entityG.health <= 0)

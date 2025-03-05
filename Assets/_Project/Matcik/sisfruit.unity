@@ -784,12 +784,12 @@ MonoBehaviour:
   zombieSpawnT: 0
   canPressKey: 1
   canPressKeyGrenade: 1
-  keyCooldownShooting: 1
-  keyCooldownGrenade: 3
+  baseCooldownShooting: 1
+  baseCooldownGrenade: 3
   inputDisableTimer: 3
   mouseSensitivity: 300
   xRotation: 50
-  buffT: 5
+  buffDuration: 5
   damageEffectDuration: 0.3
   damageEffectTimer: 0.3
   currentLevel: 1
@@ -822,6 +822,12 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: a3e9ae470b8371e4796cc6e95c3e4ad3, type: 3}
     upgradeType: 3
     value: 0.25
+  invincibilityTime: 0.5
+  damageSound: {fileID: 0}
+  audioSource: {fileID: 0}
+  flashDuration: 0.1
+  lastDamageTime: 0
+  isInvincible: 0
   playerAnimator: {fileID: 0}
   playerCameraTransform: {fileID: 0}
   entities: []
@@ -1943,6 +1949,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: boom
       objectReference: {fileID: 0}
+    - target: {fileID: 8947430647475187164, guid: 4f506076d102f3e4d921bec56fa41298, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2982,6 +2992,8 @@ GameObject:
   - component: {fileID: 5447686222817587108}
   - component: {fileID: 3076598960480156294}
   - component: {fileID: 5447686222817587109}
+  - component: {fileID: 5447686222817587110}
+  - component: {fileID: 5447686222817587111}
   m_Layer: 0
   m_Name: BH-2 Free
   m_TagString: Player
@@ -3552,17 +3564,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  mr: {fileID: 0}
+  mr: {fileID: 5447686222817587110}
   healedMat: {fileID: 0}
   notHealedMat: {fileID: 0}
-  damagedMat: {fileID: 0}
+  damagedMat: {fileID: 2100000, guid: 632ffe33e5aa898468491b96479130fa, type: 2}
   rotationSpeed: 200
   speed: 35
   deathSound: {fileID: 8300000, guid: 63eb7295e8ba1874591ddc3d46983deb, type: 3}
   deathAudioSource: {fileID: 5447686222817587109}
   isDead: 0
-  isCollisionEnabled: 0
-  collisionEntityType: 0
+  isCollisionEnabled: 1
+  collisionEntityType: 16
   originalColor: {r: 0, g: 0, b: 0, a: 0}
   isTakingDamage: 0
   replacement: {fileID: 0}
@@ -4145,7 +4157,7 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
+  MinDistance: 1.7986372
   MaxDistance: 500
   Pan2D: 0
   rolloffMode: 0
@@ -4221,6 +4233,69 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!23 &5447686222817587110
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186360988609355327}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 632ffe33e5aa898468491b96479130fa, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &5447686222817587111
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186360988609355327}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.64, y: 2, z: 0.37}
+  m_Center: {x: 0.006, y: 0.83, z: 0.027}
 --- !u!1 &5492375481123569249
 GameObject:
   m_ObjectHideFlags: 0

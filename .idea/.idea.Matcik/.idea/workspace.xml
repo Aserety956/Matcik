@@ -8,9 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -158,6 +157,8 @@
       <workItem from="1740682238712" duration="164000" />
       <workItem from="1740999880905" duration="9911000" />
       <workItem from="1741097767993" duration="7269000" />
+      <workItem from="1741194526440" duration="8516000" />
+      <workItem from="1741203381847" duration="125000" />
     </task>
     <servers />
   </component>
