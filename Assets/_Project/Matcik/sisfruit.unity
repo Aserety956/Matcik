@@ -822,12 +822,8 @@ MonoBehaviour:
     icon: {fileID: 21300000, guid: a3e9ae470b8371e4796cc6e95c3e4ad3, type: 3}
     upgradeType: 3
     value: 0.25
-  invincibilityTime: 0.5
   damageSound: {fileID: 0}
   audioSource: {fileID: 0}
-  flashDuration: 0.1
-  lastDamageTime: 0
-  isInvincible: 0
   playerAnimator: {fileID: 0}
   playerCameraTransform: {fileID: 0}
   entities: []
@@ -3565,8 +3561,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   mr: {fileID: 5447686222817587110}
-  healedMat: {fileID: 0}
-  notHealedMat: {fileID: 0}
+  healedMat: {fileID: 2100000, guid: 3a19134f7a6d1f1419f1e2dda797f129, type: 2}
   damagedMat: {fileID: 2100000, guid: 632ffe33e5aa898468491b96479130fa, type: 2}
   rotationSpeed: 200
   speed: 35
@@ -3574,9 +3569,7 @@ MonoBehaviour:
   deathAudioSource: {fileID: 5447686222817587109}
   isDead: 0
   isCollisionEnabled: 1
-  collisionEntityType: 16
-  originalColor: {r: 0, g: 0, b: 0, a: 0}
-  isTakingDamage: 0
+  collisionEntityType: 1
   replacement: {fileID: 0}
   breakForce: 0
   collisionMultiplier: 0
@@ -3588,18 +3581,23 @@ MonoBehaviour:
   upwardsModifier: 0
   forceDamping: 0
   particles: {fileID: 0}
-  IsGrenade: 0
   ballSpawn: {fileID: 2022718040902312218}
   projVelocity: 100
   health: 200
   defense: 5
   damage: 35
-  canDealDamage: 1
   attackSpeed: 0.5
   maxHealth: 0
   exp: 0
   magnetRadius: 15
   magnetForce: 25
+  isInvincible: 0
+  lastDamageTime: 5
+  invincibilityTime: 0.3
+  flashDuration: 0.3
+  AttackRange: 0
+  attackCooldown: 1
+  lastAttackTime: 0
   hpBarPrefab: {fileID: 0}
   hpBarInstance: {fileID: 0}
   hpBarForeground: {fileID: 0}
@@ -4294,8 +4292,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.64, y: 2, z: 0.37}
-  m_Center: {x: 0.006, y: 0.83, z: 0.027}
+  m_Size: {x: 0.64, y: 2, z: 0.5878065}
+  m_Center: {x: 0.0059999945, y: 0.8299999, z: -0.002676642}
 --- !u!1 &5492375481123569249
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,13 +10,11 @@ using Random = UnityEngine.Random;
 public class MyGame : MonoBehaviour
 {
     // Main idea - Vampire Survivors like-game
-    [Header("FlockMove")] 
-    public float separationDistance = 10.0f; // Минимальная дистанция между зомби
+    [Header("FlockMove")] public float separationDistance = 10.0f; // Минимальная дистанция между зомби
     public float alignmentWeight = 10f; // Влияние выравнивания
     public float cohesionWeight = 10f; // Влияние притяжения к соседям
 
-    [Header("Entities")] 
-    public Entity boxPrefab;
+    [Header("Entities")] public Entity boxPrefab;
     public Entity buffPrefab;
     public Entity zombiePrefab;
     public Entity player;
@@ -24,99 +22,85 @@ public class MyGame : MonoBehaviour
     public Entity gemlvl1Prefab;
     public Entity gemlvl2Prefab;
     public Entity gemlvl3Prefab;
-        
 
 
-    [Header("SpawnIntervals")] 
-    public float boxSpawnInterval;
+
+    [Header("SpawnIntervals")] public float boxSpawnInterval;
     public float zombieSpawnInterval;
 
-    [Header("SpawnTimers")] 
-    public float boxSpawnT;
+    [Header("SpawnTimers")] public float boxSpawnT;
     public float zombieSpawnT;
 
-    [Header("ShootingDelays")] 
-    public bool canPressKey = true;
+    [Header("ShootingDelays")] public bool canPressKey = true;
     public bool canPressKeyGrenade = true;
     public float baseCooldownShooting = 1.0f;
     public float baseCooldownGrenade = 3.0f;
     public Coroutine shootingBuffCoroutine;
 
-    
+
     public float inputDisableTimer = 3f; // idea?
 
-    [Header("MouseControls")] 
-    public float mouseSensitivity;
+    [Header("MouseControls")] public float mouseSensitivity;
     public float xRotation = 0f;
 
-    [Header("Bufftimer")] 
-    public float buffDuration = 5f;
+    [Header("Bufftimer")] public float buffDuration = 5f;
 
-    [Header("DamagedTimer")] 
-    public float damageEffectDuration;
+    [Header("DamagedTimer")] public float damageEffectDuration;
     public float damageEffectTimer;
-    
+
     [Header("Exp LvL Upgrades")]
     // Опыт и уровень
-    public int currentLevel = 1;      
-    public int currentXP = 0;         
-    public int xpToNextLevel = 100;  
-    public Slider xpBar;             
+    public int currentLevel = 1;
+
+    public int currentXP = 0;
+    public int xpToNextLevel = 100;
+
+    public Slider xpBar;
+
     // Меню улучшений
-    public GameObject upgradeMenu;              
-    public List<Button> upgradeButtons;         
+    public GameObject upgradeMenu;
+    public List<Button> upgradeButtons;
     public List<Upgrade> availableUpgrades;
 
-    [Header("PlayerDamaged")]
-    public float invincibilityTime = 0.5f;
-    
-    public AudioClip damageSound;
+    [Header("PlayerDamaged")] public AudioClip damageSound;
     public AudioSource audioSource;
-    
-    
-    public float flashDuration = 0.1f;
-    public float lastDamageTime;
-    public bool isInvincible;
 
-    [Header("Animations")] 
-    public Animator playerAnimator;
+    [Header("Animations")] public Animator playerAnimator;
     public Transform playerCameraTransform;
 
     public List<Entity> entities = new(256);
-    
-    [Header("Inventory")] 
-    public List<InventoryItemInstance> inventory = new (6); 
-    public GameObject inventorySlotPrefab; 
-    public Transform inventoryGrid; 
-    
-    [Header("Game State")]
-    public bool isGamePaused = false;
-    
+
+    [Header("Inventory")] public List<InventoryItemInstance> inventory = new(6);
+    public GameObject inventorySlotPrefab;
+    public Transform inventoryGrid;
+
+    [Header("Game State")] public bool isGamePaused = false;
+
     [CreateAssetMenu(fileName = "NewItem", menuName = "Inventory/Item")]
     public class InventoryItem : ScriptableObject
     {
-        public string itemName; 
-        public Sprite icon; 
-        public ItemType type; 
+        public string itemName;
+        public Sprite icon;
+        public ItemType type;
     }
-    
+
     [System.Serializable]
     public class InventoryItemInstance
     {
         public InventoryItem data; // Ссылка на ScriptableObject?
         public Upgrade appliedUpgrade;
-        public int lvl; 
+        public int lvl;
     }
-    
+
     [System.Serializable]
     public class Upgrade
     {
-        public string name;          
-        public string description;   
-        public Sprite icon;          
-        public UpgradeType upgradeType; 
-        public float value; 
-        
+        public string name;
+        public string description;
+        public Sprite icon;
+        public UpgradeType upgradeType;
+        public float value;
+
         /*public Upgrade Clone()
         {
             return new Upgrade()
@@ -129,6 +113,7 @@ public class MyGame : MonoBehaviour
             };
         }*/
     }
+
     public enum UpgradeType
     {
         Damage,
@@ -152,7 +137,7 @@ public class MyGame : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         playerCameraTransform = Camera.main.transform;
         audioSource = GetComponent<AudioSource>();
-        
+
         UpdateXPUI();
         UpdateInventoryUI(); // Обновляем интерфейс
     }
@@ -160,7 +145,7 @@ public class MyGame : MonoBehaviour
     public void Update()
     {
         if (isGamePaused) return;
-        
+
         if (!player.isDead)
         {
             UpdateInput();
@@ -169,6 +154,7 @@ public class MyGame : MonoBehaviour
         UpdateBoxes();
         UpdateZombies();
         Exp();
+        /*CheckZombieAttacks();*/
         //Healing(); TODO: heal method?
     }
 
@@ -213,7 +199,7 @@ public class MyGame : MonoBehaviour
         List<Entity> boxes = GetEntitiesOfType(EntityType.Box);
         List<Entity> projectiles = GetEntitiesOfType(EntityType.Projectile);
         List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
-        
+
 
         if (zombies.Count < 10)
         {
@@ -233,7 +219,7 @@ public class MyGame : MonoBehaviour
         for (int i = 0; i < zombies.Count; i++)
         {
             Entity zombie = zombies[i];
-            
+
             {
                 List<Entity> entitiesToFilter = GetEntitiesOfType(EntityType.Player | EntityType.Zombie);
                 Entity entityToFollow = FindNearestEntity(zombie, entitiesToFilter, (Entity e) => e.isHealed);
@@ -241,16 +227,23 @@ public class MyGame : MonoBehaviour
                 FlockMove(zombie, entityToFollow, infectedEntities);
                 HoverObject(zombie.transform, 3f);
 
-                if (entityToFollow != null && 
+                if (entityToFollow != null &&
                     Vector3.Distance(zombie.transform.position, entityToFollow.transform.position) < 3)
                 {
-                        if (entityToFollow.type == EntityType.Player)
-                        {
-                            player.isHealed = false;
-                        }
+                    if (entityToFollow.type == EntityType.Player)
+                    {
+                        player.isHealed = false;
+                    }
+                }
+                float distance = Vector3.Distance(player.transform.position, zombie.transform.position);
+
+                if (distance <= zombie.AttackRange && Time.time > zombie.lastAttackTime + zombie.attackCooldown)
+                {
+                    TakeDamagePlayer(zombie.damage, zombie);
+                    zombie.lastAttackTime = Time.time;
                 }
             }
-
+//TODO: fix self attack damage
             {
                 if (zombie.broken) continue;
                 if (zombie.Collision == null) continue;
@@ -259,7 +252,7 @@ public class MyGame : MonoBehaviour
                 if (zombie.Collision.relativeVelocity.magnitude >= zombie.breakForce)
                 {
                     float effectiveDamage = Mathf.Max(0, player.damage - zombie.defense);
-                    
+
                     // Здесь можно добавить эффект звука
 
 
@@ -274,6 +267,7 @@ public class MyGame : MonoBehaviour
             }
         }
     }
+
     //TODO: кнопки для отладки статов
     public void Exp()
     {
@@ -283,7 +277,7 @@ public class MyGame : MonoBehaviour
         for (int i = gems.Count - 1; i >= 0; i--)
         {
             Entity gem = gems[i];
-            
+
             if (gem == null || gem.gameObject == null)
             {
                 gems.RemoveAt(i);
@@ -319,7 +313,7 @@ public class MyGame : MonoBehaviour
     public void DestroyZombie(Entity zombie)
     {
         List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
-        
+
         zombie.broken = true;
 
         Instantiate(zombie.particles, zombie.transform.position, zombie.transform.rotation);
@@ -374,51 +368,55 @@ public class MyGame : MonoBehaviour
         UpdateHealthBar(zombie);
     }
     //TODO:типы врагов и логику для обработки их статов а не только зомби
-    
-    public void TakeDamagePlayer(float damage, Entity zombie)
-    {
-        if (isInvincible || player.health <= 0) return;
-        
-        if (Time.time - lastDamageTime < invincibilityTime) return;
 
-        float ZombieEffectiveDamage = zombie.damage - player.defense;
+    public void TakeDamagePlayer(float damage, Entity attacker)
+    {
+        if (player.isInvincible || player.health <= 0) return;
+        
+        if (Time.time - player.lastDamageTime < player.invincibilityTime) return;
+
+        float ZombieEffectiveDamage = attacker.damage - player.defense;
         ZombieEffectiveDamage = Mathf.Max(ZombieEffectiveDamage, 0);
         player.health -= ZombieEffectiveDamage;
-        lastDamageTime = Time.time;
+        player.lastDamageTime = Time.time;
         
-        StartCoroutine(PlayerDamageEffects());
+        ApplyHitEffect(player);
+        if (damageSound != null) audioSource.PlayOneShot(damageSound);
+        
         
         if (player.health <= 0)
         {
             Die();
         }
     }
-    
+
     public void Die()
     {
         //TODO: Логика смерти игрока
         Debug.Log("Player Died!");
         //TODO: Дополнительные действия: анимация, перезагрузка уровня и т.д.
     }
-    
-    
-    public IEnumerator PlayerDamageEffects()
+
+
+    /*public IEnumerator PlayerDamageEffects()
     {
-        isInvincible = true;
-
-        
+        player.isInvincible = true;
         if (damageSound != null) audioSource.PlayOneShot(damageSound);
-        
-        ApplyHitEffect(player);
-        
-        yield return new WaitForSeconds(flashDuration);
-        
-        
-        yield return new WaitForSeconds(invincibilityTime - flashDuration);
-        isInvincible = false;
-    }
 
-    public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat, Entity e)
+        ApplyHitEffect(player);
+        Material originalMat = player.mr.material;
+        player.mr.material = player.damagedMat; // Применяем материал урона
+
+        yield return new WaitForSeconds(flashDuration);
+
+        player.mr.material = originalMat; // Восстанавливаем оригинальный материал
+        yield return new WaitForSeconds(invincibilityTime - flashDuration);
+
+        player.isInvincible = false;
+    }*/
+
+
+public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat, Entity e)
     {
         yield return new WaitForSeconds(delay);
         if (e != null && e.mr != null)
@@ -436,8 +434,34 @@ public class MyGame : MonoBehaviour
 
         Material originalMat = e.mr.sharedMaterial;
         e.mr.material = e.damagedMat;
-        StartCoroutine(ResetMaterialAfterHit(0.1f, originalMat, e)); //TODO: entity invincible duration
+        
+        StartCoroutine(ResetMaterialAfterHit(e.flashDuration, originalMat, e));
+        
+        if (e.type == EntityType.Player)
+        {
+            StartCoroutine(PlayerInvincibility());
+        }
     }
+    public IEnumerator PlayerInvincibility()
+    {
+        player.isInvincible = true;
+        yield return new WaitForSeconds(player.invincibilityTime);
+        player.isInvincible = false;
+    }
+
+    /*public void CheckZombieAttacks()
+    {
+        foreach (Entity zombie in GetEntitiesOfType(EntityType.Zombie))
+        {
+            float distance = Vector3.Distance(player.transform.position, zombie.transform.position);
+
+            if (distance <= zombie.AttackRange && Time.time > zombie.lastAttackTime + zombie.attackCooldown)
+            {
+                TakeDamagePlayer(zombie.damage, zombie);
+                zombie.lastAttackTime = Time.time;
+            }
+        }
+    }*/
 
     public void HandleCollision(Entity entity, Collision collision)
     {
@@ -461,12 +485,11 @@ public class MyGame : MonoBehaviour
             Debug.Log($"{entity.name} уничтожил объект {collision.gameObject.name} при столкновении.");
         }
         
-        if (entity.type == EntityType.Zombie && otherEntity.type == EntityType.Player)
+        /*if (entity.type == EntityType.Zombie && otherEntity.type == EntityType.Player)
         {
-            //TODO: Health bar
+            Debug.Log("[Collision] Zombie->Player detected");
             TakeDamagePlayer(entity.damage, entity);
-            return;
-        }
+        }*/
 
         for (int j = 0; j < Grenades.Count; j++)
         {

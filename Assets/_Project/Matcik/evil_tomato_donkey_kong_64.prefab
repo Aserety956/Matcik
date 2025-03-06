@@ -386,7 +386,6 @@ MonoBehaviour:
   type: 2
   mr: {fileID: 730517540161944124, guid: 525d5131eee4d7d4eb57cef434303e0b, type: 3}
   healedMat: {fileID: 2100000, guid: a8a559a807b049f4cb2ec502096a4a02, type: 2}
-  notHealedMat: {fileID: 2100000, guid: 89ec8cf54f5462e44b5d255412d04070, type: 2}
   damagedMat: {fileID: 2100000, guid: 632ffe33e5aa898468491b96479130fa, type: 2}
   rotationSpeed: 5
   speed: 20
@@ -394,9 +393,7 @@ MonoBehaviour:
   deathAudioSource: {fileID: 0}
   isDead: 0
   isCollisionEnabled: 1
-  collisionEntityType: 16
-  originalColor: {r: 0, g: 0, b: 0, a: 0}
-  isTakingDamage: 0
+  collisionEntityType: 18
   replacement: {fileID: 8947430647475187164, guid: 4f506076d102f3e4d921bec56fa41298, type: 3}
   breakForce: 3
   collisionMultiplier: 100
@@ -408,15 +405,23 @@ MonoBehaviour:
   upwardsModifier: 0
   forceDamping: 0
   particles: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
-  IsGrenade: 0
   ballSpawn: {fileID: 0}
   projVelocity: 10
   health: 100
   defense: 1
-  damage: 0
-  canDealDamage: 0
+  damage: 15
   attackSpeed: 0
   maxHealth: 100
+  exp: 0
+  magnetRadius: 0
+  magnetForce: 0
+  isInvincible: 0
+  lastDamageTime: 0
+  invincibilityTime: 0.2
+  flashDuration: 0.2
+  AttackRange: 8
+  attackCooldown: 1
+  lastAttackTime: 0
   hpBarPrefab: {fileID: 5303699854912754023, guid: 678f93637a488b44887509a9c6fcc0e9, type: 3}
   hpBarInstance: {fileID: 0}
   hpBarForeground: {fileID: 9173978057401823071, guid: 1f49b8f1b662a9646a957d260aa8c344, type: 3}

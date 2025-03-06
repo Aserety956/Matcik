@@ -22,7 +22,6 @@ public class Entity : MonoBehaviour
     [Header("Editor")] public EntityType type;
     public MeshRenderer mr;
     public Material healedMat;
-    public Material notHealedMat;
     public Material damagedMat;
     public float rotationSpeed;
     public float speed;
@@ -31,8 +30,6 @@ public class Entity : MonoBehaviour
     public bool isDead;
     public bool isCollisionEnabled;
     public EntityType collisionEntityType;
-    public Color originalColor;
-    public bool isTakingDamage;
 
 
     [Header("Breakable")] public GameObject replacement;
@@ -48,7 +45,6 @@ public class Entity : MonoBehaviour
     public float upwardsModifier;
     public float forceDamping;
     public GameObject particles;
-    public bool IsGrenade;
 
 
     [Header("ProjThrow")] public Transform ballSpawn;
@@ -58,12 +54,18 @@ public class Entity : MonoBehaviour
     [Header("BaseStats")] public float health;
     public float defense;
     public float damage;
-    public bool canDealDamage;
-    public float attackSpeed;
+    public float attackSpeed;//TODO:buff?
     public float maxHealth;
     public int exp;
     public float magnetRadius;
-    public float magnetForce; 
+    public float magnetForce;
+    public bool isInvincible;
+    public float lastDamageTime;
+    public float invincibilityTime;
+    public float flashDuration;
+    public float AttackRange; 
+    public float attackCooldown;
+    public float lastAttackTime;
     
 
     public GameObject hpBarPrefab; // Префаб HP бара
@@ -75,7 +77,8 @@ public class Entity : MonoBehaviour
 
     public Vector3 moveDirection;
 
-    [Header("Runtime")] public int boxesCount;
+    [Header("Runtime")] 
+    public int boxesCount;
     public bool isHealed;
 
     public bool HasBox()
@@ -92,6 +95,7 @@ public class Entity : MonoBehaviour
             game.HandleCollision(this, other);
         }
     }
+    
 }
 
 // public void DoGame()
