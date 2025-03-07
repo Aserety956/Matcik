@@ -23,12 +23,20 @@ public class MyGame : MonoBehaviour
     public Entity gemlvl2Prefab;
     public Entity gemlvl3Prefab;
 
+    [Header("PlayerHPbar")]
+    public float smoothSpeed;
+    public Color lowHealthColor;
+    public Color highHealthColor;
+    public GameObject damageEffectPrefab;
+    public float currentFillAmount;
+    public GameObject damageEffectInstance;
 
-
-    [Header("SpawnIntervals")] public float boxSpawnInterval;
+    [Header("SpawnIntervals")] 
+    public float boxSpawnInterval;
     public float zombieSpawnInterval;
 
-    [Header("SpawnTimers")] public float boxSpawnT;
+    [Header("SpawnTimers")] 
+    public float boxSpawnT;
     public float zombieSpawnT;
 
     [Header("ShootingDelays")] public bool canPressKey = true;
@@ -36,9 +44,10 @@ public class MyGame : MonoBehaviour
     public float baseCooldownShooting = 1.0f;
     public float baseCooldownGrenade = 3.0f;
     public Coroutine shootingBuffCoroutine;
-
-
-    public float inputDisableTimer = 3f; // idea?
+    
+    /*[Header("Canvas")]
+    public Canvas targetCanvas;*/
+    //public float inputDisableTimer = 3f; idea?
 
     [Header("MouseControls")] public float mouseSensitivity;
     public float xRotation = 0f;
@@ -49,28 +58,28 @@ public class MyGame : MonoBehaviour
     public float damageEffectTimer;
 
     [Header("Exp LvL Upgrades")]
-    // Опыт и уровень
     public int currentLevel = 1;
-
     public int currentXP = 0;
     public int xpToNextLevel = 100;
 
     public Slider xpBar;
-
-    // Меню улучшений
+    
     public GameObject upgradeMenu;
     public List<Button> upgradeButtons;
     public List<Upgrade> availableUpgrades;
 
-    [Header("PlayerDamaged")] public AudioClip damageSound;
+    [Header("PlayerDamaged")] 
+    public AudioClip damageSound;
     public AudioSource audioSource;
 
-    [Header("Animations")] public Animator playerAnimator;
+    [Header("Animations")] 
+    public Animator playerAnimator;
     public Transform playerCameraTransform;
 
     public List<Entity> entities = new(256);
 
-    [Header("Inventory")] public List<InventoryItemInstance> inventory = new(6);
+    [Header("Inventory")] 
+    public List<InventoryItemInstance> inventory = new(6);
     public GameObject inventorySlotPrefab;
     public Transform inventoryGrid;
 
@@ -100,18 +109,6 @@ public class MyGame : MonoBehaviour
         public Sprite icon;
         public UpgradeType upgradeType;
         public float value;
-
-        /*public Upgrade Clone()
-        {
-            return new Upgrade()
-            {
-                name = this.name,
-                description = this.description,
-                icon = this.icon,
-                upgradeType = this.upgradeType,
-                value = this.value
-            };
-        }*/
     }
 
     public enum UpgradeType
@@ -137,9 +134,10 @@ public class MyGame : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         playerCameraTransform = Camera.main.transform;
         audioSource = GetComponent<AudioSource>();
-
+        
+        CreateHealthBarPlayer();
         UpdateXPUI();
-        UpdateInventoryUI(); // Обновляем интерфейс
+        UpdateInventoryUI();
     }
 
     public void Update()
@@ -150,11 +148,10 @@ public class MyGame : MonoBehaviour
         {
             UpdateInput();
         }
-
+        
         UpdateBoxes();
         UpdateZombies();
         Exp();
-        /*CheckZombieAttacks();*/
         //Healing(); TODO: heal method?
     }
 
@@ -211,7 +208,7 @@ public class MyGame : MonoBehaviour
                 Entity zombie = SpawnEntity(zombiePrefab, 100f);
                 zombies.Add(zombie);
                 zombie.health = zombie.maxHealth;
-                CreateHealthBar(zombie, new Vector3(0.5f, 0.5f, 0.5f));
+                CreateHealthBarEnemy(zombie, new Vector3(0.5f, 0.5f, 0.5f));
                 UpdateHealthBar(zombie);
             }
         }
@@ -340,7 +337,7 @@ public class MyGame : MonoBehaviour
         player.canDealDamage = true;
     }*/
 
-    public void CreateHealthBar(Entity e, Vector3 customScale)
+    public void CreateHealthBarEnemy(Entity e, Vector3 customScale)
     {
         if (e.hpBarPrefab != null)
         {
@@ -348,8 +345,46 @@ public class MyGame : MonoBehaviour
             e.hpBarInstance.transform.localPosition = new Vector3(0, 2, 0);
             e.hpBarInstance.transform.localScale = customScale;
             e.hpBarForeground = e.hpBarInstance.transform.Find("HPBarForeground").GetComponent<Image>();
-            e.hpBarBackround = e.hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
+            e.hpBarBackground = e.hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
         }
+    }
+    public void CreateHealthBarPlayer()
+    {
+        player.hpBarInstance = Instantiate(player.hpBarPrefab, FindObjectOfType<Canvas>().transform);
+        //player.hpBarInstance = Instantiate(player.hpBarPrefab, targetCanvas.transform);
+        
+        player.hpBarForeground = player.hpBarInstance.transform.Find("HPBarForeground").GetComponent<Image>();
+        player.hpBarBackground = player.hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
+
+        // Настройка радиального заполнения
+        player.hpBarForeground.type = Image.Type.Filled;
+        player.hpBarForeground.fillMethod = Image.FillMethod.Vertical;
+        player.hpBarForeground.fillOrigin = (int)Image.OriginVertical.Bottom;
+        
+       // damageEffectInstance = Instantiate(damageEffectPrefab, player.hpBarInstance.transform);
+    }
+    
+    public void UpdateHealthDisplay() //TODO: мейби не надо
+    {
+        float targetFill = player.health / player.maxHealth;
+        
+        // Плавное изменение заполнения
+        currentFillAmount = Mathf.Lerp(currentFillAmount, targetFill, smoothSpeed * Time.deltaTime);
+        player.hpBarForeground.fillAmount = currentFillAmount;
+
+        // Изменение цвета в зависимости от здоровья
+        player.hpBarForeground.color = Color.Lerp(lowHealthColor, highHealthColor, currentFillAmount);
+        
+        /*if(player.receivedDamage)
+        {
+            damageEffectInstance.SetActive(true);
+            // Дополнительная анимация эффекта
+        }
+        else
+        {
+            damageEffectInstance.SetActive(false); TODO уже есть is invincible
+        }*/
+        
     }
 
     public void UpdateHealthBar(Entity e)
@@ -357,6 +392,11 @@ public class MyGame : MonoBehaviour
         if (e.hpBarInstance != null)
         {
             e.hpBarForeground.fillAmount = e.health / e.maxHealth;
+        }
+        
+        if(e == player)
+        {
+            currentFillAmount = e.health / e.maxHealth;
         }
     }
 
@@ -381,6 +421,7 @@ public class MyGame : MonoBehaviour
         player.lastDamageTime = Time.time;
         
         ApplyHitEffect(player);
+        UpdateHealthBar(player);
         if (damageSound != null) audioSource.PlayOneShot(damageSound);
         
         
@@ -396,27 +437,8 @@ public class MyGame : MonoBehaviour
         Debug.Log("Player Died!");
         //TODO: Дополнительные действия: анимация, перезагрузка уровня и т.д.
     }
-
-
-    /*public IEnumerator PlayerDamageEffects()
-    {
-        player.isInvincible = true;
-        if (damageSound != null) audioSource.PlayOneShot(damageSound);
-
-        ApplyHitEffect(player);
-        Material originalMat = player.mr.material;
-        player.mr.material = player.damagedMat; // Применяем материал урона
-
-        yield return new WaitForSeconds(flashDuration);
-
-        player.mr.material = originalMat; // Восстанавливаем оригинальный материал
-        yield return new WaitForSeconds(invincibilityTime - flashDuration);
-
-        player.isInvincible = false;
-    }*/
-
-
-public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat, Entity e)
+    
+    public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat, Entity e)
     {
         yield return new WaitForSeconds(delay);
         if (e != null && e.mr != null)
@@ -449,28 +471,13 @@ public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat, Enti
         player.isInvincible = false;
     }
 
-    /*public void CheckZombieAttacks()
-    {
-        foreach (Entity zombie in GetEntitiesOfType(EntityType.Zombie))
-        {
-            float distance = Vector3.Distance(player.transform.position, zombie.transform.position);
-
-            if (distance <= zombie.AttackRange && Time.time > zombie.lastAttackTime + zombie.attackCooldown)
-            {
-                TakeDamagePlayer(zombie.damage, zombie);
-                zombie.lastAttackTime = Time.time;
-            }
-        }
-    }*/
-
     public void HandleCollision(Entity entity, Collision collision)
     {
         Entity otherEntity = collision.gameObject.GetComponent<Entity>();
         List<Entity> Grenades = GetEntitiesOfType(EntityType.Grenade);
 
         if (otherEntity == null) return;
-
-        // Проверяем, соответствует ли тип столкновения
+        
         if (entity.isCollisionEnabled && (otherEntity.type | entity.collisionEntityType) == entity.collisionEntityType)
         {
             entity.Collision = collision;
@@ -484,12 +491,6 @@ public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat, Enti
             TakeDamageZombie(player.damage, entity);
             Debug.Log($"{entity.name} уничтожил объект {collision.gameObject.name} при столкновении.");
         }
-        
-        /*if (entity.type == EntityType.Zombie && otherEntity.type == EntityType.Player)
-        {
-            Debug.Log("[Collision] Zombie->Player detected");
-            TakeDamagePlayer(entity.damage, entity);
-        }*/
 
         for (int j = 0; j < Grenades.Count; j++)
         {
@@ -1112,6 +1113,7 @@ public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat, Enti
             yield return new WaitForSeconds(1f);
             float healAmount = player.maxHealth * percentPerSecond;
             player.health = Mathf.Clamp(player.health + healAmount, 0, player.maxHealth);
+            UpdateHealthBar(player);
             Debug.Log($"Healed {healAmount} HP. Current health: {player.health}");
         }
     }

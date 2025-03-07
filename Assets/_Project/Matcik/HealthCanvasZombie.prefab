@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2878499234437140666}
   - component: {fileID: 4171467980789747792}
   m_Layer: 5
-  m_Name: HealthCanvas
+  m_Name: HealthCanvasZombie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -85,7 +85,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &4171467980789747792
 MonoBehaviour:
   m_ObjectHideFlags: 0

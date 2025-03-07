@@ -10,9 +10,10 @@
     <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/HealthCanvas.prefab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/HealthCanvas.prefab.meta" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/evil_tomato_donkey_kong_64.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/evil_tomato_donkey_kong_64.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -163,6 +164,8 @@
       <workItem from="1741194526440" duration="8516000" />
       <workItem from="1741203381847" duration="125000" />
       <workItem from="1741280635582" duration="9576000" />
+      <workItem from="1741369915269" duration="1705000" />
+      <workItem from="1741376372422" duration="6829000" />
     </task>
     <servers />
   </component>

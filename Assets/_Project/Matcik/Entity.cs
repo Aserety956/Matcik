@@ -71,7 +71,7 @@ public class Entity : MonoBehaviour
     public GameObject hpBarPrefab; // Префаб HP бара
     public GameObject hpBarInstance; // Экземпляр HP бара
     public Image hpBarForeground;
-    public Image hpBarBackround;
+    public Image hpBarBackground;
 // ТУДУ хп плеера?(UI) визуал?
 
 
@@ -100,8 +100,8 @@ public class Entity : MonoBehaviour
 
 // public void DoGame()
 // {
-//     GoToProstitutochnoyaFor(Sex);
-//     GoToProstitutochnoyaFor(Masturbation);
+//     GoToProstitutochnoyaFor(Shrex);
+//     GoToProstitutochnoyaFor(Masturnation);
 // }
 
 // public bool GoToProstitutochnoyaFor(Func<bool> SomeFunction)
@@ -128,8 +128,8 @@ public class Entity : MonoBehaviour
 //     }
 // }
 
-// public bool Masturbation()
+// public bool Masturnation()
 // {
-//     return gotPregnant;
+//     return gotPreg;
 // }
 
