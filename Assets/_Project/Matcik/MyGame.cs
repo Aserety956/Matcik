@@ -45,16 +45,23 @@ public class MyGame : MonoBehaviour
     public float baseCooldownGrenade = 3.0f;
     public Coroutine shootingBuffCoroutine;
     
-    /*[Header("Canvas")]
-    public Canvas targetCanvas;*/
+    [Header("Death Settings")]
+    public Image deathScreenOverlay; 
+    public float fadeDuration; 
+    public AudioClip deathSound;
+    public TextMeshProUGUI deathText; 
+   
     //public float inputDisableTimer = 3f; idea?
 
-    [Header("MouseControls")] public float mouseSensitivity;
+    [Header("MouseControls")] 
+    public float mouseSensitivity;
     public float xRotation = 0f;
 
-    [Header("Bufftimer")] public float buffDuration = 5f;
+    [Header("Bufftimer")] 
+    public float buffDuration = 5f;
 
-    [Header("DamagedTimer")] public float damageEffectDuration;
+    [Header("DamagedTimer")] 
+    public float damageEffectDuration;
     public float damageEffectTimer;
 
     [Header("Exp LvL Upgrades")]
@@ -68,8 +75,10 @@ public class MyGame : MonoBehaviour
     public List<Button> upgradeButtons;
     public List<Upgrade> availableUpgrades;
 
-    [Header("PlayerDamaged")] 
-    public AudioClip damageSound;
+    //Header("PlayerDamageSound")] 
+    //public AudioClip damageSound; TODO: посмотрим
+    
+    [Header("PlayerDeathAudio")] 
     public AudioSource audioSource;
 
     [Header("Animations")] 
@@ -83,7 +92,8 @@ public class MyGame : MonoBehaviour
     public GameObject inventorySlotPrefab;
     public Transform inventoryGrid;
 
-    [Header("Game State")] public bool isGamePaused = false;
+    [Header("Game State")] 
+    public bool isGamePaused = false;
 
     [CreateAssetMenu(fileName = "NewItem", menuName = "Inventory/Item")]
     public class InventoryItem : ScriptableObject
@@ -133,7 +143,6 @@ public class MyGame : MonoBehaviour
         entities.Add(player);
         Cursor.lockState = CursorLockMode.Locked;
         playerCameraTransform = Camera.main.transform;
-        audioSource = GetComponent<AudioSource>();
         
         CreateHealthBarPlayer();
         UpdateXPUI();
@@ -152,7 +161,7 @@ public class MyGame : MonoBehaviour
         UpdateBoxes();
         UpdateZombies();
         Exp();
-        //Healing(); TODO: heal method?
+        //Healing(); TODO: heal method
     }
 
     public List<Entity> GetEntitiesOfType(EntityType type, Func<Entity, bool> filter = null)
@@ -422,7 +431,7 @@ public class MyGame : MonoBehaviour
         
         ApplyHitEffect(player);
         UpdateHealthBar(player);
-        if (damageSound != null) audioSource.PlayOneShot(damageSound);
+        //if (damageSound != null) audioSource.PlayOneShot(damageSound);
         
         
         if (player.health <= 0)
@@ -433,9 +442,54 @@ public class MyGame : MonoBehaviour
 
     public void Die()
     {
-        //TODO: Логика смерти игрока
+        StartCoroutine(DeathRoutine());
         Debug.Log("Player Died!");
+        if (deathScreenOverlay == null || deathText == null)
+        {
+            Debug.LogError("Назначьте deathScreenOverlay и deathText в инспекторе!");
+            return;
+        }
         //TODO: Дополнительные действия: анимация, перезагрузка уровня и т.д.
+    }
+    private IEnumerator DeathRoutine()
+    {
+        player.isDead = true;
+        isGamePaused = true;
+        if (player.hpBarInstance != null)
+        {
+            player.hpBarInstance.SetActive(false);
+        }
+        
+        if (deathSound != null)
+        {
+            audioSource.PlayOneShot(deathSound);
+        }
+        
+        float timer = 0f;
+        while (timer < fadeDuration)
+        {
+            float alpha = Mathf.Lerp(0, 1, timer / fadeDuration);
+            deathScreenOverlay.color = new Color(0, 0, 0, alpha);
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+
+        deathText.gameObject.SetActive(true);
+        deathText.color = new Color(1, 0, 0, 0); 
+
+        
+        float textFadeDuration = 1f;
+        float textTimer = 0f;
+        while (textTimer < textFadeDuration)
+        {
+            float alpha = Mathf.Lerp(0, 1, textTimer / textFadeDuration);
+            deathText.color = new Color(1, 0, 0, alpha); // Плавное появление
+            textTimer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
     
     public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat, Entity e)
@@ -878,15 +932,6 @@ public class MyGame : MonoBehaviour
     public void PlayerHeal(float amount) // TODO: heal on pickup
     {
         player.health = Mathf.Min(player.health + amount, 100f); 
-    }
-
-    public void EnableFall()
-    {
-        if (!player.deathAudioSource.isPlaying)
-        {
-            player.deathAudioSource.Play();
-            player.isDead = true;
-        }
     }
 
     public void AddUpgradeToInventory(Upgrade upgrade)

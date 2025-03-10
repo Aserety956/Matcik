@@ -19,14 +19,13 @@ public enum EntityType
 
 public class Entity : MonoBehaviour
 {
-    [Header("Editor")] public EntityType type;
+    [Header("Editor")] 
+    public EntityType type;
     public MeshRenderer mr;
     public Material healedMat;
     public Material damagedMat;
     public float rotationSpeed;
     public float speed;
-    public AudioClip deathSound;
-    public AudioSource deathAudioSource;
     public bool isDead;
     public bool isCollisionEnabled;
     public EntityType collisionEntityType;
@@ -46,15 +45,15 @@ public class Entity : MonoBehaviour
     public float forceDamping;
     public GameObject particles;
 
-
-    [Header("ProjThrow")] public Transform ballSpawn;
+    [Header("ProjThrow")] 
+    public Transform ballSpawn;
     public float projVelocity;
 
 
     [Header("BaseStats")] public float health;
     public float defense;
     public float damage;
-    public float attackSpeed;//TODO:buff?
+    public float attackSpeed;
     public float maxHealth;
     public int exp;
     public float magnetRadius;
@@ -68,11 +67,10 @@ public class Entity : MonoBehaviour
     public float lastAttackTime;
     
 
-    public GameObject hpBarPrefab; // Префаб HP бара
-    public GameObject hpBarInstance; // Экземпляр HP бара
+    public GameObject hpBarPrefab; 
+    public GameObject hpBarInstance; 
     public Image hpBarForeground;
     public Image hpBarBackground;
-// ТУДУ хп плеера?(UI) визуал?
 
 
     public Vector3 moveDirection;
@@ -100,25 +98,25 @@ public class Entity : MonoBehaviour
 
 // public void DoGame()
 // {
-//     GoToProstitutochnoyaFor(Shrex);
-//     GoToProstitutochnoyaFor(Masturnation);
+//     GoToProstitutochnoyaFor(Kek);
+//     GoToProstitutochnoyaFor(Mast);
 // }
 
-// public bool GoToProstitutochnoyaFor(Func<bool> SomeFunction)
+// public bool GoToProstFor(Func<bool> SomeFunction)
 // {
-//     PrepareForKonchit();
+//     PrepareForKon();
 //     bool isSuccess = SomeFunction();
 //     return isSuccess;
 // }
 
-// public void PrepareForKonchit()
+// public void PrepareForKon()
 // {
 // }
 
-// public bool Sex()
+// public bool Kek()
 // {
-//     // logic for sex
-//     if (aids)
+//     // logic for kek
+//     if (lol)
 //     {
 //         return false;
 //     }
@@ -128,8 +126,8 @@ public class Entity : MonoBehaviour
 //     }
 // }
 
-// public bool Masturnation()
+// public bool Mast()
 // {
-//     return gotPreg;
+//     return gotPrep;
 // }
 

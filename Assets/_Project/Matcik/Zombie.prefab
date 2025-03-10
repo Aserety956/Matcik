@@ -317,8 +317,6 @@ MonoBehaviour:
   damagedMat: {fileID: 2100000, guid: 632ffe33e5aa898468491b96479130fa, type: 2}
   rotationSpeed: 5
   speed: 20
-  deathSound: {fileID: 0}
-  deathAudioSource: {fileID: 0}
   isDead: 0
   isCollisionEnabled: 1
   collisionEntityType: 16
