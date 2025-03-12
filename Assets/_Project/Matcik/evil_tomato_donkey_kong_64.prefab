@@ -389,8 +389,6 @@ MonoBehaviour:
   damagedMat: {fileID: 2100000, guid: 632ffe33e5aa898468491b96479130fa, type: 2}
   rotationSpeed: 5
   speed: 20
-  deathSound: {fileID: 0}
-  deathAudioSource: {fileID: 0}
   isDead: 0
   isCollisionEnabled: 1
   collisionEntityType: 18
@@ -419,13 +417,13 @@ MonoBehaviour:
   lastDamageTime: 0
   invincibilityTime: 0.2
   flashDuration: 0.2
-  AttackRange: 8
-  attackCooldown: 1
+  attackRange: 8
+  attackCooldown: 0.5
   lastAttackTime: 0
   hpBarPrefab: {fileID: 5303699854912754023, guid: 678f93637a488b44887509a9c6fcc0e9, type: 3}
   hpBarInstance: {fileID: 0}
   hpBarForeground: {fileID: 9173978057401823071, guid: 1f49b8f1b662a9646a957d260aa8c344, type: 3}
-  hpBarBackround: {fileID: 3530483156515404484, guid: e6387423118cf8e428f677560c7a71b6, type: 3}
+  hpBarBackground: {fileID: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   boxesCount: 0
   isHealed: 0

@@ -345,7 +345,7 @@ MonoBehaviour:
   lastDamageTime: 0
   invincibilityTime: 0
   flashDuration: 0
-  AttackRange: 0
+  attackRange: 0
   attackCooldown: 0
   lastAttackTime: 0
   hpBarPrefab: {fileID: 5303699854912754023, guid: 678f93637a488b44887509a9c6fcc0e9, type: 3}

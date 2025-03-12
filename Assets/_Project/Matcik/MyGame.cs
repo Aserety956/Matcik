@@ -10,11 +10,13 @@ using Random = UnityEngine.Random;
 public class MyGame : MonoBehaviour
 {
     // Main idea - Vampire Survivors like-game
-    [Header("FlockMove")] public float separationDistance = 10.0f; // Минимальная дистанция между зомби
+    [Header("FlockMove")] 
+    public float separationDistance = 10.0f; // Минимальная дистанция между зомби
     public float alignmentWeight = 10f; // Влияние выравнивания
     public float cohesionWeight = 10f; // Влияние притяжения к соседям
 
-    [Header("Entities")] public Entity boxPrefab;
+    [Header("Entities")] 
+    public Entity boxPrefab;
     public Entity buffPrefab;
     public Entity zombiePrefab;
     public Entity player;
@@ -68,15 +70,18 @@ public class MyGame : MonoBehaviour
     public int currentLevel = 1;
     public int currentXP = 0;
     public int xpToNextLevel = 100;
+    public Image xpFillImage;
+    public TextMeshProUGUI xpText;
+    public Animator levelIconAnimator;
 
-    public Slider xpBar;
+    //public Slider xpBar;
     
     public GameObject upgradeMenu;
     public List<Button> upgradeButtons;
     public List<Upgrade> availableUpgrades;
 
-    //Header("PlayerDamageSound")] 
-    //public AudioClip damageSound; TODO: посмотрим
+    [Header("PlayerDamageSound")] 
+    public AudioClip damageSound; //TODO: посмотрим
     
     [Header("PlayerDeathAudio")] 
     public AudioSource audioSource;
@@ -243,7 +248,7 @@ public class MyGame : MonoBehaviour
                 }
                 float distance = Vector3.Distance(player.transform.position, zombie.transform.position);
 
-                if (distance <= zombie.AttackRange && Time.time > zombie.lastAttackTime + zombie.attackCooldown)
+                if (distance <= zombie.attackRange && Time.time > zombie.lastAttackTime + zombie.attackCooldown)
                 {
                     TakeDamagePlayer(zombie.damage, zombie);
                     zombie.lastAttackTime = Time.time;
@@ -377,11 +382,10 @@ public class MyGame : MonoBehaviour
     {
         float targetFill = player.health / player.maxHealth;
         
-        // Плавное изменение заполнения
         currentFillAmount = Mathf.Lerp(currentFillAmount, targetFill, smoothSpeed * Time.deltaTime);
         player.hpBarForeground.fillAmount = currentFillAmount;
 
-        // Изменение цвета в зависимости от здоровья
+        
         player.hpBarForeground.color = Color.Lerp(lowHealthColor, highHealthColor, currentFillAmount);
         
         /*if(player.receivedDamage)
@@ -1013,21 +1017,27 @@ public class MyGame : MonoBehaviour
     {
         currentXP -= xpToNextLevel;
         currentLevel++;             
-        xpToNextLevel = Mathf.FloorToInt(xpToNextLevel * 1.25f); 
+        xpToNextLevel = Mathf.FloorToInt(xpToNextLevel * 1.25f);
+        levelIconAnimator.SetTrigger("LevelUp");
+        //levelIconAnimator.Play("LevelUpBounce");
+        
 
         Debug.Log($"Level Up! Current Level: {currentLevel}");
         
         ShowUpgradeMenu(GetRandomUpgrades(3)); 
     }
-
-    // Обновление UI прогресса
+    //TODO: exp update time and lvl update time
+    
     public void UpdateXPUI()
     {
-        if (xpBar != null)
+        if (xpFillImage != null)
         {
-            xpBar.value = (float)currentXP / xpToNextLevel;
+            //xpFillImage.value = (float)currentXP / xpToNextLevel;
+            xpFillImage.fillAmount = (float)currentXP / xpToNextLevel;
+            xpText.text = $"Level {currentLevel} | {currentXP}/{xpToNextLevel}";
         }
     }
+
 
     
     public void ShowUpgradeMenu(List<Upgrade> upgrades)

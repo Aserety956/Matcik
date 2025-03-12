@@ -50,7 +50,8 @@ public class Entity : MonoBehaviour
     public float projVelocity;
 
 
-    [Header("BaseStats")] public float health;
+    [Header("BaseStats")] 
+    public float health;
     public float defense;
     public float damage;
     public float attackSpeed;
@@ -62,7 +63,7 @@ public class Entity : MonoBehaviour
     public float lastDamageTime;
     public float invincibilityTime;
     public float flashDuration;
-    public float AttackRange; 
+    public float attackRange; 
     public float attackCooldown;
     public float lastAttackTime;
     
@@ -98,8 +99,8 @@ public class Entity : MonoBehaviour
 
 // public void DoGame()
 // {
-//     GoToProstitutochnoyaFor(Kek);
-//     GoToProstitutochnoyaFor(Mast);
+//     GoToProstFor(Kek);
+//     GoToProstFor(Mast);
 // }
 
 // public bool GoToProstFor(Func<bool> SomeFunction)
