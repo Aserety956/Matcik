@@ -15,6 +15,7 @@ public enum EntityType
     Projectile = 1 << 4,
     Grenade = 1 << 5,
     ExpGem = 1 << 6,
+    HealPackage = 1 << 7,
 }
 
 public class Entity : MonoBehaviour
@@ -31,13 +32,15 @@ public class Entity : MonoBehaviour
     public EntityType collisionEntityType;
 
 
-    [Header("Breakable")] public GameObject replacement;
+    [Header("Breakable")] 
+    public GameObject replacement;
     public float breakForce;
     public float collisionMultiplier;
     public bool broken;
     public Collision Collision;
 
-    [Header("Explosive")] public Ball ballPrefab;
+    [Header("Explosive")] 
+    public Ball ballPrefab;
     public float triggerForce;
     public float explosionRadius;
     public float explosionForce;
@@ -77,13 +80,13 @@ public class Entity : MonoBehaviour
     public Vector3 moveDirection;
 
     [Header("Runtime")] 
-    public int boxesCount;
+    /*public int boxesCount;*/
     public bool isHealed;
 
-    public bool HasBox()
+    /*public bool HasBox()
     {
         return boxesCount > 0;
-    }
+    }*/
 
 
     public void OnCollisionEnter(Collision other)

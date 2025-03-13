@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
@@ -20,6 +21,7 @@ public class MyGame : MonoBehaviour
     public Entity buffPrefab;
     public Entity zombiePrefab;
     public Entity player;
+    public Entity healPackagePrefab;
     public GameObject grenadePrefab;
     public Entity gemlvl1Prefab;
     public Entity gemlvl2Prefab;
@@ -41,7 +43,11 @@ public class MyGame : MonoBehaviour
     public float boxSpawnT;
     public float zombieSpawnT;
 
-    [Header("ShootingDelays")] public bool canPressKey = true;
+    [Header("SpawnChance")] 
+    [Range(0, 1)] public float healSpawnChance;
+
+    [Header("ShootingDelays")] 
+    public bool canPressKey = true;
     public bool canPressKeyGrenade = true;
     public float baseCooldownShooting = 1.0f;
     public float baseCooldownGrenade = 3.0f;
@@ -49,11 +55,16 @@ public class MyGame : MonoBehaviour
     
     [Header("Death Settings")]
     public Image deathScreenOverlay; 
-    public float fadeDuration; 
+    public float fadeDuration;
+    public AudioSource audioSource;
     public AudioClip deathSound;
     public TextMeshProUGUI deathText; 
-   
-    //public float inputDisableTimer = 3f; idea?
+    public Button restartButton;
+    public Button mainMenuButton;
+    public string mainMenuSceneName = "MainMenu";
+    public float startAlpha;
+    public float targetAlpha;
+    
 
     [Header("MouseControls")] 
     public float mouseSensitivity;
@@ -70,21 +81,17 @@ public class MyGame : MonoBehaviour
     public int currentLevel = 1;
     public int currentXP = 0;
     public int xpToNextLevel = 100;
+    
     public Image xpFillImage;
     public TextMeshProUGUI xpText;
     public Animator levelIconAnimator;
-
-    //public Slider xpBar;
     
     public GameObject upgradeMenu;
     public List<Button> upgradeButtons;
     public List<Upgrade> availableUpgrades;
 
     [Header("PlayerDamageSound")] 
-    public AudioClip damageSound; //TODO: посмотрим
-    
-    [Header("PlayerDeathAudio")] 
-    public AudioSource audioSource;
+    public AudioClip damageSound; 
 
     [Header("Animations")] 
     public Animator playerAnimator;
@@ -254,7 +261,7 @@ public class MyGame : MonoBehaviour
                     zombie.lastAttackTime = Time.time;
                 }
             }
-//TODO: fix self attack damage
+
             {
                 if (zombie.broken) continue;
                 if (zombie.Collision == null) continue;
@@ -344,13 +351,6 @@ public class MyGame : MonoBehaviour
         gems.Add(gem);
     }
 
-    /*IEnumerator AttackDamageCooldown() // TODO на подумать
-    {
-        player.canDealDamage = false;
-        yield return new WaitForSeconds(player.attackSpeed);
-        player.canDealDamage = true;
-    }*/
-
     public void CreateHealthBarEnemy(Entity e, Vector3 customScale)
     {
         if (e.hpBarPrefab != null)
@@ -362,23 +362,21 @@ public class MyGame : MonoBehaviour
             e.hpBarBackground = e.hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
         }
     }
+    
     public void CreateHealthBarPlayer()
     {
         player.hpBarInstance = Instantiate(player.hpBarPrefab, FindObjectOfType<Canvas>().transform);
-        //player.hpBarInstance = Instantiate(player.hpBarPrefab, targetCanvas.transform);
         
         player.hpBarForeground = player.hpBarInstance.transform.Find("HPBarForeground").GetComponent<Image>();
         player.hpBarBackground = player.hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
-
-        // Настройка радиального заполнения
+        
         player.hpBarForeground.type = Image.Type.Filled;
         player.hpBarForeground.fillMethod = Image.FillMethod.Vertical;
         player.hpBarForeground.fillOrigin = (int)Image.OriginVertical.Bottom;
         
-       // damageEffectInstance = Instantiate(damageEffectPrefab, player.hpBarInstance.transform);
     }
     
-    public void UpdateHealthDisplay() //TODO: мейби не надо
+    public void UpdateHealthDisplay() 
     {
         float targetFill = player.health / player.maxHealth;
         
@@ -387,16 +385,6 @@ public class MyGame : MonoBehaviour
 
         
         player.hpBarForeground.color = Color.Lerp(lowHealthColor, highHealthColor, currentFillAmount);
-        
-        /*if(player.receivedDamage)
-        {
-            damageEffectInstance.SetActive(true);
-            // Дополнительная анимация эффекта
-        }
-        else
-        {
-            damageEffectInstance.SetActive(false); TODO уже есть is invincible
-        }*/
         
     }
 
@@ -435,7 +423,7 @@ public class MyGame : MonoBehaviour
         
         ApplyHitEffect(player);
         UpdateHealthBar(player);
-        //if (damageSound != null) audioSource.PlayOneShot(damageSound);
+        if (damageSound != null) audioSource.PlayOneShot(damageSound);
         
         
         if (player.health <= 0)
@@ -453,7 +441,6 @@ public class MyGame : MonoBehaviour
             Debug.LogError("Назначьте deathScreenOverlay и deathText в инспекторе!");
             return;
         }
-        //TODO: Дополнительные действия: анимация, перезагрузка уровня и т.д.
     }
     private IEnumerator DeathRoutine()
     {
@@ -477,6 +464,31 @@ public class MyGame : MonoBehaviour
             timer += Time.unscaledDeltaTime;
             yield return null;
         }
+        
+        CanvasGroup restartGroup = restartButton.GetComponent<CanvasGroup>();
+        CanvasGroup menuGroup = mainMenuButton.GetComponent<CanvasGroup>();
+        
+        restartGroup.alpha = startAlpha;
+        menuGroup.alpha = startAlpha;
+        
+        restartButton.gameObject.SetActive(true);
+        mainMenuButton.gameObject.SetActive(true);
+        
+        while (timer < fadeDuration)
+        {
+            float progress = timer / fadeDuration;
+            restartGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, progress);
+            menuGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, progress);
+        
+            timer += Time.unscaledDeltaTime;
+            yield return null;
+        }
+        restartGroup.alpha = targetAlpha;
+        menuGroup.alpha = targetAlpha;
+        
+        restartButton.onClick.AddListener(RestartGame);
+        mainMenuButton.onClick.AddListener(LoadMainMenu);
+        
 
         deathText.gameObject.SetActive(true);
         deathText.color = new Color(1, 0, 0, 0); 
@@ -494,6 +506,18 @@ public class MyGame : MonoBehaviour
         
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+    }
+    
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void LoadMainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu");
     }
     
     public IEnumerator ResetMaterialAfterHit(float delay, Material originalMat, Entity e)
@@ -568,7 +592,7 @@ public class MyGame : MonoBehaviour
 
                     // Нанесение урона объектам типа Entity
                     Entity entityG = hit.GetComponent<Entity>();
-                    if (entityG != null && entityG.type == EntityType.Zombie) // Проверяем тип Zombie
+                    if (entityG != null && entityG.type == EntityType.Zombie)
                     {
                         float distance = Vector3.Distance(grenade.transform.position, entityG.transform.position);
                         float damageMultiplier = Mathf.Clamp01(1 - (distance / grenade.explosionRadius));
@@ -669,7 +693,9 @@ public class MyGame : MonoBehaviour
     {
         List<Entity> boxes = GetEntitiesOfType(EntityType.Box);
         List<Entity> buffs = GetEntitiesOfType(EntityType.Buff);
-        // NOTE(sqd): Spawn potions
+        List<Entity> heals = GetEntitiesOfType(EntityType.HealPackage);
+
+
         if (boxes.Count < 10)
         {
             boxSpawnT -= Time.deltaTime;
@@ -680,7 +706,7 @@ public class MyGame : MonoBehaviour
                 Entity box = SpawnEntity(boxPrefab, 20f);
             }
         }
-        
+
         for (int i = 0; i < boxes.Count; i++)
         {
             boxes[i].transform.Rotate(0, boxes[i].rotationSpeed * Time.deltaTime, 0);
@@ -696,8 +722,15 @@ public class MyGame : MonoBehaviour
                 GameObject boxReplacement =
                     Instantiate(box.replacement, box.transform.position, box.transform.rotation);
                 Rigidbody[] boxReplacmentRbs = boxReplacement.GetComponentsInChildren<Rigidbody>();
-
-                Entity buff = SpawnEntityOnDestroyed(box, buffPrefab);
+                
+                if (Random.value < healSpawnChance)
+                {
+                    SpawnEntityOnDestroyed(box, healPackagePrefab);
+                }
+                else
+                {
+                    SpawnEntityOnDestroyed(box, buffPrefab);
+                }
 
                 foreach (var rb in boxReplacmentRbs)
                 {
@@ -718,7 +751,7 @@ public class MyGame : MonoBehaviour
         for (int i = buffs.Count - 1; i >= 0; i--)
         {
             Entity buff = buffs[i];
-        
+
             if (buff == null || buff.gameObject == null)
             {
                 buffs.RemoveAt(i);
@@ -727,7 +760,7 @@ public class MyGame : MonoBehaviour
             }
 
             float distance = Vector3.Distance(player.transform.position, buff.transform.position);
-        
+
             if (distance <= player.magnetRadius)
             {
                 Vector3 direction = (player.transform.position - buff.transform.position).normalized;
@@ -742,8 +775,45 @@ public class MyGame : MonoBehaviour
                 }
             }
         }
+
+        for (int i = heals.Count - 1; i >= 0; i--) 
+        {
+            Entity heal = heals[i];
+
+            if (heal == null || heal.gameObject == null)
+            {
+                heals.RemoveAt(i);
+                entities.Remove(heal);
+                continue;
+            }
+            float distance = Vector3.Distance(player.transform.position, heal.transform.position);
+
+            if (distance <= player.magnetRadius)
+            {
+                Vector3 direction = (player.transform.position - heal.transform.position).normalized;
+                heal.transform.position += direction * player.magnetForce * Time.deltaTime;
+            }
+            if (distance < 1f)
+            {
+                ApplyHeal();
+                Destroy(heal.gameObject);
+                heals.RemoveAt(i);
+                entities.Remove(heal);
+            }
+        }
     }
 
+    public void ApplyHeal()
+    {
+        player.health += 75f;
+
+        if (player.health > 200)
+        {
+            player.health = 200;
+        }
+        UpdateHealthBar(player);
+    }
+    
     public void HoverObject(Transform obj, float hoverSpeed)
     {
         if (obj == null) return;
@@ -933,10 +1003,7 @@ public class MyGame : MonoBehaviour
         canPressKeyGrenade = true;
     }
     
-    public void PlayerHeal(float amount) // TODO: heal on pickup
-    {
-        player.health = Mathf.Min(player.health + amount, 100f); 
-    }
+    
 
     public void AddUpgradeToInventory(Upgrade upgrade)
     {
@@ -1019,8 +1086,7 @@ public class MyGame : MonoBehaviour
         currentLevel++;             
         xpToNextLevel = Mathf.FloorToInt(xpToNextLevel * 1.25f);
         levelIconAnimator.SetTrigger("LevelUp");
-        //levelIconAnimator.Play("LevelUpBounce");
-        
+        UpdateXPUI();
 
         Debug.Log($"Level Up! Current Level: {currentLevel}");
         
@@ -1037,8 +1103,6 @@ public class MyGame : MonoBehaviour
             xpText.text = $"Level {currentLevel} | {currentXP}/{xpToNextLevel}";
         }
     }
-
-
     
     public void ShowUpgradeMenu(List<Upgrade> upgrades)
     {

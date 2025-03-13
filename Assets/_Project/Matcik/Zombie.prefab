@@ -353,7 +353,6 @@ MonoBehaviour:
   hpBarForeground: {fileID: 9173978057401823071, guid: 1f49b8f1b662a9646a957d260aa8c344, type: 3}
   hpBarBackground: {fileID: 0}
   moveDirection: {x: 0, y: 0, z: 0}
-  boxesCount: 0
   isHealed: 0
 --- !u!136 &3036795746662748253
 CapsuleCollider:
