@@ -103,6 +103,16 @@ public class MyGame : MonoBehaviour
     public List<InventoryItemInstance> inventory = new(6);
     public GameObject inventorySlotPrefab;
     public Transform inventoryGrid;
+    
+    [Header("Chunk settings")]
+    public GameObject chunkPrefab; 
+    public int chunkSize = 100;    
+    public int renderDistance = 3;
+    public Transform chunksParent;
+    
+    public Vector2Int currentChunkCoord;
+    public Dictionary<Vector2Int, Chunk> chunks = new Dictionary<Vector2Int, Chunk>();
+
 
     [Header("Game State")] 
     public bool isGamePaused = false;
@@ -151,7 +161,7 @@ public class MyGame : MonoBehaviour
     public void Start()
     {
         playerAnimator = player.GetComponent<Animator>();
-        player.transform.position = new Vector3(0, 0, -2);
+        player.transform.position = new Vector3(0, 0, 0);
         entities.Add(player);
         Cursor.lockState = CursorLockMode.Locked;
         playerCameraTransform = Camera.main.transform;
@@ -173,7 +183,12 @@ public class MyGame : MonoBehaviour
         UpdateBoxes();
         UpdateZombies();
         Exp();
-        //Healing(); TODO: heal method
+        Vector2Int playerChunk = GetChunkCoord(player.transform.position);
+        if (playerChunk != currentChunkCoord)
+        {
+            currentChunkCoord = playerChunk;
+            UpdateChunks();
+        }
     }
 
     public List<Entity> GetEntitiesOfType(EntityType type, Func<Entity, bool> filter = null)
@@ -210,7 +225,65 @@ public class MyGame : MonoBehaviour
 
         return nearestEntity;
     }
+    
+    private Vector2Int GetChunkCoord(Vector3 position)
+    {
+        return new Vector2Int(
+            Mathf.FloorToInt(position.x / chunkSize),
+            Mathf.FloorToInt(position.z / chunkSize)
+        );
+    }
 
+    private void UpdateChunks()
+    {
+        HashSet<Vector2Int> neededChunks = new HashSet<Vector2Int>();
+
+        // Генерируем координаты вокруг игрока
+        for (int x = -renderDistance; x <= renderDistance; x++)
+        {
+            for (int y = -renderDistance; y <= renderDistance; y++)
+            {
+                Vector2Int coord = new Vector2Int(
+                    currentChunkCoord.x + x,
+                    currentChunkCoord.y + y
+                );
+                neededChunks.Add(coord);
+            }
+        }
+        List<Vector2Int> toRemove = new List<Vector2Int>();
+        foreach (var chunk in chunks)
+        {
+            if (!neededChunks.Contains(chunk.Key))
+            {
+                Destroy(chunk.Value.gameObject);
+                toRemove.Add(chunk.Key);
+            }
+        }
+        foreach (var key in toRemove) chunks.Remove(key);
+
+        // Создаем новые чанки
+        foreach (var coord in neededChunks)
+        {
+            if (!chunks.ContainsKey(coord))
+            {
+                Vector3 position = new Vector3(coord.x * chunkSize, 0, coord.y * chunkSize);
+                
+                GameObject chunkObj = Instantiate(
+                    chunkPrefab,
+                    position,
+                    Quaternion.identity,
+                    chunksParent
+                );
+                
+                Chunk newChunk = chunkObj.AddComponent<Chunk>();
+                newChunk.Initialize(coord);
+                chunks.Add(coord, newChunk);
+            }
+        }
+    }
+
+
+    
     public void UpdateZombies()
     {
         List<Entity> zombies = GetEntitiesOfType(EntityType.Zombie);

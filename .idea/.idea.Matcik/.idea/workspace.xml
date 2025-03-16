@@ -7,17 +7,7 @@
     <option name="autoscrollToSource" value="true" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF - Fallback.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/TextMesh Pro/Resources/Fonts &amp; Materials/LiberationSans SDF - Fallback.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/New Material 1.mat" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/New Material 1.mat" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Potion.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Potion.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Potion.prefab.meta" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Potion.prefab.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" afterDir="false" />
-    </list>
+    <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -175,6 +165,7 @@
       <workItem from="1741644588531" duration="241000" />
       <workItem from="1741708908885" duration="12337000" />
       <workItem from="1741885741840" duration="9474000" />
+      <workItem from="1742043209619" duration="457000" />
     </task>
     <servers />
   </component>
