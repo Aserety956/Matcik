@@ -169,6 +169,8 @@ public class MyGame : MonoBehaviour
         CreateHealthBarPlayer();
         UpdateXPUI();
         UpdateInventoryUI();
+        currentChunkCoord = GetChunkCoord(player.transform.position);
+        UpdateChunks();
     }
 
     public void Update()
@@ -226,7 +228,7 @@ public class MyGame : MonoBehaviour
         return nearestEntity;
     }
     
-    private Vector2Int GetChunkCoord(Vector3 position)
+    public Vector2Int GetChunkCoord(Vector3 position)
     {
         return new Vector2Int(
             Mathf.FloorToInt(position.x / chunkSize),
@@ -234,7 +236,7 @@ public class MyGame : MonoBehaviour
         );
     }
 
-    private void UpdateChunks()
+    public void UpdateChunks()
     {
         HashSet<Vector2Int> neededChunks = new HashSet<Vector2Int>();
 

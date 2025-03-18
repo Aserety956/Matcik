@@ -7,7 +7,11 @@
     <option name="autoscrollToSource" value="true" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="" />
+    <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,6 +29,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f1e29a71158e46cdb750140a667aea01175e00/ff/ce0920c2/Component.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/_Project/Matcik/Assets/MagicParticlesLite/Script.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/_Project/Matcik/Assets/Mirza Beig/Cinematic Explosions FREE/Scripts/DemoController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Assets/_Project/Matcik/Chunk.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/_Project/Matcik/MainMenuHandler.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" root0="FORCE_HIGHLIGHTING" />
@@ -166,6 +171,8 @@
       <workItem from="1741708908885" duration="12337000" />
       <workItem from="1741885741840" duration="9474000" />
       <workItem from="1742043209619" duration="457000" />
+      <workItem from="1742135979908" duration="6962000" />
+      <workItem from="1742316184728" duration="5262000" />
     </task>
     <servers />
   </component>
