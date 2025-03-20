@@ -16,6 +16,7 @@ public enum EntityType
     Grenade = 1 << 5,
     ExpGem = 1 << 6,
     HealPackage = 1 << 7,
+    RangeZombie = 1 << 8,
 }
 
 public class Entity : MonoBehaviour

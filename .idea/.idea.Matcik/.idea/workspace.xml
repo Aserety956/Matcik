@@ -9,8 +9,27 @@
   <component name="ChangeListManager">
     <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Chunk.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Chunk.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/Body.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/Body.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/Eyes.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/Eyes.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/Leafs.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/Leafs.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/Teeth.mat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/Teeth.mat.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/evil_tomato_donkey_kong_64.obj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/evil_tomato_donkey_kong_64.obj.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/mat0_body-color.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/mat0_body-color.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/mat0_eyes-color.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/mat0_eyes-color.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/mat0_leafs-color.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/mat0_leafs-color.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/mat0_teeth-color.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Enemy/mat0_teeth-color.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -173,6 +192,7 @@
       <workItem from="1742043209619" duration="457000" />
       <workItem from="1742135979908" duration="6962000" />
       <workItem from="1742316184728" duration="5262000" />
+      <workItem from="1742424061440" duration="5121000" />
     </task>
     <servers />
   </component>

@@ -239,19 +239,17 @@ public class MyGame : MonoBehaviour
     public void UpdateChunks()
     {
         HashSet<Vector2Int> neededChunks = new HashSet<Vector2Int>();
-
-        // Генерируем координаты вокруг игрока
+        
+        //render blocks 2 * renderDistance +1
         for (int x = -renderDistance; x <= renderDistance; x++)
         {
             for (int y = -renderDistance; y <= renderDistance; y++)
             {
-                Vector2Int coord = new Vector2Int(
-                    currentChunkCoord.x + x,
-                    currentChunkCoord.y + y
-                );
+                Vector2Int coord = new Vector2Int(currentChunkCoord.x + x, currentChunkCoord.y + y);
                 neededChunks.Add(coord);
             }
         }
+        
         List<Vector2Int> toRemove = new List<Vector2Int>();
         foreach (var chunk in chunks)
         {
@@ -360,8 +358,7 @@ public class MyGame : MonoBehaviour
             }
         }
     }
-
-    //TODO: кнопки для отладки статов
+    
     public void Exp()
     {
         List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
@@ -483,6 +480,7 @@ public class MyGame : MonoBehaviour
         zombie.health -= PlayerEffectiveDamage;
         UpdateHealthBar(zombie);
     }
+    
     //TODO:типы врагов и логику для обработки их статов а не только зомби
 
     public void TakeDamagePlayer(float damage, Entity attacker)
@@ -1167,7 +1165,6 @@ public class MyGame : MonoBehaviour
         
         ShowUpgradeMenu(GetRandomUpgrades(3)); 
     }
-    //TODO: exp update time and lvl update time
     
     public void UpdateXPUI()
     {

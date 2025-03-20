@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Chunk : MonoBehaviour
 {
-        private Vector2Int coord;
-        private bool isGenerated;
+        public Vector2Int coord;
+        public bool isGenerated;
 
         public void Initialize(Vector2Int coord)
         {
