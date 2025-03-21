@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -20,6 +21,7 @@ public class MyGame : MonoBehaviour
     public Entity boxPrefab;
     public Entity buffPrefab;
     public Entity zombiePrefab;
+    public Entity rangedzombiePrefab;
     public Entity player;
     public Entity healPackagePrefab;
     public GameObject grenadePrefab;
@@ -42,9 +44,6 @@ public class MyGame : MonoBehaviour
     [Header("SpawnTimers")] 
     public float boxSpawnT;
     public float zombieSpawnT;
-
-    [Header("SpawnChance")] 
-    [Range(0, 1)] public float healSpawnChance;
 
     [Header("ShootingDelays")] 
     public bool canPressKey = true;
@@ -91,7 +90,33 @@ public class MyGame : MonoBehaviour
     public List<Upgrade> availableUpgrades;
 
     [Header("PlayerDamageSound")] 
-    public AudioClip damageSound; 
+    public AudioClip damageSound;
+    
+    [Header("Wave System")]
+    public List<Wave> waves = new List<Wave>();
+    public int currentWaveIndex = 0;
+    public float timeBetweenWaves = 10f;
+    public TextMeshProUGUI waveText;
+    private float waveCooldown;
+    private bool isWaveActive;
+    public int enemiesRemaining;
+    
+    [System.Serializable]
+    public class Wave
+    {
+        public string waveName = "Wave";
+        public int totalEnemies = 10;
+        public List<EnemyWaveSettings> enemies;
+        public float healthMultiplier = 1.0f;
+        public float speedMultiplier = 1.0f;
+    }
+
+    [System.Serializable]
+    public class EnemyWaveSettings
+    {
+        public Entity enemyPrefab;
+        [Range(0, 100)] public float spawnWeight;
+    }
 
     [Header("Animations")] 
     public Animator playerAnimator;
@@ -171,6 +196,8 @@ public class MyGame : MonoBehaviour
         UpdateInventoryUI();
         currentChunkCoord = GetChunkCoord(player.transform.position);
         UpdateChunks();
+        StartNextWave();
+        //UpdateWaveUI(); enemy kill counter
     }
 
     public void Update()
@@ -180,6 +207,15 @@ public class MyGame : MonoBehaviour
         if (!player.isDead)
         {
             UpdateInput();
+        }
+        
+        if (!isWaveActive && currentWaveIndex < waves.Count)
+        {
+            waveCooldown -= Time.deltaTime;
+            if (waveCooldown <= 0)
+            {
+                StartNextWave();
+            }
         }
         
         UpdateBoxes();
@@ -286,25 +322,38 @@ public class MyGame : MonoBehaviour
     
     public void UpdateZombies()
     {
-        List<Entity> zombies = GetEntitiesOfType(EntityType.Zombie);
         List<Entity> boxes = GetEntitiesOfType(EntityType.Box);
         List<Entity> projectiles = GetEntitiesOfType(EntityType.Projectile);
         List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
+        
+        if (!isWaveActive) return;
+        
+        List<Entity> zombies = GetEntitiesOfType(EntityType.Zombie | EntityType.RangeZombie, e => !e.isDead);
 
 
         if (zombies.Count < 10)
         {
             zombieSpawnT -= Time.deltaTime;
 
-            if (zombieSpawnT <= 0)
+            if (zombies.Count < waves[currentWaveIndex].totalEnemies)
+            {
+                zombieSpawnT -= Time.deltaTime;
+                if (zombieSpawnT <= 0)
+                {
+                    SpawnEnemyWave();
+                    zombieSpawnT = zombieSpawnInterval;
+                }
+            }
+            /*if (zombieSpawnT <= 0)
             {
                 zombieSpawnT += zombieSpawnInterval;
                 Entity zombie = SpawnEntity(zombiePrefab, 100f);
+                Entity rangedz = SpawnEntity(rangedzombiePrefab, 100f);
                 zombies.Add(zombie);
                 zombie.health = zombie.maxHealth;
                 CreateHealthBarEnemy(zombie, new Vector3(0.5f, 0.5f, 0.5f));
                 UpdateHealthBar(zombie);
-            }
+            }*/
         }
 
         for (int i = 0; i < zombies.Count; i++)
@@ -359,6 +408,79 @@ public class MyGame : MonoBehaviour
         }
     }
     
+    public void SpawnEnemyWave()
+    {
+        Wave currentWave = waves[currentWaveIndex];
+        Entity enemyPrefab = GetRandomEnemy(currentWave);
+    
+        Entity zombie = SpawnEntity(enemyPrefab, 100f);
+        ApplyWaveModifiers(zombie, currentWave);
+        
+        CreateHealthBarEnemy(zombie, new Vector3(0.5f, 0.5f, 0.5f));
+        UpdateHealthBar(zombie);
+    
+        enemiesRemaining++;
+    }
+    
+    public Entity GetRandomEnemy(Wave wave)
+    {
+        float totalWeight = 0;
+        foreach (EnemyWaveSettings enemy in wave.enemies)
+        {
+            totalWeight += enemy.spawnWeight;
+        }
+
+        float randomPoint = Random.Range(0, totalWeight);
+    
+        foreach (EnemyWaveSettings enemy in wave.enemies)
+        {
+            if (randomPoint < enemy.spawnWeight)
+            {
+                return enemy.enemyPrefab;
+            }
+            randomPoint -= enemy.spawnWeight;
+        }
+    
+        return wave.enemies[0].enemyPrefab;
+    }
+    
+    public void CheckWaveCompletion()
+    {
+        if (enemiesRemaining <= 0)
+        {
+            isWaveActive = false;
+            waveCooldown = timeBetweenWaves;
+            currentWaveIndex++;
+            UpdateWaveUI();
+        }
+    }
+    
+    public void StartNextWave()
+    {
+        if (currentWaveIndex >= waves.Count)
+        {
+            // Все волны пройдены
+            return;
+        }
+
+        isWaveActive = true;
+        enemiesRemaining = waves[currentWaveIndex].totalEnemies;
+    }
+    
+    public void UpdateWaveUI()
+    {
+        if (waveText != null)
+        {
+            waveText.text = $"Wave: {currentWaveIndex + 1}/{waves.Count}";
+        }
+    }
+    public void ApplyWaveModifiers(Entity enemy, Wave wave)
+    {
+        enemy.maxHealth *= wave.healthMultiplier;
+        enemy.health = enemy.maxHealth;
+        enemy.speed *= wave.speedMultiplier;
+    }
+    
     public void Exp()
     {
         List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
@@ -403,6 +525,7 @@ public class MyGame : MonoBehaviour
     public void DestroyZombie(Entity zombie)
     {
         List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
+        List<Entity> zombies = GetEntitiesOfType(EntityType.Zombie | EntityType.RangeZombie);
 
         zombie.broken = true;
 
@@ -416,13 +539,22 @@ public class MyGame : MonoBehaviour
             rb.AddExplosionForce(zombie.explosionForce, zombie.transform.position,
                 zombie.explosionRadius);
         }
-
+        
         Destroy(zombie.gameObject);
+        entities.Remove(zombie);
+        Debug.Log($"Уничтожение зомби: {zombie.name}, тип: {zombie.type}");
+        if (zombie.type == EntityType.RangeZombie)
+        {
+            Destroy(zombie.gameObject);
+            entities.Remove(zombie);
+            Debug.Log($"Уничтожение зомби: {zombie.name}, тип: {zombie.type}");
+        }
+            
         Destroy(replacement.gameObject, 3f);
         Entity gem = SpawnEntityOnDestroyed(zombie, gemlvl1Prefab);
         gems.Add(gem);
     }
-
+// баги фиксить спавн смерть и тд
     public void CreateHealthBarEnemy(Entity e, Vector3 customScale)
     {
         if (e.hpBarPrefab != null)
@@ -475,10 +607,18 @@ public class MyGame : MonoBehaviour
 
     public void TakeDamageZombie(float damage, Entity zombie)
     {
+        
         float PlayerEffectiveDamage = player.damage - zombie.defense;
         PlayerEffectiveDamage = Mathf.Max(PlayerEffectiveDamage, 0);
         zombie.health -= PlayerEffectiveDamage;
+        zombie.health = Mathf.Max(zombie.health, 0);
+
         UpdateHealthBar(zombie);
+
+        if (zombie.health <= 0)
+        {
+            DestroyZombie(zombie);
+        }
     }
     
     //TODO:типы врагов и логику для обработки их статов а не только зомби
@@ -664,8 +804,9 @@ public class MyGame : MonoBehaviour
                     Rigidbody rb = hit.GetComponent<Rigidbody>();
 
                     // Нанесение урона объектам типа Entity
-                    Entity entityG = hit.GetComponent<Entity>();
-                    if (entityG != null && entityG.type == EntityType.Zombie)
+                    Entity entityG = hit.GetComponent<Entity>(); 
+                    
+                    if (entityG != null && (entityG.type == EntityType.Zombie || entityG.type == EntityType.RangeZombie)) 
                     {
                         float distance = Vector3.Distance(grenade.transform.position, entityG.transform.position);
                         float damageMultiplier = Mathf.Clamp01(1 - (distance / grenade.explosionRadius));
@@ -768,7 +909,6 @@ public class MyGame : MonoBehaviour
         List<Entity> buffs = GetEntitiesOfType(EntityType.Buff);
         List<Entity> heals = GetEntitiesOfType(EntityType.HealPackage);
 
-
         if (boxes.Count < 10)
         {
             boxSpawnT -= Time.deltaTime;
@@ -795,14 +935,20 @@ public class MyGame : MonoBehaviour
                 GameObject boxReplacement =
                     Instantiate(box.replacement, box.transform.position, box.transform.rotation);
                 Rigidbody[] boxReplacmentRbs = boxReplacement.GetComponentsInChildren<Rigidbody>();
-                
-                if (Random.value < healSpawnChance)
+
+                for (int j = 0; j < heals.Count; j++)
                 {
-                    SpawnEntityOnDestroyed(box, healPackagePrefab);
-                }
-                else
-                {
-                    SpawnEntityOnDestroyed(box, buffPrefab);
+                    Entity heal = heals[j];
+
+                    if (Random.value < heal.SpawnChance)
+                    {
+                        SpawnEntityOnDestroyed(box, healPackagePrefab);
+                    }
+                    else
+                    {
+                        SpawnEntityOnDestroyed(box, buffPrefab);
+                    }
+
                 }
 
                 foreach (var rb in boxReplacmentRbs)

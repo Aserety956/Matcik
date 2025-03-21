@@ -1175,6 +1175,7 @@ MonoBehaviour:
   boxPrefab: {fileID: -81902245594999429, guid: d94f1c95ecc412946ac63af1e8bae664, type: 3}
   buffPrefab: {fileID: -2175818397552126741, guid: efa9d74a5e9e9df4cbab1d53bf9a8ef4, type: 3}
   zombiePrefab: {fileID: 2082736746236443959, guid: 0b86842cd06c6b94b964cdd397875476, type: 3}
+  rangedzombiePrefab: {fileID: 1308823903294781406, guid: be4a6be303c04694da1e67f7b7235f9a, type: 3}
   player: {fileID: 3076598960480156294}
   healPackagePrefab: {fileID: -8320544360822765405, guid: 2deeed2c5ff0f1646bd517ff2fa5b5f6, type: 3}
   grenadePrefab: {fileID: 915003303001102376, guid: f3f4fe16aeb92c24e90024f6ca95e792, type: 3}
@@ -1191,7 +1192,6 @@ MonoBehaviour:
   zombieSpawnInterval: 1
   boxSpawnT: 0
   zombieSpawnT: 0
-  healSpawnChance: 0.5
   canPressKey: 1
   canPressKeyGrenade: 1
   baseCooldownShooting: 1
@@ -1244,6 +1244,20 @@ MonoBehaviour:
     upgradeType: 3
     value: 0.25
   damageSound: {fileID: 8300000, guid: a1957386876b05841b5250fc2ca550cf, type: 3}
+  waves:
+  - waveName: What is going on?
+    totalEnemies: 15
+    enemies:
+    - enemyPrefab: {fileID: 2082736746236443959, guid: 0b86842cd06c6b94b964cdd397875476, type: 3}
+      spawnWeight: 70
+    - enemyPrefab: {fileID: 1308823903294781406, guid: be4a6be303c04694da1e67f7b7235f9a, type: 3}
+      spawnWeight: 30
+    healthMultiplier: 1
+    speedMultiplier: 1
+  currentWaveIndex: 0
+  timeBetweenWaves: 10
+  waveText: {fileID: 0}
+  enemiesRemaining: 0
   playerAnimator: {fileID: 0}
   playerCameraTransform: {fileID: 0}
   entities: []
@@ -4804,6 +4818,7 @@ MonoBehaviour:
   isDead: 0
   isCollisionEnabled: 0
   collisionEntityType: 1
+  SpawnChance: 0
   replacement: {fileID: 0}
   breakForce: 1000
   collisionMultiplier: 0
@@ -4817,7 +4832,7 @@ MonoBehaviour:
   particles: {fileID: 0}
   ballSpawn: {fileID: 2022718040902312218}
   projVelocity: 100
-  health: 20
+  health: 200
   defense: 5
   damage: 35
   attackSpeed: 0.5

@@ -9,8 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1845444593394038253}
+  - component: {fileID: 1308823903294781406}
+  - component: {fileID: -894198842891642145}
+  - component: {fileID: 8469331764130861310}
   m_Layer: 0
-  m_Name: pumpkin1
+  m_Name: pumpkinDmg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -26,7 +29,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.11131786, y: 0.9281767, z: 0.35064808, w: 0.056056146}
   m_LocalPosition: {x: 0.05147604, y: 4.4497194, z: -5.7516117}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalScale: {x: 10, y: 10, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6272624151163126975}
@@ -36,6 +39,110 @@ Transform:
   - {fileID: 7689636489188467367}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -39.676, y: 166.312, z: 18.637}
+--- !u!114 &1308823903294781406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090549872343446163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b0461747d10edf468aa97ad11fb3ab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 256
+  mr: {fileID: 0}
+  healedMat: {fileID: 0}
+  damagedMat: {fileID: 0}
+  rotationSpeed: 5
+  speed: 15
+  isDead: 0
+  isCollisionEnabled: 1
+  collisionEntityType: 274
+  SpawnChance: 0
+  replacement: {fileID: 0}
+  breakForce: 3
+  collisionMultiplier: 100
+  broken: 0
+  ballPrefab: {fileID: 0}
+  triggerForce: 0
+  explosionRadius: 30
+  explosionForce: 5000
+  upwardsModifier: 0
+  forceDamping: 0
+  particles: {fileID: 1845955007268882, guid: 67a684e320da6e7439421a07e3fa265c, type: 3}
+  ballSpawn: {fileID: 0}
+  projVelocity: 0
+  health: 70
+  defense: 2
+  damage: 25
+  attackSpeed: 0
+  maxHealth: 70
+  exp: 0
+  magnetRadius: 0
+  magnetForce: 0
+  isInvincible: 0
+  lastDamageTime: 0
+  invincibilityTime: 0.2
+  flashDuration: 0.2
+  attackRange: 8
+  attackCooldown: 1
+  lastAttackTime: 0
+  hpBarPrefab: {fileID: 5303699854912754023, guid: 678f93637a488b44887509a9c6fcc0e9, type: 3}
+  hpBarInstance: {fileID: 0}
+  hpBarForeground: {fileID: 9173978057401823071, guid: 1f49b8f1b662a9646a957d260aa8c344, type: 3}
+  hpBarBackground: {fileID: 0}
+  moveDirection: {x: 0, y: 0, z: 0}
+  isHealed: 0
+--- !u!54 &-894198842891642145
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090549872343446163}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!135 &8469331764130861310
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1090549872343446163}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2134148002923350279
 GameObject:
   m_ObjectHideFlags: 0

@@ -320,6 +320,7 @@ MonoBehaviour:
   isDead: 0
   isCollisionEnabled: 1
   collisionEntityType: 16
+  SpawnChance: 0
   replacement: {fileID: 8947430647475187164, guid: 4f506076d102f3e4d921bec56fa41298, type: 3}
   breakForce: 3
   collisionMultiplier: 100

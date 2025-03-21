@@ -31,6 +31,7 @@ public class Entity : MonoBehaviour
     public bool isDead;
     public bool isCollisionEnabled;
     public EntityType collisionEntityType;
+    [Range(0, 1)] public float SpawnChance;
 
 
     [Header("Breakable")] 
