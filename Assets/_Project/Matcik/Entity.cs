@@ -42,7 +42,6 @@ public class Entity : MonoBehaviour
     public Collision Collision;
 
     [Header("Explosive")] 
-    public Ball ballPrefab;
     public float triggerForce;
     public float explosionRadius;
     public float explosionForce;
@@ -71,6 +70,7 @@ public class Entity : MonoBehaviour
     public float attackRange; 
     public float attackCooldown;
     public float lastAttackTime;
+    public float lifetime;
     
 
     public GameObject hpBarPrefab; 

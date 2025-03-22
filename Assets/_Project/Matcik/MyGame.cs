@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -24,7 +23,8 @@ public class MyGame : MonoBehaviour
     public Entity rangedzombiePrefab;
     public Entity player;
     public Entity healPackagePrefab;
-    public GameObject grenadePrefab;
+    public Entity ballPrefab;
+    public Entity grenadePrefab;
     public Entity gemlvl1Prefab;
     public Entity gemlvl2Prefab;
     public Entity gemlvl3Prefab;
@@ -105,10 +105,10 @@ public class MyGame : MonoBehaviour
     public class Wave
     {
         public string waveName = "Wave";
-        public int totalEnemies = 10;
-        public List<EnemyWaveSettings> enemies;
-        public float healthMultiplier = 1.0f;
-        public float speedMultiplier = 1.0f;
+        public int totalEnemies ;
+        public List<EnemyWaveSettings> enemiesType;
+        public float healthMultiplier;
+        public float speedMultiplier;
     }
 
     [System.Serializable]
@@ -329,11 +329,7 @@ public class MyGame : MonoBehaviour
         if (!isWaveActive) return;
         
         List<Entity> zombies = GetEntitiesOfType(EntityType.Zombie | EntityType.RangeZombie, e => !e.isDead);
-
-
-        if (zombies.Count < 10)
         {
-            zombieSpawnT -= Time.deltaTime;
 
             if (zombies.Count < waves[currentWaveIndex].totalEnemies)
             {
@@ -418,21 +414,20 @@ public class MyGame : MonoBehaviour
         
         CreateHealthBarEnemy(zombie, new Vector3(0.5f, 0.5f, 0.5f));
         UpdateHealthBar(zombie);
-    
-        enemiesRemaining++;
+        
     }
     
     public Entity GetRandomEnemy(Wave wave)
     {
         float totalWeight = 0;
-        foreach (EnemyWaveSettings enemy in wave.enemies)
+        foreach (EnemyWaveSettings enemy in wave.enemiesType)
         {
             totalWeight += enemy.spawnWeight;
         }
 
         float randomPoint = Random.Range(0, totalWeight);
     
-        foreach (EnemyWaveSettings enemy in wave.enemies)
+        foreach (EnemyWaveSettings enemy in wave.enemiesType)
         {
             if (randomPoint < enemy.spawnWeight)
             {
@@ -441,7 +436,7 @@ public class MyGame : MonoBehaviour
             randomPoint -= enemy.spawnWeight;
         }
     
-        return wave.enemies[0].enemyPrefab;
+        return wave.enemiesType[0].enemyPrefab;
     }
     
     public void CheckWaveCompletion()
@@ -542,6 +537,7 @@ public class MyGame : MonoBehaviour
         
         Destroy(zombie.gameObject);
         entities.Remove(zombie);
+        enemiesRemaining--;
         Debug.Log($"Уничтожение зомби: {zombie.name}, тип: {zombie.type}");
         if (zombie.type == EntityType.RangeZombie)
         {
@@ -554,7 +550,8 @@ public class MyGame : MonoBehaviour
         Entity gem = SpawnEntityOnDestroyed(zombie, gemlvl1Prefab);
         gems.Add(gem);
     }
-// баги фиксить спавн смерть и тд
+    
+    
     public void CreateHealthBarEnemy(Entity e, Vector3 customScale)
     {
         if (e.hpBarPrefab != null)
@@ -654,8 +651,9 @@ public class MyGame : MonoBehaviour
             Debug.LogError("Назначьте deathScreenOverlay и deathText в инспекторе!");
             return;
         }
-    }
-    private IEnumerator DeathRoutine()
+    } 
+    
+    IEnumerator DeathRoutine()
     {
         player.isDead = true;
         isGamePaused = true;
@@ -782,6 +780,7 @@ public class MyGame : MonoBehaviour
         if (otherEntity.type == EntityType.Projectile && collision.relativeVelocity.magnitude >= entity.breakForce)
         {
             Destroy(collision.gameObject);
+            KillEntity(otherEntity);
             ApplyHitEffect(entity);
             TakeDamageZombie(player.damage, entity);
             Debug.Log($"{entity.name} уничтожил объект {collision.gameObject.name} при столкновении.");
@@ -802,11 +801,12 @@ public class MyGame : MonoBehaviour
                 foreach (var hit in colliders)
                 {
                     Rigidbody rb = hit.GetComponent<Rigidbody>();
-
-                    // Нанесение урона объектам типа Entity
+                    
                     Entity entityG = hit.GetComponent<Entity>(); 
                     
-                    if (entityG != null && (entityG.type == EntityType.Zombie || entityG.type == EntityType.RangeZombie)) 
+                    if (entityG != null && (entityG.type == EntityType.Zombie || 
+                                            entityG.type == EntityType.RangeZombie ||
+                                            entityG.type == EntityType.Box)) 
                     {
                         float distance = Vector3.Distance(grenade.transform.position, entityG.transform.position);
                         float damageMultiplier = Mathf.Clamp01(1 - (distance / grenade.explosionRadius));
@@ -1079,11 +1079,12 @@ public class MyGame : MonoBehaviour
         return result;
     }
 
-    public void KillEntity(Entity e)
+    /*public void KillEntity(Entity e)
     {
         GameObject.Destroy(e.gameObject);
         entities.Remove(e);
-    }
+        //TODO: взрыв гранаты даже если не попал
+    }*/
 
     public void UpdateInput()
     {
@@ -1148,18 +1149,86 @@ public class MyGame : MonoBehaviour
         if (canPressKeyGrenade && Input.GetKey(KeyCode.Mouse1))
         {
             ThrowGrenade();
-            StartCoroutine(KeyPressCooldownGrenade()); // fix
+            StartCoroutine(KeyPressCooldownGrenade()); //TODO: fix
         }
     }
+    public void KillEntity(Entity e)
+    {
+        if (e == null) return;
+
+        if (entities.Contains(e))
+        {
+            entities.Remove(e);
+        }
+
+        if (e.gameObject != null)
+        {
+            Destroy(e.gameObject);
+        }
+    }
+    private IEnumerator ProjectileLifecycle(Entity projectile, float velocity, float lifetime, bool shouldExplode)
+    {
+        Rigidbody rb = projectile.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.velocity = projectile.transform.forward * velocity;
+        }
+
+        float timer = 0f;
+        while (timer < lifetime && projectile != null)
+        {
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        if (projectile != null)
+        {
+            // Взрыв, если это граната
+            if (shouldExplode)
+            {
+                ExplodeProjectile(projectile);
+            }
+            KillEntity(projectile);
+        }
+    }
+    
 
     public void Shooting()
     {
+        Vector3 spawnPosition = player.ballSpawn.transform.position + new Vector3(0, 4, 0);
+        Entity projectile = Instantiate(ballPrefab, spawnPosition, player.transform.rotation);
+    
+        
+        StartCoroutine(ProjectileLifecycle(
+            projectile, 
+            player.projVelocity, 
+            projectile.lifetime,
+            false
+        ));
+    
+        entities.Add(projectile);
+    }
+    
+    private void ExplodeProjectile(Entity projectile)
+    {
+        if (projectile.particles != null)
         {
-            Ball ball;
-            player.moveDirection = player.transform.forward;
-            Vector3 spawnPosition = player.ballSpawn.transform.position + new Vector3(0, 4, 0);
-            ball = Instantiate(player.ballPrefab, spawnPosition, player.ballSpawn.rotation);
-            ball.Init(player.projVelocity);
+            Instantiate(projectile.particles, projectile.transform.position, Quaternion.identity);
+        }
+        
+        Collider[] colliders = Physics.OverlapSphere(projectile.transform.position, projectile.explosionRadius);
+        foreach (var hit in colliders)
+        {
+            Entity entity = hit.GetComponent<Entity>();
+            if (entity != null && (entity.type == EntityType.Zombie || 
+                                   entity.type == EntityType.RangeZombie || 
+                                   entity.type == EntityType.Box))
+            {
+                float distance = Vector3.Distance(projectile.transform.position, entity.transform.position);
+                float damageMultiplier = Mathf.Clamp01(1 - (distance / projectile.explosionRadius));
+                TakeDamageZombie(projectile.damage * damageMultiplier, entity);
+                ApplyHitEffect(entity);
+            }
         }
     }
 
@@ -1168,30 +1237,34 @@ public class MyGame : MonoBehaviour
         if (grenadePrefab != null)
         {
             Vector3 spawnPosition = player.ballSpawn.transform.position + new Vector3(0, 2, 0);
-            GameObject Grenade = Instantiate(grenadePrefab, spawnPosition, Quaternion.identity);
-            Rigidbody rb = Grenade.GetComponent<Rigidbody>();
-            Entity grenade = Grenade.GetComponent<Entity>();
+            Entity grenade = Instantiate(grenadePrefab, spawnPosition, Quaternion.identity);
+            grenade.type = EntityType.Grenade;
 
+            // Запуск корутины с флагом shouldExplode = true
+            StartCoroutine(ProjectileLifecycle(
+                grenade, 
+                grenade.projVelocity, 
+                grenade.lifetime, 
+                true // Это граната, должен быть взрыв
+            ));
+
+            // Физика
+            Rigidbody rb = grenade.GetComponent<Rigidbody>();
             if (rb != null)
             {
-                //Vector3 throwDirection = player.transform.forward * 10f + Vector3.up * 5f;
                 rb.velocity = player.transform.forward * grenade.projVelocity + Vector3.up * 15f;
             }
 
-            if (grenade != null)
-            {
-                entities.Add(grenade);
-            }
+            entities.Add(grenade);
         }
     }
     public void ApplyBuffEffect(Entity buff)
     {
-        if(shootingBuffCoroutine != null) 
+        if(shootingBuffCoroutine != null)
             StopCoroutine(shootingBuffCoroutine);
         
         baseCooldownShooting *= 0.5f;
-    
-        // Запускаем таймер бафа
+        
         shootingBuffCoroutine = StartCoroutine(ResetShootingSpeed(buffDuration));
     
         // Визуальный эффект
@@ -1199,7 +1272,7 @@ public class MyGame : MonoBehaviour
             Instantiate(buff.buffParticles, player.transform.position, Quaternion.identity);*/
     }
 
-    private IEnumerator ResetShootingSpeed(float duration)
+    IEnumerator ResetShootingSpeed(float duration)
     {
         yield return new WaitForSeconds(duration);
     

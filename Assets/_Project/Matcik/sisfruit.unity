@@ -1178,7 +1178,8 @@ MonoBehaviour:
   rangedzombiePrefab: {fileID: 1308823903294781406, guid: be4a6be303c04694da1e67f7b7235f9a, type: 3}
   player: {fileID: 3076598960480156294}
   healPackagePrefab: {fileID: -8320544360822765405, guid: 2deeed2c5ff0f1646bd517ff2fa5b5f6, type: 3}
-  grenadePrefab: {fileID: 915003303001102376, guid: f3f4fe16aeb92c24e90024f6ca95e792, type: 3}
+  ballPrefab: {fileID: 2912222714317828024, guid: 4cb3f20a55d45ed49b86e55ddfd0cdb8, type: 3}
+  grenadePrefab: {fileID: 3180414331669198828, guid: f3f4fe16aeb92c24e90024f6ca95e792, type: 3}
   gemlvl1Prefab: {fileID: -4791376813349504071, guid: 5354bd472440e6748a9bc4bdd094bf19, type: 3}
   gemlvl2Prefab: {fileID: -7483390410567822133, guid: 50d64eb94d8f11e4c8b2835face61b2c, type: 3}
   gemlvl3Prefab: {fileID: -5441609640527611429, guid: a9d22ecd0aab27c458b4cc6f031236d0, type: 3}
@@ -1189,7 +1190,7 @@ MonoBehaviour:
   currentFillAmount: 0
   damageEffectInstance: {fileID: 0}
   boxSpawnInterval: 5
-  zombieSpawnInterval: 1
+  zombieSpawnInterval: 3
   boxSpawnT: 0
   zombieSpawnT: 0
   canPressKey: 1
@@ -1247,7 +1248,7 @@ MonoBehaviour:
   waves:
   - waveName: What is going on?
     totalEnemies: 15
-    enemies:
+    enemiesType:
     - enemyPrefab: {fileID: 2082736746236443959, guid: 0b86842cd06c6b94b964cdd397875476, type: 3}
       spawnWeight: 70
     - enemyPrefab: {fileID: 1308823903294781406, guid: be4a6be303c04694da1e67f7b7235f9a, type: 3}
@@ -1255,7 +1256,7 @@ MonoBehaviour:
     healthMultiplier: 1
     speedMultiplier: 1
   currentWaveIndex: 0
-  timeBetweenWaves: 10
+  timeBetweenWaves: 50
   waveText: {fileID: 0}
   enemiesRemaining: 0
   playerAnimator: {fileID: 0}
@@ -4823,7 +4824,6 @@ MonoBehaviour:
   breakForce: 1000
   collisionMultiplier: 0
   broken: 0
-  ballPrefab: {fileID: 5924872118086199498, guid: 4cb3f20a55d45ed49b86e55ddfd0cdb8, type: 3}
   triggerForce: 0
   explosionRadius: 0
   explosionForce: 0
@@ -4847,6 +4847,7 @@ MonoBehaviour:
   attackRange: 0
   attackCooldown: 1
   lastAttackTime: 0
+  lifetime: 0
   hpBarPrefab: {fileID: 2522345390698294444, guid: 6f2fc49bf9571fd4e9dc939936dc7ce5, type: 3}
   hpBarInstance: {fileID: 0}
   hpBarForeground: {fileID: 0}

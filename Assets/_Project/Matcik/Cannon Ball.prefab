@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 3258752824007467037}
   - component: {fileID: 71069986426092711}
   - component: {fileID: 2627042973223693139}
-  - component: {fileID: 5924872118086199498}
   - component: {fileID: 3618321057630165456}
   - component: {fileID: 2912222714317828024}
   m_Layer: 0
@@ -108,19 +107,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &5924872118086199498
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 247282228500047371}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 535093baf3581cf4c99080aeea66d00e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _rb: {fileID: 3618321057630165456}
 --- !u!54 &3618321057630165456
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -163,22 +149,17 @@ MonoBehaviour:
   type: 16
   mr: {fileID: 0}
   healedMat: {fileID: 0}
-  notHealedMat: {fileID: 0}
   damagedMat: {fileID: 0}
   rotationSpeed: 0
   speed: 0
-  deathSound: {fileID: 0}
-  deathAudioSource: {fileID: 0}
   isDead: 0
   isCollisionEnabled: 0
   collisionEntityType: 2
-  originalColor: {r: 0, g: 0, b: 0, a: 0}
-  isTakingDamage: 0
+  SpawnChance: 0
   replacement: {fileID: 0}
   breakForce: 3
   collisionMultiplier: 0
   broken: 0
-  ballPrefab: {fileID: 0}
   triggerForce: 0.5
   explosionRadius: 50
   explosionForce: 5000
@@ -190,13 +171,22 @@ MonoBehaviour:
   health: 0
   defense: 0
   damage: 0
-  canDealDamage: 0
   attackSpeed: 0
   maxHealth: 0
+  exp: 0
+  magnetRadius: 0
+  magnetForce: 0
+  isInvincible: 0
+  lastDamageTime: 0
+  invincibilityTime: 0
+  flashDuration: 0
+  attackRange: 0
+  attackCooldown: 0
+  lastAttackTime: 0
+  lifetime: 2
   hpBarPrefab: {fileID: 0}
   hpBarInstance: {fileID: 0}
   hpBarForeground: {fileID: 0}
-  hpBarBackround: {fileID: 0}
+  hpBarBackground: {fileID: 0}
   moveDirection: {x: 0, y: 0, z: 0}
-  boxesCount: 0
   isHealed: 0
