@@ -8,15 +8,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Ball.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Ball.cs.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Cannon Ball.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Cannon Ball.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Cube.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Cube.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Entity.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Grenade.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Grenade.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Zombie.prefab" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/pumpkinDmg.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/pumpkinDmg.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -183,6 +175,7 @@
       <workItem from="1742424061440" duration="5121000" />
       <workItem from="1742502258170" duration="12942000" />
       <workItem from="1742654609533" duration="9119000" />
+      <workItem from="1743176012314" duration="7282000" />
     </task>
     <servers />
   </component>

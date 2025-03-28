@@ -120,7 +120,7 @@ public class MyGame : MonoBehaviour
 
     [Header("Animations")] 
     public Animator playerAnimator;
-    public Transform playerCameraTransform;
+    //public Transform playerCameraTransform;
 
     public List<Entity> entities = new(256);
 
@@ -138,7 +138,11 @@ public class MyGame : MonoBehaviour
     public Vector2Int currentChunkCoord;
     public Dictionary<Vector2Int, Chunk> chunks = new Dictionary<Vector2Int, Chunk>();
 
-
+    [Header("Camera")] 
+    public Camera mainCamera;
+    public List<GameObject> zombieHealthBars = new List<GameObject>();
+    
+    
     [Header("Game State")] 
     public bool isGamePaused = false;
 
@@ -189,7 +193,8 @@ public class MyGame : MonoBehaviour
         player.transform.position = new Vector3(0, 0, 0);
         entities.Add(player);
         Cursor.lockState = CursorLockMode.Locked;
-        playerCameraTransform = Camera.main.transform;
+        //playerCameraTransform = Camera.main.transform;
+        mainCamera = Camera.main;
         
         CreateHealthBarPlayer();
         UpdateXPUI();
@@ -226,6 +231,13 @@ public class MyGame : MonoBehaviour
         {
             currentChunkCoord = playerChunk;
             UpdateChunks();
+        }
+        foreach(var healthBar in zombieHealthBars)
+        {
+            if(healthBar != null)
+            {
+                healthBar.transform.rotation = mainCamera.transform.rotation;
+            }
         }
     }
 
@@ -545,6 +557,10 @@ public class MyGame : MonoBehaviour
             entities.Remove(zombie);
             Debug.Log($"Уничтожение зомби: {zombie.name}, тип: {zombie.type}");
         }
+        if(zombie.hpBarInstance != null)
+        {
+            zombieHealthBars.Remove(zombie.hpBarInstance);
+        }
             
         Destroy(replacement.gameObject, 3f);
         Entity gem = SpawnEntityOnDestroyed(zombie, gemlvl1Prefab);
@@ -559,6 +575,10 @@ public class MyGame : MonoBehaviour
             e.hpBarInstance = Instantiate(e.hpBarPrefab, e.transform);
             e.hpBarInstance.transform.localPosition = new Vector3(0, 2, 0);
             e.hpBarInstance.transform.localScale = customScale;
+            if(e.type == EntityType.Zombie || e.type == EntityType.RangeZombie)
+            {
+                zombieHealthBars.Add(e.hpBarInstance);
+            }
             e.hpBarForeground = e.hpBarInstance.transform.Find("HPBarForeground").GetComponent<Image>();
             e.hpBarBackground = e.hpBarInstance.transform.Find("HPBarBackground").GetComponent<Image>();
         }
@@ -1132,11 +1152,11 @@ public class MyGame : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        xRotation -= mouseY;
+        /*xRotation -= mouseY;
 
         xRotation = Mathf.Clamp(xRotation, -60f, 60f);
 
-        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);*/
 
         player.transform.Rotate(Vector3.up * mouseX);
 
