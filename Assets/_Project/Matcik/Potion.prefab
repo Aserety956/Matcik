@@ -108,11 +108,11 @@ MonoBehaviour:
   isDead: 0
   isCollisionEnabled: 0
   collisionEntityType: 0
+  SpawnChance: 0.25
   replacement: {fileID: 0}
   breakForce: 0
   collisionMultiplier: 0
   broken: 0
-  ballPrefab: {fileID: 0}
   triggerForce: 0
   explosionRadius: 0
   explosionForce: 0
@@ -136,6 +136,7 @@ MonoBehaviour:
   attackRange: 0
   attackCooldown: 0
   lastAttackTime: 0
+  lifetime: 0
   hpBarPrefab: {fileID: 0}
   hpBarInstance: {fileID: 0}
   hpBarForeground: {fileID: 0}

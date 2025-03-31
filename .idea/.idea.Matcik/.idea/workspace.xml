@@ -8,8 +8,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="71003fa4-6019-4f59-9962-df38e278e7af" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.Matcik/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Buff.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Buff.prefab" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/HealthCanvasZombie.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/HealthCanvasZombie.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/MyGame.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/sisfruit.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/_Project/Matcik/Potion.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/_Project/Matcik/Potion.prefab" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -176,6 +179,8 @@
       <workItem from="1742502258170" duration="12942000" />
       <workItem from="1742654609533" duration="9119000" />
       <workItem from="1743176012314" duration="7282000" />
+      <workItem from="1743267246103" duration="1632000" />
+      <workItem from="1743435324907" duration="7851000" />
     </task>
     <servers />
   </component>

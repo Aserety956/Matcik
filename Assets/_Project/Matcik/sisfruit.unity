@@ -1193,6 +1193,7 @@ MonoBehaviour:
   zombieSpawnInterval: 3
   boxSpawnT: 0
   zombieSpawnT: 0
+  healSpawnChance: 0.25
   canPressKey: 1
   canPressKeyGrenade: 1
   baseCooldownShooting: 1

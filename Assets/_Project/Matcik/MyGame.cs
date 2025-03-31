@@ -40,11 +40,15 @@ public class MyGame : MonoBehaviour
     [Header("SpawnIntervals")] 
     public float boxSpawnInterval;
     public float zombieSpawnInterval;
-
+//???
     [Header("SpawnTimers")] 
     public float boxSpawnT;
     public float zombieSpawnT;
 
+    [Header("SpawnChances")] 
+    public float healSpawnChance;
+    
+    
     [Header("ShootingDelays")] 
     public bool canPressKey = true;
     public bool canPressKeyGrenade = true;
@@ -424,7 +428,7 @@ public class MyGame : MonoBehaviour
         Entity zombie = SpawnEntity(enemyPrefab, 100f);
         ApplyWaveModifiers(zombie, currentWave);
         
-        CreateHealthBarEnemy(zombie, new Vector3(0.5f, 0.5f, 0.5f));
+        CreateHealthBarEnemy(zombie, new Vector3(0.25f, 0.10f, 0.25f));
         UpdateHealthBar(zombie);
         
     }
@@ -533,38 +537,46 @@ public class MyGame : MonoBehaviour
     {
         List<Entity> gems = GetEntitiesOfType(EntityType.ExpGem);
         List<Entity> zombies = GetEntitiesOfType(EntityType.Zombie | EntityType.RangeZombie);
-
-        zombie.broken = true;
-
-        Instantiate(zombie.particles, zombie.transform.position, zombie.transform.rotation);
-        GameObject replacement = Instantiate(zombie.replacement, zombie.transform.position,
-            zombie.transform.rotation);
-
-        Rigidbody[] replacementRbs = replacement.GetComponentsInChildren<Rigidbody>();
-        foreach (var rb in replacementRbs)
-        {
-            rb.AddExplosionForce(zombie.explosionForce, zombie.transform.position,
-                zombie.explosionRadius);
-        }
         
-        Destroy(zombie.gameObject);
-        entities.Remove(zombie);
-        enemiesRemaining--;
-        Debug.Log($"Уничтожение зомби: {zombie.name}, тип: {zombie.type}");
-        if (zombie.type == EntityType.RangeZombie)
-        {
+        
+            zombie.broken = true;
+            
+            Instantiate(zombie.particles, zombie.transform.position, zombie.transform.rotation);
+            GameObject replacement = Instantiate(zombie.replacement, zombie.transform.position,
+                zombie.transform.rotation);
+
+            Rigidbody[] replacementRbs = replacement.GetComponentsInChildren<Rigidbody>();
+            foreach (var rb in replacementRbs)
+            {
+                rb.AddExplosionForce(zombie.explosionForce, zombie.transform.position,
+                    zombie.explosionRadius);
+            }
+
             Destroy(zombie.gameObject);
             entities.Remove(zombie);
+            enemiesRemaining--;
             Debug.Log($"Уничтожение зомби: {zombie.name}, тип: {zombie.type}");
-        }
-        if(zombie.hpBarInstance != null)
-        {
-            zombieHealthBars.Remove(zombie.hpBarInstance);
-        }
-            
-        Destroy(replacement.gameObject, 3f);
-        Entity gem = SpawnEntityOnDestroyed(zombie, gemlvl1Prefab);
-        gems.Add(gem);
+
+            if (zombie.type == EntityType.RangeZombie)
+            {
+                Destroy(zombie.gameObject);
+                entities.Remove(zombie);
+                Debug.Log($"Уничтожение зомби: {zombie.name}, тип: {zombie.type}");
+            }
+
+            if (zombie.hpBarInstance != null)
+            {
+                zombieHealthBars.Remove(zombie.hpBarInstance);
+            }
+
+            Destroy(replacement.gameObject, 3f);
+
+            if (zombie.type == EntityType.Zombie || zombie.type == EntityType.RangeZombie)
+            {
+                Entity gem = SpawnEntityOnDestroyed(zombie, gemlvl1Prefab);
+                gems.Add(gem);
+            }
+        
     }
     
     
@@ -573,7 +585,7 @@ public class MyGame : MonoBehaviour
         if (e.hpBarPrefab != null)
         {
             e.hpBarInstance = Instantiate(e.hpBarPrefab, e.transform);
-            e.hpBarInstance.transform.localPosition = new Vector3(0, 2, 0);
+            e.hpBarInstance.transform.localPosition = new Vector3(0, 1, 0);
             e.hpBarInstance.transform.localScale = customScale;
             if(e.type == EntityType.Zombie || e.type == EntityType.RangeZombie)
             {
@@ -790,7 +802,23 @@ public class MyGame : MonoBehaviour
         List<Entity> Grenades = GetEntitiesOfType(EntityType.Grenade);
 
         if (otherEntity == null) return;
-        
+        if (entity.type == EntityType.Box)
+        {
+            
+            if (collision.relativeVelocity.magnitude >= entity.breakForce)
+            {
+                
+                entity.health = 0;
+                DestroyZombie(entity);
+            
+                
+                Entity itemToSpawn = Random.value < 0.5f ? healPackagePrefab : buffPrefab;
+                SpawnEntityOnDestroyed(entity, itemToSpawn);
+            
+                Debug.Log($"Ящик разрушен! Спавн предмета: {itemToSpawn.name}");
+            }
+        }
+
         if (entity.isCollisionEnabled && (otherEntity.type | entity.collisionEntityType) == entity.collisionEntityType)
         {
             entity.Collision = collision;
@@ -936,12 +964,14 @@ public class MyGame : MonoBehaviour
             if (boxSpawnT <= 0)
             {
                 boxSpawnT += boxSpawnInterval;
-                Entity box = SpawnEntity(boxPrefab, 20f);
+                Entity box = SpawnEntity(boxPrefab, 10f);
             }
         }
 
         for (int i = 0; i < boxes.Count; i++)
         {
+            
+            
             boxes[i].transform.Rotate(0, boxes[i].rotationSpeed * Time.deltaTime, 0);
             Entity box = boxes[i];
 
@@ -951,25 +981,23 @@ public class MyGame : MonoBehaviour
             if (box.Collision.relativeVelocity.magnitude >= box.breakForce)
             {
                 box.broken = true;
-
+                
+                /*Entity itemToSpawn = Random.value < healSpawnChance ? healPackagePrefab : buffPrefab;
+                
+                Entity spawnedItem = SpawnEntityOnDestroyed(box, itemToSpawn);
+                
+                if (spawnedItem != null)
+                {
+                    Debug.Log($"Spawned {spawnedItem.name} at {spawnedItem.transform.position}");
+                }
+                else
+                {
+                    Debug.LogError("Failed to spawn item!");
+                }*/
                 GameObject boxReplacement =
                     Instantiate(box.replacement, box.transform.position, box.transform.rotation);
                 Rigidbody[] boxReplacmentRbs = boxReplacement.GetComponentsInChildren<Rigidbody>();
-
-                for (int j = 0; j < heals.Count; j++)
-                {
-                    Entity heal = heals[j];
-
-                    if (Random.value < heal.SpawnChance)
-                    {
-                        SpawnEntityOnDestroyed(box, healPackagePrefab);
-                    }
-                    else
-                    {
-                        SpawnEntityOnDestroyed(box, buffPrefab);
-                    }
-
-                }
+                
 
                 foreach (var rb in boxReplacmentRbs)
                 {
@@ -978,6 +1006,20 @@ public class MyGame : MonoBehaviour
 
                 if (box.health <= -1)
                 {
+                    /*for (int j = 0; j < heals.Count; j++)
+                    {
+                        Entity heal = heals[j];
+
+                        if (Random.value < healSpawnChance)
+                        {
+                            SpawnEntityOnDestroyed(box, healPackagePrefab);
+                        }
+                        else
+                        {
+                            SpawnEntityOnDestroyed(box, buffPrefab);
+                        }
+
+                    }*/
                     Destroy(box.gameObject);
                     entities.Remove(box);
                     boxes.Remove(box);
@@ -1076,7 +1118,7 @@ public class MyGame : MonoBehaviour
             float randomX = Random.Range(-100, 100);
             float randomZ = Random.Range(-100, 100);
 
-            randomPosition = new Vector3(randomX, 5, randomZ);
+            randomPosition = new Vector3(randomX, 3, randomZ);
 
             distanceToPlayer = Vector3.Distance(randomPosition, player.transform.position);
         } while (distanceToPlayer < minimumDistance);
@@ -1089,11 +1131,11 @@ public class MyGame : MonoBehaviour
 
     public Entity SpawnEntityOnDestroyed(Entity destroyedEntity, Entity prefabToSpawn)
     {
+        
         Vector3 spawnPosition = destroyedEntity.transform.position - new Vector3(0, 2, 0);
         Quaternion spawnRotation = prefabToSpawn.transform.rotation;
 
         Entity result = Instantiate(prefabToSpawn, spawnPosition, spawnRotation);
-
         entities.Add(result);
 
         return result;
@@ -1229,7 +1271,7 @@ public class MyGame : MonoBehaviour
         entities.Add(projectile);
     }
     
-    private void ExplodeProjectile(Entity projectile)
+    public void ExplodeProjectile(Entity projectile)
     {
         if (projectile.particles != null)
         {
@@ -1241,8 +1283,8 @@ public class MyGame : MonoBehaviour
         {
             Entity entity = hit.GetComponent<Entity>();
             if (entity != null && (entity.type == EntityType.Zombie || 
-                                   entity.type == EntityType.RangeZombie || 
-                                   entity.type == EntityType.Box))
+                                   entity.type == EntityType.RangeZombie 
+                                   ))
             {
                 float distance = Vector3.Distance(projectile.transform.position, entity.transform.position);
                 float damageMultiplier = Mathf.Clamp01(1 - (distance / projectile.explosionRadius));
